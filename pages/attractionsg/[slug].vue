@@ -177,6 +177,7 @@ onMounted(async () => {
           limit: 1000 // Get all events to find by ID
         }
       })
+      console.log('📊 Detail page API response:', res)
       allEvents = res.data || []
       console.log(`✅ API returned ${allEvents.length} events`)
     } catch (apiErr) {
@@ -190,6 +191,19 @@ onMounted(async () => {
         console.log(`✅ Direct fetch loaded ${allEvents.length} events`)
       } catch (fallbackErr) {
         console.error('❌ Error loading from public URL:', fallbackErr)
+      }
+    }
+    
+    // Additional fallback: if API returns 0 but no error, try direct fetch
+    if (allEvents.length === 0) {
+      console.log('⚠️ API returned 0 events, trying direct fetch as backup...')
+      try {
+        const publicData = await $fetch('/data/attractionsg-events.json')
+        console.log('📊 Detail page backup fetch response:', publicData)
+        allEvents = publicData.events || []
+        console.log(`✅ Backup fetch loaded ${allEvents.length} events`)
+      } catch (fallbackErr) {
+        console.error('❌ Error in backup fetch:', fallbackErr)
       }
     }
     

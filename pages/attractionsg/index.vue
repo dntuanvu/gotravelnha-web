@@ -195,6 +195,7 @@ const loadTickets = async () => {
     loading.value = true
     error.value = null
     
+    console.log('📡 loadTickets: Trying API endpoint...')
     const res = await $fetch('/api/attractionsg/events', {
       method: 'POST',
       body: {
@@ -203,32 +204,36 @@ const loadTickets = async () => {
       }
     })
 
+    console.log('📊 loadTickets: API response:', res)
     tickets.value = res.data || []
+    console.log(`📊 loadTickets: API returned ${tickets.value.length} tickets`)
     
     // Fallback: If no data, try direct fetch from public URL
     if (tickets.value.length === 0) {
-      console.log('⚠️ API returned no data, trying direct fetch...')
+      console.log('⚠️ loadTickets: API returned no data, trying direct fetch...')
       try {
         const publicData = await $fetch('/data/attractionsg-events.json')
+        console.log('📊 loadTickets: Direct fetch response:', publicData)
         tickets.value = publicData.events || []
-        console.log(`✅ Loaded ${tickets.value.length} events from public URL`)
+        console.log(`✅ loadTickets: Loaded ${tickets.value.length} events from public URL`)
       } catch (fallbackErr) {
-        console.error('Error loading from public URL:', fallbackErr)
+        console.error('❌ loadTickets: Error loading from public URL:', fallbackErr)
       }
     }
   } catch (err) {
+    console.error('❌ loadTickets: API error:', err)
     error.value = 'Unable to fetch tickets. Please try again later.'
-    console.error('Error loading tickets:', err)
     
     // Last resort: try direct fetch
     try {
-      console.log('⚠️ API failed, trying direct fetch as last resort...')
+      console.log('⚠️ loadTickets: API failed, trying direct fetch as last resort...')
       const publicData = await $fetch('/data/attractionsg-events.json')
+      console.log('📊 loadTickets: Last resort response:', publicData)
       tickets.value = publicData.events || []
-      console.log(`✅ Loaded ${tickets.value.length} events from public URL`)
+      console.log(`✅ loadTickets: Loaded ${tickets.value.length} events from public URL`)
       error.value = null // Clear error if successful
     } catch (fallbackErr) {
-      console.error('Error loading from public URL:', fallbackErr)
+      console.error('❌ loadTickets: Error loading from public URL:', fallbackErr)
     }
   } finally {
     loading.value = false
