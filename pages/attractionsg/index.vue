@@ -204,9 +204,32 @@ const loadTickets = async () => {
     })
 
     tickets.value = res.data || []
+    
+    // Fallback: If no data, try direct fetch from public URL
+    if (tickets.value.length === 0) {
+      console.log('⚠️ API returned no data, trying direct fetch...')
+      try {
+        const publicData = await $fetch('/data/attractionsg-events.json')
+        tickets.value = publicData.events || []
+        console.log(`✅ Loaded ${tickets.value.length} events from public URL`)
+      } catch (fallbackErr) {
+        console.error('Error loading from public URL:', fallbackErr)
+      }
+    }
   } catch (err) {
     error.value = 'Unable to fetch tickets. Please try again later.'
     console.error('Error loading tickets:', err)
+    
+    // Last resort: try direct fetch
+    try {
+      console.log('⚠️ API failed, trying direct fetch as last resort...')
+      const publicData = await $fetch('/data/attractionsg-events.json')
+      tickets.value = publicData.events || []
+      console.log(`✅ Loaded ${tickets.value.length} events from public URL`)
+      error.value = null // Clear error if successful
+    } catch (fallbackErr) {
+      console.error('Error loading from public URL:', fallbackErr)
+    }
   } finally {
     loading.value = false
   }
