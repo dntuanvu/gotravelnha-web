@@ -56,6 +56,23 @@ export default defineEventHandler(async (event) => {
         }
       }
       
+      // If still no events and we're on Vercel, try fetching from public URL
+      if (events.length === 0 && process.env.VERCEL) {
+        console.log('🌐 On Vercel, trying to fetch from public URL...')
+        try {
+          const baseUrl = process.env.VERCEL_URL 
+            ? `https://${process.env.VERCEL_URL}` 
+            : 'https://www.gotravelnha.com'
+          
+          const fetch = await import('ofetch')
+          const publicData = await fetch.$fetch(`${baseUrl}/data/attractionsg-events.json`)
+          events = publicData.events || []
+          console.log(`✅ Loaded ${events.length} events from public URL`)
+        } catch (error) {
+          console.error('❌ Error fetching from public URL:', error)
+        }
+      }
+      
       if (events.length === 0) {
         console.error(`⚠️ No events file found in any location`)
         console.error(`⚠️ Current working directory: ${process.cwd()}`)
