@@ -99,25 +99,25 @@ vercel --prod
 
 ---
 
-## ⚙️ Step 4: Install Playwright in Build
+## ⚙️ Step 4: Vercel Configuration
 
-Vercel needs Playwright installed during build. Add a `vercel.json` configuration:
-
-```bash
-# Create vercel.json
-touch vercel.json
-```
-
-Then add to `vercel.json`:
+A simplified `vercel.json` has been created with minimal configuration:
 
 ```json
 {
-  "buildCommand": "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm run build",
-  "installCommand": "npm install"
+  "regions": ["sin1"],
+  "env": {
+    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+  }
 }
 ```
 
-⚠️ **Note**: You may need to adjust based on Vercel's Playwright support. Consider using Puppeteer for serverless if Playwright causes issues.
+⚠️ **CRITICAL**: Playwright has limitations on Vercel serverless:
+- **Timeout**: Vercel functions have 10-60s limits (extended)
+- **File System**: Read-only except `/tmp` (ephemeral)
+- **Browser**: Needs to download during build
+
+**Current Setup**: The crawler runs in the background and returns quickly, while data loads from cache.
 
 ---
 
@@ -143,18 +143,28 @@ After deployment, test:
 
 ## 🔍 Troubleshooting
 
-### Playwright Won't Install on Vercel
+### Playwright Won't Work on Vercel
 
-**Solution**: Use a serverless-friendly browser or scrape differently.
+**The Reality**: Playwright crawls cannot run reliably on Vercel serverless functions due to:
+1. **Timeout limits**: Crawls take 2-5 minutes, Vercel max is 60s
+2. **File system**: Data writes to disk are ephemeral in `/tmp`
+3. **Browser overhead**: Large Playwright binary increases cold start time
 
-**Option 1**: Use Puppeteer with chromium-core
-```bash
-npm install puppeteer-core
-```
+**Production Solutions**:
 
-**Option 2**: Skip Playwright for Vercel, use external service
-- Use a separate scraping service
-- Or run Playwright on a different server
+**Option 1**: Use external database (RECOMMENDED)
+- Store crawled data in Vercel Postgres, MongoDB Atlas, or Supabase
+- Update crawler to use database instead of file system
+
+**Option 2**: Separate scraping service
+- Deploy crawler on Railway, Render, or DigitalOcean
+- Use Vercel only for the web app
+
+**Option 3**: For MVP, use caching
+- Run crawls locally and commit data to Git
+- Or use a cron service like EasyCron to trigger external scrape
+
+**Current Setup**: Crawler will likely timeout on first crawl in production
 
 ### Environment Variables Not Working
 
