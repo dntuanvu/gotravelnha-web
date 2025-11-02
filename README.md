@@ -1,44 +1,53 @@
-# GoTravelNha Web
+# GoTravelNha Web - Complete Documentation
 
-A modern, professional travel booking platform that compares and aggregates deals from multiple travel platforms including Trip.com, Klook, Agoda, and Booking.com.
+A modern, professional travel booking platform that compares and aggregates deals from multiple travel platforms including Trip.com, Klook, and AttractionsSG.
+
+---
 
 ## 🌟 Features
 
 ### Professional UI/UX
-- **Modern Design**: Beautiful, responsive design with smooth animations
-- **Gradient Themes**: Eye-catching gradient backgrounds and buttons
-- **Mobile-First**: Fully responsive across all devices
-- **Loading States**: Professional skeleton loaders and loading indicators
-- **Error Handling**: User-friendly error messages with retry functionality
+- Modern, responsive design with animations
+- Gradient themes and glassmorphism effects
+- Mobile-first responsive layout
+- Loading states and error handling
+- Custom airplane favicon
 
-### Web Scraping Capabilities
-- **Simple Scraper**: Lightweight HTML scraper using Cheerio for quick data extraction
-- **Advanced Scraper**: Full Playwright-based scraper for JavaScript-rendered pages
+### Multi-Platform Integration
+- **Trip.com**: Flights, hotels with search and affiliate tracking
+- **Klook**: Tours, activities & experiences
+- **AttractionsSG**: Singapore attractions & exclusive tickets
+
+### Trip.com Advanced Features
+- **Deep Linking**: Dynamic affiliate links with campaign tracking
+- **Promotion Management**: Configurable promotional campaigns
+- **Data Collection**: Scraping system for deal comparison
+- **Analytics**: Comprehensive tracking and conversion monitoring
+
+### Web Scraping Infrastructure
+- **Simple Scraper**: Lightweight HTML scraper using Cheerio
+- **Advanced Scraper**: Full Playwright-based scraper
+- **Trip.com Scraper**: Specialized promotional deal scraper
 - **Flexible Extraction**: Support for custom CSS selectors
-- **Metadata Extraction**: Automatic extraction of titles, descriptions, images, and more
-- **Price Detection**: Smart price extraction from various formats
 
-### Travel Platform Integration
-- **Trip.com**: Hotel and flight bookings with search functionality
-- **Klook**: Activity and experience bookings
-- **Agoda**: Coming soon
-- **Booking.com**: Coming soon
+### Activity Tracking
+- Session management
+- Page view tracking
+- Click event tracking
+- Scroll depth analysis
+- Time on page metrics
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/yourusername/gotravelnha-web.git
-
-# Navigate to project directory
-cd gotravelnha-web
-
 # Install dependencies
 npm install
 
@@ -47,92 +56,228 @@ npm run dev
 
 # Build for production
 npm run build
-
-# Preview production build
 npm run preview
 ```
+
+### Environment Setup
+
+Create a `.env` file:
+
+```env
+# SMTP Email (REQUIRED)
+SMTP_USER=your-email@enjoytravelsingapore.com
+SMTP_PASS=your-smtp-password
+
+# AttractionsSG (REQUIRED - PDPA Protected)
+ATTRACTIONSG_EMAIL=enjoytravelticket@gmail.com
+ATTRACTIONSG_PASSWORD=Truc1@3456101112
+
+# Trip.com Affiliate (Optional)
+TRIP_ALLIANCE_ID=3883416
+TRIP_SID=22874365
+
+# Auth0 (Optional)
+AUTH0_DOMAIN=your-domain.auth0.com
+AUTH0_CLIENT_ID=your-client-id
+```
+
+---
 
 ## 📁 Project Structure
 
 ```
 gotravelnha-web/
-├── assets/              # CSS and static assets
-│   └── css/
-│       └── tailwind.css
-├── components/          # Vue components
-│   ├── AffiliateCard.vue
-│   ├── HeroBanner.vue
-│   ├── TripHotelList.vue
+├── assets/css/              # Tailwind CSS
+├── components/              # Vue components
+│   ├── PopularDeals.vue
+│   ├── ResponsiveTripSearchBox.vue
+│   ├── StaticBanner.vue
+│   ├── DynamicBanner.vue
 │   └── ...
-├── composables/         # Composable functions
-│   ├── useAuth.ts
-│   ├── useScraper.ts
-│   └── useTrack.ts
-├── layouts/             # Layout templates
-│   └── default.vue
-├── middleware/          # Route middleware
-│   └── auth.global.ts
-├── pages/               # Application pages
-│   ├── index.vue
+├── composables/             # Reusable logic
+│   ├── useTripDeeplink.ts       # Deep link generator
+│   ├── useTripPromotions.ts     # Campaign management
+│   ├── useTripScraper.ts        # Data collection
+│   ├── useActivityTracker.ts    # User tracking
+│   ├── useCampaignManager.ts    # A/B testing
+│   └── ...
+├── layouts/
+│   └── default.vue         # Main layout
+├── pages/
+│   ├── index.vue           # Homepage
+│   ├── trip/               # Trip.com page
+│   ├── klook/              # Klook page
+│   ├── attractionsg/       # AttractionsSG page
+│   ├── analytics/          # Analytics dashboard
+│   └── trip-promotions-demo.vue
+├── server/api/
 │   ├── trip/
-│   ├── klook/
-│   ├── scraper-demo.vue
-│   └── ...
-├── plugins/             # Nuxt plugins
-│   ├── klook-widget.js
-│   ├── toast.client.ts
-│   └── tripTools.client.ts
-├── public/              # Static files
-├── server/              # Server-side API
-│   └── api/
-│       ├── scrape-simple.ts
-│       ├── scraper.ts
-│       └── trip/
-│           └── hotels.ts
-├── nuxt.config.ts       # Nuxt configuration
-├── tailwind.config.js   # Tailwind configuration
-├── tsconfig.json        # TypeScript configuration
-└── package.json         # Dependencies
+│   │   ├── hotels.ts       # Hotel search API
+│   │   └── scrape-promotions.ts
+│   ├── attractionsg/       # AttractionsSG APIs
+│   ├── scrape-simple.ts    # Basic scraper
+│   └── scraper.ts          # Advanced scraper
+└── public/                 # Static assets
 ```
 
-## 🛠️ Technology Stack
+---
 
-- **Framework**: Nuxt 3
-- **UI**: Vue 3 + Tailwind CSS
-- **Language**: TypeScript
-- **Scraping**: Cheerio, Playwright, Puppeteer
-- **Authentication**: Auth0
-- **Email**: Nodemailer
+## 🎯 Trip.com Integration
 
-## 🔍 Web Scraping Usage
+### 1. Deep Linking System
 
-### Simple Scraper API
+Generate tracked affiliate links dynamically:
 
-Basic HTML scraping without JavaScript rendering:
+```typescript
+import { useTripDeeplink } from '~/composables/useTripDeeplink'
 
-```javascript
-// POST /api/scrape-simple
-{
-  "url": "https://example.com",
-  "selectors": {
-    "customData": ".my-custom-selector"
+const { generateDeeplink } = useTripDeeplink()
+
+// Generate deep links
+const hotelLink = generateDeeplink({
+  type: 'hotel',
+  params: {
+    destination: 'Singapore',
+    campaign: 'homepage-hero-hotel'
   }
-}
+})
+
+const flightLink = generateDeeplink({
+  type: 'flight',
+  params: {
+    departure: 'SIN',
+    arrival: 'BKK',
+    campaign: 'homepage-hero-flight'
+  }
+})
 ```
 
-### Advanced Scraper API
+**Supported Types**: `hotel`, `flight`, `activity`, `train`, `car`, `package`, `generic`
 
-Full browser automation with JavaScript support:
+### 2. Promotion Campaign Management
 
-```javascript
-// POST /api/scraper
-{
-  "url": "https://example.com",
-  "timeout": 30000
-}
+Add and manage Trip.com promotional campaigns:
+
+```typescript
+// Edit: composables/useTripPromotions.ts
+
+const PROMOTION_CAMPAIGNS = [
+  {
+    id: 'summer-sale',
+    name: 'Summer Sale',
+    type: 'hotel',
+    widgetUrl: 'https://www.trip.com/partners/ad/WIDGET_CODE', // ⭐ RECOMMENDED
+    title: '🏖️ Summer Hotel Deals',
+    description: 'Up to 50% off',
+    active: true,
+    priority: 10
+  }
+]
 ```
 
-### Using the Composable
+**Get Campaign Widget:**
+```vue
+<template>
+  <PopularDeals campaign-id="summer-sale" />
+</template>
+```
+
+### 3. Data Collection & Scraping
+
+Scrape Trip.com promotional data for comparison:
+
+```typescript
+import { useTripScraper } from '~/composables/useTripScraper'
+
+const { scrapePromotions, scrapeHotels } = useTripScraper()
+
+// Scrape promotional deals
+const result = await scrapePromotions(
+  'https://sg.trip.com/sale/w/4747/flightrebate.html',
+  'flight'
+)
+
+// Scrape hotel data
+const hotels = await scrapeHotels({
+  cityId: '33',
+  checkinDate: '2025-03-01',
+  checkoutDate: '2025-03-05'
+})
+```
+
+### 4. Campaign Tracking & Analytics
+
+Track clicks and conversions:
+
+```typescript
+import { useActivityTracker } from '~/composables/useActivityTracker'
+
+const { trackClick } = useActivityTracker()
+
+// Track affiliate link clicks
+<a href="link" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', option: 'external' })">
+  Book Hotel
+</a>
+```
+
+View analytics at `/analytics` (currently hidden from public navigation).
+
+---
+
+## 🎨 AttractionsSG Integration
+
+### Setup
+
+Add credentials to `.env`:
+```env
+ATTRACTIONSG_EMAIL=your-email@gmail.com
+ATTRACTIONSG_PASSWORD=your-password
+```
+
+### Usage
+
+The AttractionsSG page (`/attractionsg`) automatically:
+- Scrapes available tickets
+- Displays in responsive card layout
+- Tracks user interactions
+- Handles loading/error states
+
+---
+
+## 🔍 Web Scraping
+
+### Simple Scraper (Cheerio)
+
+Fast HTML scraping without JavaScript:
+
+```typescript
+const response = await $fetch('/api/scrape-simple', {
+  method: 'POST',
+  body: {
+    url: 'https://example.com',
+    selectors: {
+      title: 'h1',
+      price: '.price'
+    }
+  }
+})
+```
+
+### Advanced Scraper (Playwright)
+
+Full browser automation:
+
+```typescript
+const response = await $fetch('/api/scraper', {
+  method: 'POST',
+  body: {
+    url: 'https://example.com',
+    timeout: 30000
+  }
+})
+```
+
+### Composable Usage
 
 ```vue
 <script setup>
@@ -141,144 +286,263 @@ import { useScraper } from '~/composables/useScraper'
 const { scrapeUrl, loading, error } = useScraper()
 
 const fetchData = async () => {
-  const data = await scrapeUrl({
-    url: 'https://example.com'
-  })
-  
-  if (data) {
-    console.log(data.title, data.description)
-  }
+  const data = await scrapeUrl({ url: 'https://example.com' })
+  console.log(data.title, data.description)
 }
 </script>
 ```
 
-## 🎨 Customization
+---
 
-### Tailwind Configuration
+## 📊 Activity Tracking
 
-The project uses custom Tailwind themes. Edit `tailwind.config.js` to customize:
+Track user behavior passively:
 
-```javascript
-theme: {
-  extend: {
-    colors: {
-      primary: { /* custom primary colors */ }
-    }
-  }
-}
+```typescript
+import { useActivityTracker } from '~/composables/useActivityTracker'
+
+const { startTracking, trackClick, trackPageView } = useActivityTracker()
+
+onMounted(() => {
+  startTracking()
+  trackPageView('/trip', { platform: 'trip' })
+})
+
+// Track interactions
+trackClick('destination', { city: 'Singapore' })
 ```
 
-### Branding
-
-Update brand information in:
-- `nuxt.config.ts` - SEO and meta tags
-- `layouts/default.vue` - Header and footer
-- `pages/index.vue` - Homepage content
-
-## 🌐 Environment Variables
-
-**⚠️ IMPORTANT**: Create a `.env` file in the project root with the following variables:
-
-```env
-# ==========================================
-# SMTP Email Configuration (REQUIRED)
-# ==========================================
-# Required for: Contact form, Booking requests, Exchange requests
-# Contact your hosting provider for sinult3.hostarmada.net credentials
-SMTP_USER=your-email@enjoytravelsingapore.com
-SMTP_PASS=your-smtp-password
-
-# ==========================================
-# AttractionsSG Integration (REQUIRED)
-# ==========================================
-# ⚠️ CONFIDENTIAL - PDPA Protected
-ATTRACTIONSG_EMAIL=enjoytravelticket@gmail.com
-ATTRACTIONSG_PASSWORD=Truc1@3456101112
-
-# ==========================================
-# Auth0 Authentication (Optional)
-# ==========================================
-AUTH0_DOMAIN=your-domain.auth0.com
-AUTH0_CLIENT_ID=your-client-id
-AUTH0_REDIRECT_URI=http://localhost:3000/callback
-
-# ==========================================
-# External API Configuration (Optional)
-# ==========================================
-EXCHANGE_API_KEY=your-exchange-api-key
-NUXT_PUBLIC_API_BASE=https://api.example.com
-
-# ==========================================
-# Trip.com Affiliate Configuration (Optional)
-# ==========================================
-TRIP_ALLIANCE_ID=3883416
-TRIP_SID=22874365
-TRIP_BASE_URL=https://www.trip.com
-```
-
-### Quick Setup
-
-```bash
-# Copy template and add your values
-cp .env.example .env
-# Edit .env with your actual credentials
-```
-
-**Note**: The `.env` file is already in `.gitignore` and will not be committed to version control.
-
-## 📱 Responsive Design
-
-The application is fully responsive with breakpoints:
-- **Mobile**: < 640px
-- **Tablet**: 640px - 1024px
-- **Desktop**: > 1024px
-
-## 🔒 Security Considerations
-
-### Web Scraping
-- Always respect website terms of service
-- Implement rate limiting
-- Use proper User-Agent headers
-- Handle errors gracefully
-- Consider caching to avoid excessive requests
-
-### API Security
-- Never expose sensitive API keys client-side
-- Use server-side endpoints for scraping
-- Implement request validation
-- Add timeout limits
-
-## 🧪 Testing
-
-```bash
-# Run linter
-npm run lint
-
-# Build for testing
-npm run build
-
-# Preview production
-npm run preview
-```
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-## 📞 Support
-
-For support, email support@gotravelnha.com or visit our [Contact Page](http://gotravelnha.com/contact).
-
-## 🔗 Links
-
-- **Website**: https://gotravelnha.com
-- **Documentation**: Coming soon
-- **API Reference**: Coming soon
+**Tracked Data:**
+- Page views
+- Click events
+- Search queries
+- Scroll depth
+- Time on page
+- Device info
 
 ---
 
-Made with ❤️ by the GoTravelNha team
+## 🎯 Current Implementation Status
+
+### ✅ Active Platforms
+
+| Platform | Status | Features |
+|----------|--------|----------|
+| **Trip.com** | ✅ Active | Flights, Hotels, Deep links, Promotions, Data scraping |
+| **Klook** | ✅ Active | Activities, Tours, Widget integration |
+| **AttractionsSG** | ✅ Active | Singapore tickets, Automated scraping |
+
+### 🏗️ Architecture
+
+**Frontend:**
+- Nuxt 3 + Vue 3
+- Tailwind CSS
+- TypeScript
+
+**Backend:**
+- Server API routes
+- Playwright scraping
+- Cheerio HTML parsing
+
+**Tracking:**
+- Activity tracking
+- Campaign analytics
+- Conversion monitoring
+
+---
+
+## 🌐 Key URLs
+
+| Page | URL | Description |
+|------|-----|-------------|
+| Homepage | `/` | Generic landing page |
+| Trip.com | `/trip` | Hotels, flights, deals |
+| Klook | `/klook` | Activities & tours |
+| AttractionsSG | `/attractionsg` | Singapore tickets |
+| Analytics | `/analytics` | Dashboard (hidden from nav) |
+| Scraper Demo | `/scraper-demo` | Web scraping tools |
+| Trip Promotions | `/trip-promotions-demo` | Trip.com scraper demo |
+
+---
+
+## 🔧 Configuration Files
+
+### Trip.com Deep Linking
+
+**File**: `composables/useTripDeeplink.ts`
+- Alliance ID: 3883416
+- SID: 22874365
+- Configurable in `nuxt.config.ts`
+
+### Promotions
+
+**File**: `composables/useTripPromotions.ts`
+- Add/remove campaigns
+- Set active/inactive
+- Configure priorities
+
+### Tailwind CSS
+
+**File**: `tailwind.config.js`
+- Custom colors (primary gradient)
+- Custom shadows
+- Animations (fade-in, slide-up)
+
+---
+
+## 📋 Common Tasks
+
+### Add Trip.com Promotion Campaign
+
+1. Get widget code from Trip.com affiliate portal
+2. Edit `composables/useTripPromotions.ts`
+3. Add campaign object with `active: true`
+4. Use `<PopularDeals campaign-id="your-id" />`
+
+### Generate Affiliate Link
+
+```typescript
+import { useTripDeeplink } from '~/composables/useTripDeeplink'
+
+const link = generateDeeplink({
+  type: 'hotel',
+  params: { campaign: 'my-campaign' }
+})
+```
+
+### Track User Interaction
+
+```typescript
+trackClick('element_id', {
+  campaign: 'campaign-name',
+  option: 'external' // or 'internal'
+})
+```
+
+### Scrape Trip.com Data
+
+```typescript
+import { useTripScraper } from '~/composables/useTripScraper'
+
+const { scrapePromotions } = useTripScraper()
+const data = await scrapePromotions(url, 'flight')
+```
+
+---
+
+## 🚀 Deployment
+
+### Vercel Deployment
+
+```bash
+npm run build:vercel
+```
+
+**Config**: `vercel.json` handles routing and serverless functions.
+
+### Environment Variables
+
+Set in Vercel dashboard:
+- `SMTP_USER`, `SMTP_PASS`
+- `ATTRACTIONSG_EMAIL`, `ATTRACTIONSG_PASSWORD`
+- `TRIP_ALLIANCE_ID`, `TRIP_SID` (optional)
+
+---
+
+## 🧪 Testing & Development
+
+```bash
+# Development
+npm run dev
+
+# Build
+npm run build
+
+# Preview
+npm run preview
+
+# Production build for Vercel
+npm run build:vercel
+```
+
+---
+
+## 📊 Analytics & Tracking
+
+### Available at `/analytics`
+
+- Total clicks
+- Click-through rate (CTR)
+- Conversions
+- Revenue tracking
+- Top campaigns
+- Real-time monitoring
+
+**Note**: Currently hidden from public navigation until RBAC implementation.
+
+---
+
+## 📖 Additional Documentation
+
+Historical implementation notes available in:
+- `docs/ARCHIVED/` - Consolidated historical documentation
+
+---
+
+## 🆘 Troubleshooting
+
+### Promotion Shows "Expired" Message
+
+**Solution**: Check if campaign is active in `useTripPromotions.ts`:
+```typescript
+{ active: false } // ← Change to true
+```
+
+**Best Practice**: Use widget codes instead of sale page URLs to avoid expiration.
+
+### Scraping Timeout
+
+**Solution**: Increase timeout parameter:
+```typescript
+scrapePromotions(url, type, 90000) // 90 seconds
+```
+
+### No Deals Found
+
+**Possible Causes**:
+- Page structure changed
+- JavaScript-rendered content needs more wait time
+- Anti-bot protection
+
+---
+
+## 🔗 Resources
+
+### Trip.com Affiliate Portal
+- Dashboard: https://www.trip.com/partners
+- Deep Link Tool: https://www.trip.com/partners/tools/deeplink
+- Promotion Tools: https://www.trip.com/partners/tools/promotion/popularDeals
+
+### Commission Rates
+- Hotels: 5.5%
+- Attractions: 2.5%
+- Flights: 1%
+
+---
+
+## 📞 Support
+
+- Website: https://gotravelnha.com
+- Email: support@gotravelnha.com
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+**Made with ❤️ for GoTravelNha**
+
+*Last Updated: 2025*
