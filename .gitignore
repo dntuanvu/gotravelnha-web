@@ -9,6 +9,7 @@ dist
 
 # Crawled data cache
 # data  # Temporarily uncommented for MVP - committing attractionsg-events.json
+# public/data  # Allow public/data/attractionsg-events.json for Vercel deployment
 
 # Node dependencies
 node_modules

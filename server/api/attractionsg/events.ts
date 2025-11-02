@@ -14,8 +14,11 @@ interface EventsRequest {
   sortOrder?: 'asc' | 'desc'
 }
 
+// Check both public/data (for deployment) and data/ (for local dev)
 const DATA_DIR = join(process.cwd(), 'data')
+const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
 const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
+const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
 
 export default defineEventHandler(async (event) => {
   try {
@@ -27,16 +30,35 @@ export default defineEventHandler(async (event) => {
     // Load events from cache or disk
     let events = getEventsCache()
     
+    console.log(`📦 Initial cache: ${events.length} events from memory`)
+    
     if (events.length === 0) {
-      // Try to load from disk cache
-      if (existsSync(EVENTS_FILE)) {
-        try {
-          const data = await readFile(EVENTS_FILE, 'utf-8')
-          const parsed = JSON.parse(data)
-          events = parsed.events || []
-        } catch (error) {
-          console.error('Error loading events from disk:', error)
+      // Try to load from public/data first (for deployment), then data/ (for local)
+      const filesToTry = [
+        { path: PUBLIC_EVENTS_FILE, name: 'public/data/attractionsg-events.json' },
+        { path: EVENTS_FILE, name: 'data/attractionsg-events.json' }
+      ]
+      
+      for (const fileInfo of filesToTry) {
+        console.log(`📂 Checking file: ${fileInfo.name}`)
+        console.log(`📂 File exists: ${existsSync(fileInfo.path)}`)
+        
+        if (existsSync(fileInfo.path)) {
+          try {
+            const data = await readFile(fileInfo.path, 'utf-8')
+            const parsed = JSON.parse(data)
+            events = parsed.events || []
+            console.log(`✅ Loaded ${events.length} events from ${fileInfo.name}`)
+            break
+          } catch (error) {
+            console.error(`Error loading events from ${fileInfo.name}:`, error)
+          }
         }
+      }
+      
+      if (events.length === 0) {
+        console.error(`⚠️ No events file found in any location`)
+        console.error(`⚠️ Current working directory: ${process.cwd()}`)
       }
     }
 

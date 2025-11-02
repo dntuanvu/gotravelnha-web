@@ -36,7 +36,9 @@ let cacheTimestamp: number = 0
 
 const CACHE_DURATION = 1000 * 60 * 60 * 6 // 6 hours
 const DATA_DIR = join(process.cwd(), 'data')
+const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
 const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
+const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
 
 export default defineEventHandler(async (event) => {
   try {
@@ -459,13 +461,24 @@ function extractRating($item: cheerio.Cheerio<any>): number | undefined {
 
 async function loadCacheFromDisk() {
   try {
-    if (existsSync(EVENTS_FILE)) {
-      const data = await readFile(EVENTS_FILE, 'utf-8')
-      const parsed = JSON.parse(data)
-      eventsCache = parsed.events || []
-      cacheTimestamp = new Date(parsed.timestamp).getTime() || 0
-      console.log(`✅ Loaded ${eventsCache.length} events from cache`)
+    // Try public/data first (for deployment), then data/ (for local)
+    const filesToTry = [
+      { path: PUBLIC_EVENTS_FILE, name: 'public/data/attractionsg-events.json' },
+      { path: EVENTS_FILE, name: 'data/attractionsg-events.json' }
+    ]
+    
+    for (const fileInfo of filesToTry) {
+      if (existsSync(fileInfo.path)) {
+        const data = await readFile(fileInfo.path, 'utf-8')
+        const parsed = JSON.parse(data)
+        eventsCache = parsed.events || []
+        cacheTimestamp = new Date(parsed.timestamp).getTime() || 0
+        console.log(`✅ Loaded ${eventsCache.length} events from ${fileInfo.name}`)
+        return
+      }
     }
+    
+    console.log('⚠️ No cache file found in public/data/ or data/')
   } catch (error) {
     console.error('⚠️ Error loading cache from disk:', error)
   }
