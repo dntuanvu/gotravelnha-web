@@ -177,22 +177,47 @@ Update brand information in:
 
 ## 🌐 Environment Variables
 
-Create a `.env` file:
+**⚠️ IMPORTANT**: Create a `.env` file in the project root with the following variables:
 
 ```env
-# Auth0 Configuration
+# ==========================================
+# SMTP Email Configuration (REQUIRED)
+# ==========================================
+# Required for: Contact form, Booking requests, Exchange requests
+# Contact your hosting provider for sinult3.hostarmada.net credentials
+SMTP_USER=your-email@enjoytravelsingapore.com
+SMTP_PASS=your-smtp-password
+
+# ==========================================
+# AttractionsSG Integration (REQUIRED)
+# ==========================================
+# ⚠️ CONFIDENTIAL - PDPA Protected
+ATTRACTIONSG_EMAIL=enjoytravelticket@gmail.com
+ATTRACTIONSG_PASSWORD=Truc1@3456101112
+
+# ==========================================
+# Auth0 Authentication (Optional)
+# ==========================================
 AUTH0_DOMAIN=your-domain.auth0.com
 AUTH0_CLIENT_ID=your-client-id
 AUTH0_REDIRECT_URI=http://localhost:3000/callback
 
-# Email Configuration
-SMTP_USER=your-smtp-user
-SMTP_PASS=your-smtp-password
-
-# API Configuration
+# ==========================================
+# External API Configuration (Optional)
+# ==========================================
 EXCHANGE_API_KEY=your-exchange-api-key
 NUXT_PUBLIC_API_BASE=https://api.example.com
 ```
+
+### Quick Setup
+
+```bash
+# Copy template and add your values
+cp .env.example .env
+# Edit .env with your actual credentials
+```
+
+**Note**: The `.env` file is already in `.gitignore` and will not be committed to version control.
 
 ## 📱 Responsive Design
 

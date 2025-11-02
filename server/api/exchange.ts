@@ -10,13 +10,16 @@ export default defineEventHandler(async (event) => {
 
   const transporter = nodemailer.createTransport({
     host: 'sinult3.hostarmada.net',
-    port: 465, // or 587 if TLS
-    secure: true, // true = SSL (465), false = TLS (587)
+    port: 465,
+    secure: true, // SSL for 465
     auth: {
-        user: config.SMTP_USER,
-        pass: config.SMTP_PASS
+      user: config.SMTP_USER,
+      pass: config.SMTP_PASS
+    },
+    tls: {
+      rejectUnauthorized: false // Accept self-signed certificates
     }
-})
+  })
 
   await transporter.sendMail({
     from: `noreply@enjoytravelsingapore.com`,

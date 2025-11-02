@@ -4,10 +4,15 @@
     :class="{ 'opacity-60': comingSoon }"
   >
     <div class="mb-4 animate-fade-in">
-      <img :src="img" alt="" class="h-28 mx-auto object-contain transition-transform duration-300 group-hover:scale-110" />
+      <img v-if="img" :src="img" alt="" class="h-28 mx-auto object-contain transition-transform duration-300 group-hover:scale-110" />
+      <div v-else class="h-28 w-full flex items-center justify-center rounded-xl">
+        <slot name="custom-logo">
+          <span class="text-6xl">🎫</span>
+        </slot>
+      </div>
     </div>
     
-    <h3 class="text-xl font-bold mb-3 text-gray-800">{{ title }}</h3>
+    <h3 v-if="title" class="text-xl font-bold mb-3 text-gray-800">{{ title }}</h3>
     <p class="text-gray-600 mb-6 text-sm leading-relaxed">{{ desc }}</p>
 
     <div v-if="comingSoon" class="text-sm text-orange-500 font-semibold mb-3 flex items-center justify-center gap-2">

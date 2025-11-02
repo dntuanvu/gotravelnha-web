@@ -32,8 +32,12 @@ export default defineNuxtConfig({
         }
     },
     runtimeConfig: {
+      SMTP_HOST: process.env.SMTP_HOST,
+      SMTP_PORT: process.env.SMTP_PORT,
       SMTP_USER: process.env.SMTP_USER,
       SMTP_PASS: process.env.SMTP_PASS,
+      ATTRACTIONSG_EMAIL: process.env.ATTRACTIONSG_EMAIL,
+      ATTRACTIONSG_PASSWORD: process.env.ATTRACTIONSG_PASSWORD,
       public: {
         exchangeApiKey: process.env.EXCHANGE_API_KEY,
         apiBase: process.env.NUXT_PUBLIC_API_BASE,
