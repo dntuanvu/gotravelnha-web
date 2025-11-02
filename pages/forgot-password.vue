@@ -89,7 +89,7 @@
 import { ref } from 'vue'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'auth'
 })
 
 const email = ref('')

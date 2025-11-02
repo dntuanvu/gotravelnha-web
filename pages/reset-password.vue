@@ -97,7 +97,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'auth'
 })
 
 const route = useRoute()

@@ -123,7 +123,7 @@ import { useRouter } from 'vue-router'
 import { useAuthState } from '~/composables/useAuthState'
 
 definePageMeta({
-  layout: 'default'
+  layout: 'auth'
 })
 
 const router = useRouter()
