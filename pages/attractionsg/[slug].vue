@@ -163,12 +163,14 @@ const event = ref(null)
 
 onMounted(async () => {
   const slug = route.params.slug
+  console.log(`🔍 Looking for event with ID: ${slug}`)
   
   try {
     // Fetch all events (slug already contains the ID)
     let allEvents = []
     
     try {
+      console.log('📡 Trying API endpoint...')
       const res = await $fetch('/api/attractionsg/events', {
         method: 'POST',
         body: {
@@ -176,27 +178,35 @@ onMounted(async () => {
         }
       })
       allEvents = res.data || []
+      console.log(`✅ API returned ${allEvents.length} events`)
     } catch (apiErr) {
-      console.error('API error, trying direct fetch:', apiErr)
+      console.error('❌ API error, trying direct fetch:', apiErr)
       
       // Fallback: fetch directly from public URL
       try {
+        console.log('📡 Trying direct fetch from /data/...')
         const publicData = await $fetch('/data/attractionsg-events.json')
         allEvents = publicData.events || []
-        console.log(`✅ Loaded ${allEvents.length} events from public URL`)
+        console.log(`✅ Direct fetch loaded ${allEvents.length} events`)
       } catch (fallbackErr) {
-        console.error('Error loading from public URL:', fallbackErr)
+        console.error('❌ Error loading from public URL:', fallbackErr)
       }
     }
+    
+    console.log(`📊 Total events loaded: ${allEvents.length}`)
+    console.log(`🔍 First 3 event IDs:`, allEvents.slice(0, 3).map(e => e.id))
     
     // Find the matching event by ID
     const foundEvent = allEvents.find(e => e.id === slug)
     
     if (foundEvent) {
+      console.log(`✅ Found event: ${foundEvent.title}`)
       event.value = foundEvent
+    } else {
+      console.error(`❌ Event not found with ID: ${slug}`)
     }
   } catch (err) {
-    console.error('Error loading event:', err)
+    console.error('❌ Error loading event:', err)
   } finally {
     loading.value = false
   }
