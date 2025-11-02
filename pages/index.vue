@@ -1,87 +1,104 @@
 <template>
   <div class="space-y-12 pb-16 animate-fade-in">
-    <!-- Hero Section -->
-    <section class="max-w-6xl mx-auto px-4 pt-8">
-      <div class="relative bg-white rounded-3xl shadow-soft overflow-hidden border border-gray-100">
-        <!-- Decorative Background Elements -->
-        <div class="absolute inset-0 opacity-50">
-          <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-100 to-indigo-200 rounded-full -mr-48 -mt-48 blur-3xl"></div>
-          <div class="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-purple-100 to-pink-200 rounded-full -ml-48 -mb-48 blur-3xl"></div>
-          <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-full blur-3xl"></div>
+    <!-- Enhanced Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 pt-4">
+      <div class="relative bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-indigo-500">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0 opacity-20">
+          <!-- Floating orbs with animation -->
+          <div class="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full -mr-48 -mt-48 blur-3xl animate-float"></div>
+          <div class="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-br from-pink-300 to-red-400 rounded-full -ml-48 -mb-48 blur-3xl animate-float-delayed"></div>
+          <div class="absolute top-1/3 left-1/4 w-72 h-72 bg-gradient-to-br from-cyan-300 to-blue-400 rounded-full blur-3xl animate-float"></div>
+          <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-br from-green-300 to-teal-400 rounded-full blur-3xl animate-float-delayed"></div>
         </div>
 
         <!-- Content -->
-        <div class="relative z-10 px-8 py-12 md:px-16 md:py-16">
-          <!-- Headline -->
-          <div class="text-center mb-8">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4 leading-tight">
-              GoTravelNha
+        <div class="relative z-10 px-6 py-10 md:px-12 md:py-16">
+          <!-- Animated Badge -->
+          <div class="flex justify-center mb-4 animate-fade-in">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
+              <span class="animate-pulse">✨</span>
+              <span class="text-white/90 font-semibold text-xs md:text-sm">Your All-in-One Travel Platform</span>
+              <span class="animate-pulse">✨</span>
+            </div>
+          </div>
+
+          <!-- Headline with animations -->
+          <div class="text-center mb-6 space-y-3">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight animate-slide-up">
+              <span class="inline-block hover:scale-110 transition-transform duration-300">Go</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75">Travel</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150">Nha</span>
             </h1>
             
-            <!-- Tagline -->
-            <p class="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-4 font-bold max-w-3xl mx-auto leading-relaxed">
-              Your Travel Companion
+            <!-- Enhanced Tagline -->
+            <p class="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mb-4 font-bold max-w-3xl mx-auto leading-tight animate-slide-up-delayed drop-shadow-lg">
+              Discover, Compare & Book
             </p>
 
-            <!-- Description -->
-            <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Book your perfect trip with the best travel platforms — all in one place.
+            <!-- Enhanced Description -->
+            <p class="text-base sm:text-lg md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-6 animate-fade-in-delayed">
+              Compare deals across <span class="font-bold text-white">Trip.com</span>, <span class="font-bold text-white">Klook</span>, and <span class="font-bold text-white">Singapore Attractions</span>
             </p>
           </div>
 
-          <!-- Quick Access Pills -->
-          <div class="flex flex-wrap justify-center gap-3 mb-8">
-            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-gradient-to-br from-blue-50 to-blue-100 px-5 py-2.5 rounded-full hover:from-blue-100 hover:to-blue-200 transition-all cursor-pointer border-2 border-blue-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+          <!-- Enhanced Quick Access Pills with better animations -->
+          <div class="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up-delayed">
+            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
               <div class="flex items-center gap-2">
-                <span class="text-xl">✈️</span>
-                <span class="text-blue-700 font-bold text-sm">Flights</span>
+                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">✈️</span>
+                <span class="text-white font-bold text-base md:text-lg">Flights</span>
+                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </a>
-            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-gradient-to-br from-indigo-50 to-indigo-100 px-5 py-2.5 rounded-full hover:from-indigo-100 hover:to-indigo-200 transition-all cursor-pointer border-2 border-indigo-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-delayed">
               <div class="flex items-center gap-2">
-                <span class="text-xl">🏨</span>
-                <span class="text-indigo-700 font-bold text-sm">Hotels</span>
+                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🏨</span>
+                <span class="text-white font-bold text-base md:text-lg">Hotels</span>
+                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </a>
-            <NuxtLink to="/klook" class="group bg-gradient-to-br from-purple-50 to-purple-100 px-5 py-2.5 rounded-full hover:from-purple-100 hover:to-purple-200 transition-all cursor-pointer border-2 border-purple-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <NuxtLink to="/klook" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more">
               <div class="flex items-center gap-2">
-                <span class="text-xl">🎯</span>
-                <span class="text-purple-700 font-bold text-sm">Activities</span>
+                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎯</span>
+                <span class="text-white font-bold text-base md:text-lg">Activities</span>
+                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </NuxtLink>
-            <NuxtLink to="/attractionsg" class="group bg-gradient-to-br from-yellow-50 to-yellow-100 px-5 py-2.5 rounded-full hover:from-yellow-100 hover:to-yellow-200 transition-all cursor-pointer border-2 border-yellow-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <NuxtLink to="/attractionsg" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more-delayed">
               <div class="flex items-center gap-2">
-                <span class="text-xl">🎫</span>
-                <span class="text-yellow-700 font-bold text-sm">SG Attractions</span>
+                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎫</span>
+                <span class="text-white font-bold text-xs md:text-base">SG Attractions</span>
+                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </NuxtLink>
           </div>
 
-          <!-- Trust Badges -->
-          <div class="flex flex-wrap justify-center gap-6 mt-6">
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <!-- Enhanced Trust Badges with icons -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto animate-fade-in">
+            <div class="flex flex-col items-center gap-2 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
+              <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold text-sm">Secure Booking</span>
+              <span class="text-white font-bold text-sm md:text-base">Secure & Safe</span>
             </div>
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col items-center gap-2 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
+              <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold text-sm">Best Prices</span>
+              <span class="text-white font-bold text-sm md:text-base">Best Prices</span>
             </div>
-            <div class="flex items-center gap-2">
-              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="flex flex-col items-center gap-2 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
+              <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold text-sm">24/7 Support</span>
+              <span class="text-white font-bold text-sm md:text-base">24/7 Support</span>
             </div>
           </div>
         </div>
