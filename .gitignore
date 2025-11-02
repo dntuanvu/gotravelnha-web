@@ -8,7 +8,7 @@
 dist
 
 # Crawled data cache
-data
+# data  # Temporarily uncommented for MVP - committing attractionsg-events.json
 
 # Node dependencies
 node_modules

@@ -57,7 +57,19 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Perform fresh crawl
+    // MVP: On Vercel, only return cached data (Playwright doesn't work on serverless)
+    if (process.env.VERCEL || process.env.NETLIFY) {
+      console.log('🌐 Running on serverless platform - returning cached data only')
+      return {
+        success: true,
+        cached: true,
+        total: eventsCache.length,
+        timestamp: new Date(cacheTimestamp).toISOString(),
+        message: 'Playwright not available on serverless. Using pre-populated data. Run crawler locally to update data.'
+      }
+    }
+
+    // Perform fresh crawl (local development only)
     console.log('🕷️ Starting AttractionsSG crawl...')
     
     const config = useRuntimeConfig()
