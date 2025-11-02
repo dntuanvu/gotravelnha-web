@@ -166,15 +166,31 @@ onMounted(async () => {
   
   try {
     // Fetch all events (slug already contains the ID)
-    const res = await $fetch('/api/attractionsg/events', {
-      method: 'POST',
-      body: {
-        limit: 1000 // Get all events to find by ID
+    let allEvents = []
+    
+    try {
+      const res = await $fetch('/api/attractionsg/events', {
+        method: 'POST',
+        body: {
+          limit: 1000 // Get all events to find by ID
+        }
+      })
+      allEvents = res.data || []
+    } catch (apiErr) {
+      console.error('API error, trying direct fetch:', apiErr)
+      
+      // Fallback: fetch directly from public URL
+      try {
+        const publicData = await $fetch('/data/attractionsg-events.json')
+        allEvents = publicData.events || []
+        console.log(`✅ Loaded ${allEvents.length} events from public URL`)
+      } catch (fallbackErr) {
+        console.error('Error loading from public URL:', fallbackErr)
       }
-    })
+    }
     
     // Find the matching event by ID
-    const foundEvent = res.data?.find(e => e.id === slug)
+    const foundEvent = allEvents.find(e => e.id === slug)
     
     if (foundEvent) {
       event.value = foundEvent
