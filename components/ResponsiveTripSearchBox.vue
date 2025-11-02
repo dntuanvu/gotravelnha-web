@@ -38,6 +38,7 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useTripDeeplink } from '~/composables/useTripDeeplink'
 
 const selected = ref('flight')
 const iframeSrc = ref('')
@@ -45,17 +46,52 @@ const iframeKey = ref('default')
 const iframeWidth = ref(900)
 const iframeHeight = ref(200)
 
+const { generateDeeplink } = useTripDeeplink()
+
 const updateIframe = () => {
   const isMobile = window.innerWidth <= 768
+  
+  // Generate campaign ID based on selection and device
+  const campaign = `search-box-${selected.value}-${isMobile ? 'mobile' : 'desktop'}`
 
   if (selected.value === 'flight') {
-    iframeSrc.value = isMobile
-      ? 'https://www.trip.com/partners/ad/S3375857?Allianceid=3883416&SID=22874365&trip_sub1=' // mobile
-      : 'https://www.trip.com/partners/ad/S553037?Allianceid=3883416&SID=22874365&trip_sub1=' // desktop
+    // Use Trip.com iframe ad codes for flights
+    const baseUrl = isMobile
+      ? 'https://www.trip.com/partners/ad/S3375857'
+      : 'https://www.trip.com/partners/ad/S553037'
+    
+    // Add tracking parameters
+    const deeplink = generateDeeplink({
+      type: 'flight',
+      params: {
+        campaign: campaign
+      }
+    })
+    
+    // Extract tracking params and append to iframe URL
+    const url = new URL(deeplink)
+    const trackingParams = `Allianceid=${url.searchParams.get('Allianceid')}&SID=${url.searchParams.get('SID')}&trip_campaign=${url.searchParams.get('trip_campaign')}`
+    
+    iframeSrc.value = `${baseUrl}?${trackingParams}&trip_sub1=`
   } else if (selected.value === 'hotel') {
-    iframeSrc.value = isMobile
-      ? 'https://www.trip.com/partners/ad/S3376172?Allianceid=3883416&SID=22874365&trip_sub1=' // same mobile fallback
-      : 'https://www.trip.com/partners/ad/S552988?Allianceid=3883416&SID=22874365&trip_sub1=' // same desktop fallback
+    // Use Trip.com iframe ad codes for hotels
+    const baseUrl = isMobile
+      ? 'https://www.trip.com/partners/ad/S3376172'
+      : 'https://www.trip.com/partners/ad/S552988'
+    
+    // Add tracking parameters
+    const deeplink = generateDeeplink({
+      type: 'hotel',
+      params: {
+        campaign: campaign
+      }
+    })
+    
+    // Extract tracking params and append to iframe URL
+    const url = new URL(deeplink)
+    const trackingParams = `Allianceid=${url.searchParams.get('Allianceid')}&SID=${url.searchParams.get('SID')}&trip_campaign=${url.searchParams.get('trip_campaign')}`
+    
+    iframeSrc.value = `${baseUrl}?${trackingParams}&trip_sub1=`
   }
 
   iframeWidth.value = isMobile ? 320 : 900

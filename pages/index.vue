@@ -11,75 +11,77 @@
         </div>
 
         <!-- Content -->
-        <div class="relative z-10 px-8 py-20 md:px-16 md:py-28 text-center">
+        <div class="relative z-10 px-8 py-12 md:px-16 md:py-16">
           <!-- Headline -->
-          <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4 leading-tight">
-            GoTravelNha
-          </h1>
-          
-          <!-- Tagline -->
-          <p class="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-8 font-bold max-w-3xl mx-auto leading-relaxed">
-            Your Travel Companion
-          </p>
+          <div class="text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-4 leading-tight">
+              GoTravelNha
+            </h1>
+            
+            <!-- Tagline -->
+            <p class="text-xl sm:text-2xl md:text-3xl text-gray-700 mb-4 font-bold max-w-3xl mx-auto leading-relaxed">
+              Your Travel Companion
+            </p>
 
-          <!-- Description -->
-          <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto mb-12 leading-relaxed">
-            Book your perfect trip with the best travel platforms — all in one place.
-          </p>
+            <!-- Description -->
+            <p class="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Book your perfect trip with the best travel platforms — all in one place.
+            </p>
+          </div>
 
-          <!-- Feature Pills -->
-          <div class="flex flex-wrap justify-center gap-4">
-            <NuxtLink to="/trip" class="group bg-gradient-to-br from-blue-50 to-blue-100 px-6 py-3 rounded-full hover:from-blue-100 hover:to-blue-200 transition-all cursor-pointer border-2 border-blue-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+          <!-- Quick Access Pills -->
+          <div class="flex flex-wrap justify-center gap-3 mb-8">
+            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-gradient-to-br from-blue-50 to-blue-100 px-5 py-2.5 rounded-full hover:from-blue-100 hover:to-blue-200 transition-all cursor-pointer border-2 border-blue-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
               <div class="flex items-center gap-2">
-                <span class="text-2xl">✈️</span>
-                <span class="text-blue-700 font-bold text-sm sm:text-base">Flights</span>
+                <span class="text-xl">✈️</span>
+                <span class="text-blue-700 font-bold text-sm">Flights</span>
+              </div>
+            </a>
+            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-gradient-to-br from-indigo-50 to-indigo-100 px-5 py-2.5 rounded-full hover:from-indigo-100 hover:to-indigo-200 transition-all cursor-pointer border-2 border-indigo-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🏨</span>
+                <span class="text-indigo-700 font-bold text-sm">Hotels</span>
+              </div>
+            </a>
+            <NuxtLink to="/klook" class="group bg-gradient-to-br from-purple-50 to-purple-100 px-5 py-2.5 rounded-full hover:from-purple-100 hover:to-purple-200 transition-all cursor-pointer border-2 border-purple-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🎯</span>
+                <span class="text-purple-700 font-bold text-sm">Activities</span>
               </div>
             </NuxtLink>
-            <NuxtLink to="/trip" class="group bg-gradient-to-br from-indigo-50 to-indigo-100 px-6 py-3 rounded-full hover:from-indigo-100 hover:to-indigo-200 transition-all cursor-pointer border-2 border-indigo-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
+            <NuxtLink to="/attractionsg" class="group bg-gradient-to-br from-yellow-50 to-yellow-100 px-5 py-2.5 rounded-full hover:from-yellow-100 hover:to-yellow-200 transition-all cursor-pointer border-2 border-yellow-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
               <div class="flex items-center gap-2">
-                <span class="text-2xl">🏨</span>
-                <span class="text-indigo-700 font-bold text-sm sm:text-base">Hotels</span>
-              </div>
-            </NuxtLink>
-            <NuxtLink to="/klook" class="group bg-gradient-to-br from-purple-50 to-purple-100 px-6 py-3 rounded-full hover:from-purple-100 hover:to-purple-200 transition-all cursor-pointer border-2 border-purple-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">🎯</span>
-                <span class="text-purple-700 font-bold text-sm sm:text-base">Activities</span>
-              </div>
-            </NuxtLink>
-            <NuxtLink to="/trip" class="group bg-gradient-to-br from-pink-50 to-pink-100 px-6 py-3 rounded-full hover:from-pink-100 hover:to-pink-200 transition-all cursor-pointer border-2 border-pink-200 shadow-md hover:shadow-lg transform hover:-translate-y-1">
-              <div class="flex items-center gap-2">
-                <span class="text-2xl">🎁</span>
-                <span class="text-pink-700 font-bold text-sm sm:text-base">Best Deals</span>
+                <span class="text-xl">🎫</span>
+                <span class="text-yellow-700 font-bold text-sm">SG Attractions</span>
               </div>
             </NuxtLink>
           </div>
 
           <!-- Trust Badges -->
-          <div class="flex flex-wrap justify-center gap-8 mt-12">
+          <div class="flex flex-wrap justify-center gap-6 mt-6">
             <div class="flex items-center gap-2">
-              <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold">Secure Booking</span>
+              <span class="text-gray-700 font-semibold text-sm">Secure Booking</span>
             </div>
             <div class="flex items-center gap-2">
-              <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold">Best Prices</span>
+              <span class="text-gray-700 font-semibold text-sm">Best Prices</span>
             </div>
             <div class="flex items-center gap-2">
-              <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                 </svg>
               </div>
-              <span class="text-gray-700 font-semibold">24/7 Support</span>
+              <span class="text-gray-700 font-semibold text-sm">24/7 Support</span>
             </div>
           </div>
         </div>
@@ -133,15 +135,29 @@
         <div class="flex flex-wrap justify-center gap-4">
           <NuxtLink
             to="/trip"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-hotel-internal', route: '/trip', option: 'internal' })"
             class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
           >
             🏨 Book Hotels
+          </NuxtLink>
+          <NuxtLink
+            to="/trip"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-flight-internal', route: '/trip', option: 'internal' })"
+            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
+          >
+            ✈️ Book Flights
           </NuxtLink>
           <NuxtLink
             to="/klook"
             class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
           >
             🎯 Find Activities
+          </NuxtLink>
+          <NuxtLink
+            to="/attractionsg"
+            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
+          >
+            🎫 SG Attractions
           </NuxtLink>
         </div>
       </div>
@@ -151,5 +167,24 @@
 
 <script setup>
 import AffiliateCard from '~/components/AffiliateCard.vue'
-import SmartAffiliateLink from '~/components/SmartAffiliateLink.vue'
+import { useTripDeeplink } from '~/composables/useTripDeeplink'
+import { useActivityTracker } from '~/composables/useActivityTracker'
+
+const { generateDeeplink } = useTripDeeplink()
+const { trackClick } = useActivityTracker()
+
+// Generate deep links for homepage CTAs
+const flightLink = generateDeeplink({
+  type: 'flight',
+  params: {
+    campaign: 'homepage-hero-flight'
+  }
+})
+
+const hotelLink = generateDeeplink({
+  type: 'hotel',
+  params: {
+    campaign: 'homepage-hero-hotel'
+  }
+})
 </script>

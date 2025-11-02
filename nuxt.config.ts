@@ -20,7 +20,7 @@ export default defineNuxtConfig({
     
             // Social: Twitter
             { name: 'twitter:card', content: 'summary_large_image' },
-            { name: 'twitter:title', content: 'Go Travel Nha ✈️🏨' },
+            { name: 'twitter:title', content: 'Go Travel Nha ✈️ | 🏨' },
             { name: 'twitter:description', content: 'Compare and book top flight, hotel and attraction deals across platforms.' },
             { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' }
           ],
@@ -43,7 +43,10 @@ export default defineNuxtConfig({
         apiBase: process.env.NUXT_PUBLIC_API_BASE,
         auth0Domain: process.env.AUTH0_DOMAIN,
         auth0ClientId: process.env.AUTH0_CLIENT_ID,
-        auth0RedirectUri: process.env.AUTH0_REDIRECT_URI
+        auth0RedirectUri: process.env.AUTH0_REDIRECT_URI,
+        TRIP_ALLIANCE_ID: process.env.TRIP_ALLIANCE_ID || '3883416',
+        TRIP_SID: process.env.TRIP_SID || '22874365',
+        TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com'
       }
     }  
 })

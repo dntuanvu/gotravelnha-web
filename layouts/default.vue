@@ -90,6 +90,18 @@ const navigate = (path) => {
               Klook
             </NuxtLink>
           </li>
+          <!-- Analytics - Hidden until RBAC implementation -->
+          <!-- <li>
+            <NuxtLink 
+              to="/analytics" 
+              @click="navigate('/analytics')" 
+              :class="['nav-link', isActive('/analytics')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span class="mr-1">📊</span>
+              Analytics
+            </NuxtLink>
+          </li> -->
           <li>
             <NuxtLink 
               to="/contact" 

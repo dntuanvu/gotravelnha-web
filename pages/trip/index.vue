@@ -58,10 +58,19 @@
       <StaticBanner />
       <DynamicBanner />
     </section>
+
+    <!-- Popular Deals -->
+    <section class="max-w-6xl mx-auto px-4">
+      <PopularDeals />
+    </section>
   </div>
 </template>
   
 <script setup>
+import PopularDeals from '~/components/PopularDeals.vue'
+import StaticBanner from '~/components/StaticBanner.vue'
+import DynamicBanner from '~/components/DynamicBanner.vue'
+import ResponsiveTripSearchBox from '~/components/ResponsiveTripSearchBox.vue'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 import { onMounted } from 'vue'
 

@@ -207,6 +207,13 @@ AUTH0_REDIRECT_URI=http://localhost:3000/callback
 # ==========================================
 EXCHANGE_API_KEY=your-exchange-api-key
 NUXT_PUBLIC_API_BASE=https://api.example.com
+
+# ==========================================
+# Trip.com Affiliate Configuration (Optional)
+# ==========================================
+TRIP_ALLIANCE_ID=3883416
+TRIP_SID=22874365
+TRIP_BASE_URL=https://www.trip.com
 ```
 
 ### Quick Setup
