@@ -22,51 +22,118 @@ const navigate = (path) => {
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex flex-col min-h-screen bg-gray-50">
     <!-- Sticky Top Nav -->
-    <header class="fixed top-0 left-0 w-full bg-gray-800 text-white z-50 shadow">
-      <nav class="container mx-auto flex items-center justify-between p-4 min-h-[64px]">
+    <header class="fixed top-0 left-0 w-full bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white z-50 shadow-lg">
+      <nav class="container mx-auto flex items-center justify-between p-4 min-h-[72px]">
         <!-- Logo --> 
-        <NuxtLink to="/" @click="navigate('/')" :class="isActive('/')"">
-          Home
+        <NuxtLink 
+          to="/" 
+          @click="navigate('/')" 
+          class="flex items-center gap-2 font-bold text-xl hover:text-primary-300 transition-colors"
+        >
+          <span class="text-2xl">✈️</span>
+          <span>GoTravelNha</span>
         </NuxtLink>
 
         <!-- Toggle Button for Mobile -->
         <button
           @click="isMenuOpen = !isMenuOpen"
-          class="text-white block lg:hidden focus:outline-none"
+          class="text-white block lg:hidden focus:outline-none p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          aria-label="Toggle menu"
         >
           <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="isMenuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h16M4 18h16'" />
           </svg>
         </button>
 
         <!-- Full Menu -->
         <ul
           :class="[
-            'flex flex-col lg:flex-row gap-4 items-center lg:items-stretch lg:gap-6',
+            'flex flex-col lg:flex-row gap-3 items-center lg:items-stretch',
             isMenuOpen ? 'block' : 'hidden',
-            'absolute lg:relative lg:flex bg-gray-800 lg:bg-transparent top-16 lg:top-auto left-0 w-full lg:w-auto p-4 lg:p-0 z-40'
+            'absolute lg:relative lg:flex bg-gray-800 lg:bg-transparent top-16 lg:top-auto left-0 w-full lg:w-auto p-4 lg:p-0 z-40 rounded-lg lg:rounded-none'
           ]"
         >
-          <li><NuxtLink to="/trip" @click="navigate('/trip')" :class="isActive('/trip')">Trip.com</NuxtLink></li>
-          <li><NuxtLink to="/klook" @click="navigate('/klook')" :class="isActive('/klook')">Klook</NuxtLink></li>
-          
-          <li><span class="text-gray-400 cursor-not-allowed" title="Coming Soon">Agoda</span></li>
-          <li><span class="text-gray-400 cursor-not-allowed" title="Coming Soon">Booking.com</span></li>
-          <li><NuxtLink to="/contact" @click="navigate('/contact')" :class="isActive('/contact')">Contact Us</NuxtLink></li>
+          <li>
+            <NuxtLink 
+              to="/trip" 
+              @click="navigate('/trip')" 
+              :class="['nav-link', isActive('/trip')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span class="mr-1">🏨</span>
+              Trip.com
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
+              to="/klook" 
+              @click="navigate('/klook')" 
+              :class="['nav-link', isActive('/klook')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span class="mr-1">🎯</span>
+              Klook
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
+              to="/contact" 
+              @click="navigate('/contact')" 
+              :class="['nav-link', isActive('/contact')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span class="mr-1">📧</span>
+              Contact
+            </NuxtLink>
+          </li>
         </ul>
       </nav>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 pt-20 container mx-auto px-4 w-full">
+    <main class="flex-1 pt-24 container mx-auto px-4 w-full">
       <NuxtPage />
     </main>
 
     <!-- Footer: always sticks to bottom -->
-    <footer class="bg-gray-100 text-center text-sm text-gray-600 py-4 w-full">
-      <p class="mt-2">© {{ new Date().getFullYear() }} GoTravelNha. All rights reserved.</p>
+    <footer class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white py-8 w-full">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
+          <!-- About -->
+          <div>
+            <h3 class="font-bold text-lg mb-4">About GoTravelNha</h3>
+            <p class="text-gray-400 text-sm">
+              Your one-stop destination for comparing and booking the best travel deals across multiple platforms.
+            </p>
+          </div>
+          
+          <!-- Links -->
+          <div>
+            <h3 class="font-bold text-lg mb-4">Quick Links</h3>
+            <ul class="space-y-2 text-sm">
+              <li><NuxtLink to="/trip" class="text-gray-400 hover:text-primary-400 transition-colors">Trip.com Deals</NuxtLink></li>
+              <li><NuxtLink to="/klook" class="text-gray-400 hover:text-primary-400 transition-colors">Klook Activities</NuxtLink></li>
+              <li><NuxtLink to="/contact" class="text-gray-400 hover:text-primary-400 transition-colors">Contact Us</NuxtLink></li>
+            </ul>
+          </div>
+          
+          <!-- Contact Info -->
+          <div>
+            <h3 class="font-bold text-lg mb-4">Stay Connected</h3>
+            <p class="text-gray-400 text-sm mb-3">
+              Get the latest travel deals and exclusive offers delivered to your inbox.
+            </p>
+          </div>
+        </div>
+        
+        <div class="border-t border-gray-700 pt-6 text-center">
+          <p class="text-gray-400 text-sm">
+            © {{ new Date().getFullYear() }} GoTravelNha. All rights reserved.
+          </p>
+        </div>
+      </div>
     </footer>
   </div>
 </template>
@@ -88,12 +155,13 @@ ul {
   display: block !important;
 }
 
-.active-link {
-  background-color: #ffffff;
-  color: #1f2937;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+.nav-link.active-link {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #ffffff;
   font-weight: bold;
-  transition: all 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

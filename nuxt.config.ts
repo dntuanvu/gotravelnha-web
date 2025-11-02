@@ -25,7 +25,9 @@ export default defineNuxtConfig({
             { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' }
           ],
           link: [
-            { rel: 'icon', type: 'image/png', href: 'https://storage.googleapis.com/travella_assets_images/favicon.png' }
+            { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
+            { rel: 'icon', type: 'image/png', href: 'https://storage.googleapis.com/travella_assets_images/favicon.png' },
+            { rel: 'apple-touch-icon', href: '/apple-touch-icon.svg' }
           ]
         }
     },
