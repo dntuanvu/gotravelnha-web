@@ -4,6 +4,7 @@
     "type": "module",
     "scripts": {
         "build": "nuxt build",
+        "build:vercel": "npx playwright install chromium && nuxt build",
         "dev": "NODE_NO_WARNINGS=1 nuxt dev",
         "generate": "nuxt generate",
         "preview": "nuxt preview",

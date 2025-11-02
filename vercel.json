@@ -1,7 +1,5 @@
 {
   "regions": ["sin1"],
-  "env": {
-    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
-  }
+  "buildCommand": "npx playwright install chromium && npm run build"
 }
 

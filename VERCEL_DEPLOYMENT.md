@@ -101,23 +101,25 @@ vercel --prod
 
 ## ⚙️ Step 4: Vercel Configuration
 
-A simplified `vercel.json` has been created with minimal configuration:
+The `vercel.json` is configured to install Playwright browsers:
 
 ```json
 {
   "regions": ["sin1"],
-  "env": {
-    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
-  }
+  "buildCommand": "npx playwright install chromium && npm run build"
 }
 ```
 
-⚠️ **CRITICAL**: Playwright has limitations on Vercel serverless:
-- **Timeout**: Vercel functions have 10-60s limits (extended)
-- **File System**: Read-only except `/tmp` (ephemeral)
-- **Browser**: Needs to download during build
+⚠️ **CRITICAL**: Playwright works but has limitations on Vercel:
+- **✅ FIXED**: Chromium browser now installs during build
+- **⚠️ Timeout**: Crawls take 2-5 minutes, Vercel max is 60s (will timeout)
+- **⚠️ File System**: Writes to disk are ephemeral in `/tmp` directory
+- **⚠️ Browser**: Chromium is ~200MB, increases cold start time
 
-**Current Setup**: The crawler runs in the background and returns quickly, while data loads from cache.
+**Current Behavior**: 
+- Browser installs during build ✅
+- First crawl will likely timeout ⏱️
+- Data won't persist between deployments 💾
 
 ---
 
@@ -164,7 +166,13 @@ After deployment, test:
 - Run crawls locally and commit data to Git
 - Or use a cron service like EasyCron to trigger external scrape
 
-**Current Setup**: Crawler will likely timeout on first crawl in production
+**Current Setup**: 
+- ✅ Chromium installs during build
+- ⚠️ Crawls will timeout (60s limit)
+- ⚠️ Data won't persist (ephemeral `/tmp`)
+
+**Quick Fix for Testing**: 
+Pre-populate data by committing `data/attractionsg-events.json` to Git (not ideal but works for MVP)
 
 ### Environment Variables Not Working
 
