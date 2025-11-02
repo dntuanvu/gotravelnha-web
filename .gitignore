@@ -7,6 +7,9 @@
 .vercel
 dist
 
+# Crawled data cache
+data
+
 # Node dependencies
 node_modules
 

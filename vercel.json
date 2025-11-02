@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".output/public",
+  "functions": {
+    ".output/server/**/*.js": {
+      "maxDuration": 60
+    }
+  },
+  "regions": ["sin1"],
+  "env": {
+    "PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD": "1"
+  }
+}
+

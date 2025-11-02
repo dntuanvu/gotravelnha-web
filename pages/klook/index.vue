@@ -9,11 +9,9 @@
         
         <div class="relative z-10">
           <div class="flex items-center justify-center mb-6">
-            <img 
-              src="https://storage.googleapis.com/travella_assets_images/klook-logo.png" 
-              alt="Klook" 
-              class="h-16 w-auto bg-white p-3 rounded-xl shadow-lg"
-            />
+            <h2 class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
+              Klook
+            </h2>
           </div>
           
           <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center drop-shadow-lg">

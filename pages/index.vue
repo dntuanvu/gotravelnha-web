@@ -95,7 +95,7 @@
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-2xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
         <AffiliateCard
           link="/trip"
           img="https://storage.googleapis.com/travella_assets_images/trip-logo.png"
@@ -106,6 +106,20 @@
           img="https://storage.googleapis.com/travella_assets_images/klook-logo.png"
           desc="Tours, activities & experiences worldwide."
         />
+        <AffiliateCard
+          link="/attractionsg"
+          img=""
+          desc="Singapore attractions & exclusive tickets."
+        >
+          <template #custom-logo>
+            <div class="bg-yellow-400 rounded-full px-8 py-3 shadow-lg">
+              <div class="flex items-center justify-center gap-1">
+                <span class="text-[#166534] font-black text-2xl tracking-tight">SG</span>
+                <span class="text-[#1e3a8a] font-black text-2xl tracking-tight">ATTRACTIONS</span>
+              </div>
+            </div>
+          </template>
+        </AffiliateCard>
       </div>
     </section>
 
