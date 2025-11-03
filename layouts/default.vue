@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
             class="flex items-center gap-2 font-bold text-xl hover:text-blue-300 transition-colors"
           >
             <Logo :size="'32'" />
-            <span class="hidden sm:inline">GoVietHub</span>
+            <span class="inline">GoVietHub</span>
           </NuxtLink>
         </div>
 
