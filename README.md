@@ -1,4 +1,4 @@
-# GoTravelNha Web - Complete Documentation
+# GoVietHub - Complete Documentation
 
 A modern, professional travel booking platform that compares and aggregates deals from multiple travel platforms including Trip.com, Klook, and AttractionsSG.
 
@@ -21,14 +21,16 @@ A modern, professional travel booking platform that compares and aggregates deal
 ### Trip.com Advanced Features
 - **Deep Linking**: Dynamic affiliate links with campaign tracking
 - **Promotion Management**: Configurable promotional campaigns
-- **Data Collection**: Scraping system for deal comparison
+- **Data Collection**: Promotional deal scraping for comparison
 - **Analytics**: Comprehensive tracking and conversion monitoring
+- **Admin Portal**: User management, scraper monitoring, data viewer
 
 ### Web Scraping Infrastructure
-- **Simple Scraper**: Lightweight HTML scraper using Cheerio
-- **Advanced Scraper**: Full Playwright-based scraper
-- **Trip.com Scraper**: Specialized promotional deal scraper
-- **Flexible Extraction**: Support for custom CSS selectors
+- **Promotional Deal Scraper**: Optimized for Trip.com sale/promo pages
+- **Two-Tier Extraction**: Specialized selectors for promotions + generic fallback
+- **Admin Interface**: Monitor jobs, view results, manage sources
+- **Background Processing**: Async scraping with Playwright
+- **Data Persistence**: PostgreSQL storage with Prisma ORM
 
 ### Activity Tracking
 - Session management
@@ -419,14 +421,30 @@ trackClick('element_id', {
 })
 ```
 
-### Scrape Trip.com Data
+### Scrape Trip.com Promotional Deals
 
+**Using Admin Portal** (Recommended):
+1. Navigate to `/admin/scrapers`
+2. Click "Add Source"
+3. Enter Trip.com promotional page URL
+4. Click "Run" to start scraping
+5. Monitor job status and view results
+
+**Using API**:
 ```typescript
 import { useTripScraper } from '~/composables/useTripScraper'
 
 const { scrapePromotions } = useTripScraper()
 const data = await scrapePromotions(url, 'flight')
 ```
+
+**Supported URLs**:
+- ✅ `/sale/*` - Trip.com sale pages
+- ✅ `/partners/ad/*` - Affiliate widget pages
+- ✅ `/promo/*` - Promotional campaigns
+- ❌ General browsing/search pages
+
+See [Promotional Deal Scraping Guide](./docs/SCRAPER_PROMOTIONAL_DEALS.md) for details.
 
 ---
 
@@ -484,7 +502,21 @@ npm run build:vercel
 
 ## 📖 Additional Documentation
 
-Historical implementation notes available in:
+### Active Documentation
+- `docs/KLOOK_SCRAPING_STRATEGY.md` - Klook scraping implementation guide based on portal analysis ⭐ NEW
+- `docs/KLOOK_AFFILIATE_INTEGRATION.md` - Klook affiliate integration strategy and roadmap
+- `docs/SCALING_ROADMAP.md` - Comprehensive scaling strategy and phases
+- `docs/AFFILIATE_PLATFORM_REALITY.md` - Real-world constraints and best practices
+- `docs/TRIP_AFFILIATE_SCRAPING_REALITY.md` - Trip.com limitations and alternatives
+- `docs/SCRAPER_PROMOTIONAL_DEALS.md` - Guide to Trip.com promotional deal scraping
+- `docs/WHY_PROMOTIONAL_PAGES_ONLY.md` - Why only promotion pages should be scraped
+- `docs/BULK_DEAL_SCRAPING.md` - Bulk scraping strategy and limitations
+- `docs/GET_TRIP_WIDGET_CODES.md` - How to obtain widget codes from Trip.com affiliate portal
+- `docs/SCHEDULED_SCRAPING_GUIDE.md` - Automated scraping setup and configuration
+- `docs/DATABASE_SETUP_COMPLETE.md` - PostgreSQL setup and user management
+- `docs/GOOGLE_OAUTH_SETUP.md` - Google OAuth integration guide
+
+### Historical Implementation Notes
 - `docs/ARCHIVED/` - Consolidated historical documentation
 
 ---

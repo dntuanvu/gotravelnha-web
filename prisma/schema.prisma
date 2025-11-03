@@ -66,7 +66,155 @@ model LoyaltyPoint {
   @@map("loyalty_points")
 }
 
+model ScraperJob {
+  id          String         @id @default(uuid())
+  platform    String         // trip, klook, attractionsg
+  sourceUrl   String         // The URL being scraped
+  jobType     String         // event, deal, promotion
+  status      ScraperStatus  @default(PENDING)
+  priority    Int            @default(0) // Higher = more priority
+  startedAt   DateTime?
+  completedAt DateTime?
+  error       String?
+  metadata    Json?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  
+  // Relations
+  source    ScraperSource    @relation(fields: [sourceUrl], references: [url], onDelete: Cascade)
+  dataItems TripScrapedData[]
+  
+  @@map("scraper_jobs")
+}
+
+model ScraperSource {
+  url           String        @id // Unique URL
+  platform      String        // trip, klook, attractionsg
+  sourceType    String        // affiliate_link, search_url, promotion_page
+  isActive      Boolean       @default(true)
+  lastScrapedAt DateTime?
+  scrapeCount   Int           @default(0)
+  metadata      Json?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relations
+  jobs ScraperJob[]
+  
+  @@map("scraper_sources")
+}
+
+model TripScrapedData {
+  id                String      @id @default(uuid())
+  jobId             String
+  title             String
+  description       String?
+  originalPrice     Decimal?
+  discountedPrice   Decimal?
+  discount          String?
+  currency          String?
+  image             String?
+  affiliateLink     String?
+  location          String?
+  dates             String?
+  category          String?
+  metadata          Json?
+  isValid           Boolean     @default(true)
+  duplicateOf       String?     // ID of duplicate if this is a duplicate
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  // Relations
+  job ScraperJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  
+  @@index([jobId])
+  @@index([category])
+  @@index([isValid])
+  @@map("trip_scraped_data")
+}
+
+model KlookPromoCode {
+  id                        String   @id @default(uuid())
+  promoCode                 String   @unique // e.g., DLTCAL8
+  discountDescription       String   // e.g., 8% off
+  promoCodeDescription      String   // Full description
+  affiliateDescription      String   // Affiliate version
+  applicablePlatforms       String   // All platforms, App only, etc
+  redeemFrom                DateTime
+  redeemBefore              DateTime
+  validUntil                DateTime
+  timeZone                  String
+  termsAndConditions        String   @db.Text
+  applicableToResidentsOf   String?  // Country codes separated by ;
+  notApplicableToResidentsOf String? // Country codes
+  nonApplicableActivitiesUrl String? // URL
+  
+  // Status tracking
+  isActive                  Boolean  @default(true)
+  importedAt                DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+  
+  @@index([promoCode])
+  @@index([isActive])
+  @@index([validUntil])
+  @@map("klook_promo_codes")
+}
+
+model KlookHotelDeal {
+  id                String   @id @default(uuid())
+  hotelId           String   @unique // Master hotel ID from Klook
+  hotelName         String
+  dealCategory      String   // Big sale, Bestseller, etc
+  starRating        Int?
+  
+  // Pricing
+  originalPrice     Decimal  // Sell price
+  discountedPrice   Decimal  // Deal price
+  currency          String   @default("USD")
+  savings           Decimal
+  savingsPercent    Decimal? // Auto-calculated
+  
+  // Links
+  affiliateLink     String
+  
+  // Metadata
+  importedAt        DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  isActive          Boolean  @default(true)
+  
+  @@index([hotelId])
+  @@index([dealCategory])
+  @@index([isActive])
+  @@index([updatedAt])
+  @@map("klook_hotel_deals")
+}
+
+model DataComparison {
+  id             String   @id @default(uuid())
+  title          String
+  platform1      String   // trip
+  platform2      String   // klook, attractionsg, etc
+  price1         Decimal
+  price2         Decimal
+  currency       String
+  savingsPercent Decimal?
+  metadata       Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([title])
+  @@map("data_comparisons")
+}
+
 enum Role {
   ADMIN
   USER
+}
+
+enum ScraperStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
 }

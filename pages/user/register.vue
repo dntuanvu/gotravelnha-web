@@ -135,7 +135,7 @@
         <!-- Back to Site Link -->
         <div class="mt-4 text-center">
           <NuxtLink to="/" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-            ← Back to GoTravelNha
+            ← Back to GoVietHub
           </NuxtLink>
         </div>
       </div>
@@ -143,7 +143,7 @@
       <!-- Benefits Banner -->
       <div class="mt-6 bg-white rounded-xl shadow-lg p-6 border border-blue-200">
         <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>✨</span> Join GoTravelNha and Get
+          <span>✨</span> Join GoVietHub and Get
         </h3>
         <div class="space-y-2 text-sm text-gray-700">
           <div class="flex items-center gap-2">

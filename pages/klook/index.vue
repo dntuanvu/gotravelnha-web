@@ -1,5 +1,40 @@
 <template>
   <div class="space-y-8 pb-16">
+    <!-- Limited Time Promo Banner -->
+    <section class="max-w-6xl mx-auto px-4">
+      <div class="bg-gradient-to-r from-red-600 via-orange-500 to-pink-600 rounded-2xl shadow-lg overflow-hidden">
+        <div class="flex items-center justify-between p-6 md:p-8">
+          <div class="flex-1">
+            <div class="flex items-center gap-3 mb-2">
+              <span class="text-4xl animate-bounce">🎉</span>
+              <h3 class="text-2xl md:text-3xl font-black text-white">Exclusive Deals Available Now!</h3>
+            </div>
+            <p class="text-lg text-orange-100 font-medium mb-4">
+              Save up to 8% with Klook promo codes + Premium hotel deals
+            </p>
+            <div class="flex items-center gap-4">
+              <NuxtLink to="/deals?tab=promo" class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all group">
+                <span class="text-2xl">🎯</span>
+                <span class="font-bold text-white group-hover:scale-105 transition-transform">Promo Codes</span>
+              </NuxtLink>
+              <NuxtLink to="/deals?tab=hotel" class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all group">
+                <span class="text-2xl">🏨</span>
+                <span class="font-bold text-white group-hover:scale-105 transition-transform">Hotel Deals</span>
+              </NuxtLink>
+              <NuxtLink to="/deals" class="flex items-center gap-2 bg-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500 transition-all group">
+                <span class="font-black text-gray-900">View All Deals →</span>
+              </NuxtLink>
+            </div>
+          </div>
+          <div class="hidden md:block">
+            <div class="bg-white/10 backdrop-blur-sm rounded-full p-6 border-4 border-white/30">
+              <span class="text-6xl">💎</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Hero Section for Klook -->
     <section class="max-w-6xl mx-auto px-4">
       <div class="bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 text-white p-12 md:p-16 rounded-2xl shadow-soft overflow-hidden animate-slide-up relative">

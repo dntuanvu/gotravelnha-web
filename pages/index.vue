@@ -17,9 +17,7 @@
           <!-- Animated Badge -->
           <div class="flex justify-center mb-4 animate-fade-in">
             <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-              <span class="animate-pulse">✨</span>
               <span class="text-white/90 font-semibold text-xs md:text-sm">Your All-in-One Travel Platform</span>
-              <span class="animate-pulse">✨</span>
             </div>
           </div>
 
@@ -27,8 +25,8 @@
           <div class="text-center mb-6 space-y-3">
             <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight animate-slide-up">
               <span class="inline-block hover:scale-110 transition-transform duration-300">Go</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75">Travel</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150">Nha</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75">Viet</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150">Hub</span>
             </h1>
             
             <!-- Enhanced Tagline -->
@@ -37,8 +35,11 @@
             </p>
 
             <!-- Enhanced Description -->
-            <p class="text-base sm:text-lg md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-6 animate-fade-in-delayed">
+            <p class="text-base sm:text-lg md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-2 animate-fade-in-delayed">
               Compare deals across <span class="font-bold text-white">Trip.com</span>, <span class="font-bold text-white">Klook</span>, and <span class="font-bold text-white">Singapore Attractions</span>
+            </p>
+            <p class="text-sm md:text-base text-blue-200 max-w-3xl mx-auto italic animate-fade-in-delayed">
+              formerly known as GoTravelNha
             </p>
           </div>
 
@@ -127,18 +128,78 @@
         />
         <AffiliateCard
           link="/attractionsg"
-          img=""
           desc="Singapore attractions & exclusive tickets."
-        >
-          <template #custom-logo>
-            <div class="bg-yellow-400 rounded-full px-8 py-3 shadow-lg">
-              <div class="flex items-center justify-center gap-1">
-                <span class="text-[#166534] font-black text-2xl tracking-tight">SG</span>
-                <span class="text-[#1e3a8a] font-black text-2xl tracking-tight">ATTRACTIONS</span>
-              </div>
+        />
+      </div>
+    </section>
+
+    <!-- Best Deals Section -->
+    <section class="max-w-6xl mx-auto px-4">
+      <div class="mb-8 text-center">
+        <h2 class="text-3xl font-bold text-gray-800 mb-3">🔥 Best Travel Deals</h2>
+        <p class="text-gray-600 text-lg">
+          Handpicked offers you don't want to miss
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Top Deals Cards - Load dynamic data -->
+        <NuxtLink to="/deals?tab=promo" class="group bg-gradient-to-br from-orange-500 to-pink-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+          <div class="aspect-video bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-6xl">🎯</span>
             </div>
-          </template>
-        </AffiliateCard>
+            <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm">
+              Up to 8% OFF
+            </div>
+          </div>
+          <div class="p-6 text-white">
+            <h3 class="text-xl font-bold mb-2 group-hover:text-yellow-200 transition-colors">Klook Promo Codes</h3>
+            <p class="text-orange-100 mb-4">Exclusive discount codes for your next adventure</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-orange-200">View All Deals →</span>
+              <span class="text-2xl group-hover:translate-x-2 transition-transform">✨</span>
+            </div>
+          </div>
+        </NuxtLink>
+
+        <NuxtLink to="/deals?tab=hotel" class="group bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+          <div class="aspect-video bg-gradient-to-br from-blue-400 to-cyan-500 relative overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-6xl">🏨</span>
+            </div>
+            <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full font-bold text-sm">
+              Big Sale
+            </div>
+          </div>
+          <div class="p-6 text-white">
+            <h3 class="text-xl font-bold mb-2 group-hover:text-blue-100 transition-colors">Premium Hotels</h3>
+            <p class="text-blue-100 mb-4">Stay at luxury hotels for less</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-blue-200">View All Deals →</span>
+              <span class="text-2xl group-hover:translate-x-2 transition-transform">✨</span>
+            </div>
+          </div>
+        </NuxtLink>
+
+        <NuxtLink to="/compare" class="group bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+          <div class="aspect-video bg-gradient-to-br from-purple-400 to-indigo-500 relative overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span class="text-6xl">💎</span>
+            </div>
+            <div class="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full font-bold text-sm">
+              Smart Compare
+            </div>
+          </div>
+          <div class="p-6 text-white">
+            <h3 class="text-xl font-bold mb-2 group-hover:text-purple-100 transition-colors">Price Comparison</h3>
+            <p class="text-purple-100 mb-4">Find the best prices across platforms</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-purple-200">Compare Now →</span>
+              <span class="text-2xl group-hover:translate-x-2 transition-transform">✨</span>
+            </div>
+          </div>
+        </NuxtLink>
       </div>
     </section>
 

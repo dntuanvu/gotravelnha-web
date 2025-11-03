@@ -5,8 +5,8 @@
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mb-4">
-            <span class="text-white text-2xl">🔐</span>
+          <div class="inline-flex items-center justify-center mb-4">
+            <Logo :size="'64'" />
           </div>
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
           <p class="text-gray-600">Sign in to continue your journey</p>
@@ -109,7 +109,7 @@
         <!-- Back to Site Link -->
         <div class="mt-4 text-center">
           <NuxtLink to="/" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-            ← Back to GoTravelNha
+            ← Back to GoVietHub
           </NuxtLink>
         </div>
       </div>
@@ -121,6 +121,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthState } from '~/composables/useAuthState'
+import Logo from '~/components/Logo.vue'
 
 definePageMeta({
   layout: 'auth'

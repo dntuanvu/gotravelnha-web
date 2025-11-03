@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useAuthState } from '~/composables/useAuthState';
+import Logo from '~/components/Logo.vue';
 
 const isMenuOpen = ref(false);
 const isProfileDropdownOpen = ref(false);
@@ -77,8 +78,8 @@ onBeforeUnmount(() => {
             @click="navigate('/')" 
             class="flex items-center gap-2 font-bold text-xl hover:text-blue-300 transition-colors"
           >
-            <span class="text-2xl">✈️</span>
-            <span>GoTravelNha</span>
+            <Logo :size="'32'" />
+            <span>GoVietHub</span>
           </NuxtLink>
         </div>
 
@@ -86,15 +87,26 @@ onBeforeUnmount(() => {
         <ul class="hidden lg:flex flex-row gap-3 items-center">
           <li>
             <NuxtLink 
+              to="/deals" 
+              @click="navigate('/deals')" 
+              :class="['nav-link', isActive('/deals')]"
+              class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative"
+            >
+              <div class="inline-flex items-center gap-1">
+                <span class="text-xl group-hover:animate-pulse">🔥</span>
+                <span class="font-bold">Best Deals</span>
+                </div>
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
               to="/attractionsg" 
               @click="navigate('/attractionsg')" 
-              :class="['nav-link-sg', isActive('/attractionsg')]"
-              class="px-4 py-2 rounded-lg transition-all"
+              :class="['nav-link', isActive('/attractionsg')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              <div class="bg-yellow-400 rounded-full px-3 py-1 shadow-md inline-flex items-center transition-transform hover:scale-105">
-                <span class="text-[#166534] font-black text-sm tracking-tight">SG</span>
-                <span class="text-[#1e3a8a] font-black text-sm tracking-tight">ATTRACTIONS</span>
-              </div>
+              <span class="mr-1">🎫</span>
+              SG Attractions
             </NuxtLink>
           </li>
           <li>
@@ -117,6 +129,17 @@ onBeforeUnmount(() => {
             >
               <span class="mr-1">🎯</span>
               Klook
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
+              to="/compare" 
+              @click="navigate('/compare')" 
+              :class="['nav-link', isActive('/compare')]"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <span class="mr-1">🔍</span>
+              Compare
             </NuxtLink>
           </li>
           <!-- Analytics - Hidden until RBAC implementation -->
@@ -217,15 +240,27 @@ onBeforeUnmount(() => {
       >
         <li>
           <NuxtLink 
+            to="/deals" 
+            @click="navigate('/deals')" 
+            :class="['nav-link', isActive('/deals')]"
+            class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative bg-orange-600/20"
+          >
+            <div class="inline-flex items-center gap-1">
+              <span class="text-xl">🔥</span>
+              <span class="font-bold">Best Deals</span>
+              <span class="bg-red-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full">!</span>
+            </div>
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink 
             to="/attractionsg" 
             @click="navigate('/attractionsg')" 
-            :class="['nav-link-sg', isActive('/attractionsg')]"
-            class="px-4 py-2 rounded-lg transition-all"
+            :class="['nav-link', isActive('/attractionsg')]"
+            class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <div class="bg-yellow-400 rounded-full px-3 py-1 shadow-md inline-flex items-center transition-transform hover:scale-105">
-              <span class="text-[#166534] font-black text-sm tracking-tight">SG</span>
-              <span class="text-[#1e3a8a] font-black text-sm tracking-tight">ATTRACTIONS</span>
-            </div>
+            <span class="mr-1">🎫</span>
+            SG Attractions
           </NuxtLink>
         </li>
         <li>
@@ -248,6 +283,17 @@ onBeforeUnmount(() => {
           >
             <span class="mr-1">🎯</span>
             Klook
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink 
+            to="/compare" 
+            @click="navigate('/compare')" 
+            :class="['nav-link', isActive('/compare')]"
+            class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            <span class="mr-1">🔍</span>
+            Compare
           </NuxtLink>
         </li>
         <li>
@@ -275,9 +321,12 @@ onBeforeUnmount(() => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
           <!-- About -->
           <div>
-            <h3 class="font-bold text-lg mb-4">About GoTravelNha</h3>
-            <p class="text-slate-300 text-sm">
+            <h3 class="font-bold text-lg mb-4">About GoVietHub</h3>
+            <p class="text-slate-300 text-sm mb-2">
               Your one-stop destination for comparing and booking the best travel deals across multiple platforms.
+            </p>
+            <p class="text-slate-400 text-xs italic">
+              (formerly known as GoTravelNha)
             </p>
           </div>
           
@@ -302,7 +351,7 @@ onBeforeUnmount(() => {
         
         <div class="border-t border-slate-600/30 pt-6 text-center">
           <p class="text-slate-400 text-sm">
-            © {{ new Date().getFullYear() }} GoTravelNha. All rights reserved.
+            © {{ new Date().getFullYear() }} GoVietHub. All rights reserved.
           </p>
         </div>
       </div>
@@ -331,15 +380,5 @@ ul {
 
 .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Special hover effect for SG Attractions - no background, just scale */
-.nav-link-sg:hover {
-  background-color: transparent;
-}
-
-.nav-link-sg.active-link .bg-yellow-400 {
-  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.3);
-  background-color: rgba(251, 191, 36, 1);
 }
 </style>

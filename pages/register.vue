@@ -5,8 +5,8 @@
       <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
         <!-- Logo/Header -->
         <div class="text-center mb-8">
-          <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full mb-4">
-            <span class="text-white text-2xl">✈️</span>
+          <div class="inline-flex items-center justify-center mb-4">
+            <Logo :size="'64'" />
           </div>
           <h1 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
           <p class="text-gray-600">Start your travel journey with us</p>
@@ -159,7 +159,7 @@
         <!-- Back to Site Link -->
         <div class="mt-4 text-center">
           <NuxtLink to="/" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-            ← Back to GoTravelNha
+            ← Back to GoVietHub
           </NuxtLink>
         </div>
       </div>
@@ -167,7 +167,7 @@
       <!-- Benefits Banner -->
       <div class="mt-6 bg-white rounded-xl shadow-lg p-6 border border-blue-200">
         <h3 class="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>✨</span> Join GoTravelNha and Get
+          <span>✨</span> Join GoVietHub and Get
         </h3>
         <div class="space-y-2 text-sm text-gray-700">
           <div class="flex items-center gap-2">
@@ -196,6 +196,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthState } from '~/composables/useAuthState'
+import Logo from '~/components/Logo.vue'
 
 definePageMeta({
   layout: 'auth'

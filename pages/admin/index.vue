@@ -83,16 +83,16 @@
                 </div>
               </button>
 
-              <button
-                @click="manageScrapers"
-                class="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors text-left group"
+              <NuxtLink
+                to="/admin/scrapers"
+                class="flex items-center gap-3 p-4 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition-colors group"
               >
                 <span class="text-2xl">🤖</span>
                 <div>
                   <div class="font-semibold text-gray-900 group-hover:text-purple-600">Manage Scrapers</div>
                   <div class="text-sm text-gray-600">Configure crawlers</div>
                 </div>
-              </button>
+              </NuxtLink>
 
               <NuxtLink
                 to="/trip-promotions-demo"
@@ -255,10 +255,6 @@ const viewEvents = () => {
   router.push('/attractionsg')
 }
 
-const manageScrapers = () => {
-  // TODO: Navigate to scraper management
-  alert('Scraper management coming soon!')
-}
 
 onMounted(() => {
   console.log('🔐 Admin dashboard loaded')
