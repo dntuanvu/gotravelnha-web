@@ -23,7 +23,7 @@ export default defineNuxtConfig({
             // Social: Open Graph (Facebook, WhatsApp)
             { property: 'og:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
             { property: 'og:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and more.' },
-            { property: 'og:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' },
+            { property: 'og:image', content: '/favicon.svg' },
             { property: 'og:url', content: 'https://gotravelnha.com/' },
             { property: 'og:type', content: 'website' },
             { property: 'og:site_name', content: 'GoVietHub' },
@@ -33,12 +33,12 @@ export default defineNuxtConfig({
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
             { name: 'twitter:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions.' },
-            { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' },
+            { name: 'twitter:image', content: '/favicon.svg' },
             { name: 'twitter:site', content: '@GoVietHub' }
           ],
           link: [
             { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
-            { rel: 'icon', type: 'image/png', href: 'https://storage.googleapis.com/travella_assets_images/favicon.png' },
+            { rel: 'icon', type: 'image/png', href: '/favicon.svg' },
             { rel: 'apple-touch-icon', href: '/apple-touch-icon.svg' },
             { rel: 'canonical', href: 'https://gotravelnha.com/' }
           ],
@@ -51,7 +51,7 @@ export default defineNuxtConfig({
                 name: 'GoVietHub',
                 alternateName: 'GoTravelNha',
                 url: 'https://gotravelnha.com',
-                logo: 'https://storage.googleapis.com/travella_assets_images/app_icon.png',
+                logo: '/favicon.svg',
                 description: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions',
                 sameAs: [],
                 contactPoint: {
