@@ -45,27 +45,27 @@
 
           <!-- Enhanced Quick Access Pills with better animations -->
           <div class="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up-delayed">
-            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
+            <NuxtLink to="/klook" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
+              <div class="flex items-center gap-2">
+                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎯</span>
+                <span class="text-white font-bold text-base md:text-lg">Klook</span>
+                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
+              </div>
+            </NuxtLink>
+            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-delayed">
               <div class="flex items-center gap-2">
                 <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">✈️</span>
                 <span class="text-white font-bold text-base md:text-lg">Flights</span>
                 <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </a>
-            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-delayed">
+            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more">
               <div class="flex items-center gap-2">
                 <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🏨</span>
                 <span class="text-white font-bold text-base md:text-lg">Hotels</span>
                 <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
             </a>
-            <NuxtLink to="/klook" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more">
-              <div class="flex items-center gap-2">
-                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎯</span>
-                <span class="text-white font-bold text-base md:text-lg">Activities</span>
-                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
-              </div>
-            </NuxtLink>
             <NuxtLink to="/attractionsg" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more-delayed">
               <div class="flex items-center gap-2">
                 <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎫</span>
@@ -212,31 +212,30 @@
         </p>
         <div class="flex flex-wrap justify-center gap-4">
           <NuxtLink
-            to="/trip"
-            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-hotel-internal', route: '/trip', option: 'internal' })"
-            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            🏨 Book Hotels
-          </NuxtLink>
-          <NuxtLink
-            to="/trip"
-            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-flight-internal', route: '/trip', option: 'internal' })"
-            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            ✈️ Book Flights
-          </NuxtLink>
-          <NuxtLink
             to="/klook"
+            @click="() => trackClick('klook_link', { campaign: 'homepage-cta-activities', route: '/klook' })"
             class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
           >
             🎯 Find Activities
           </NuxtLink>
-          <NuxtLink
-            to="/attractionsg"
+          <a
+            :href="flightLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-flight-external', route: flightLink, option: 'external' })"
             class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
           >
-            🎫 SG Attractions
-          </NuxtLink>
+            ✈️ Book Flights
+          </a>
+          <a
+            :href="hotelLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-hotel-external', route: hotelLink, option: 'external' })"
+            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
+          >
+            🏨 Book Hotels
+          </a>
         </div>
       </div>
     </section>

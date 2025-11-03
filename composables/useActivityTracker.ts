@@ -127,7 +127,7 @@ export const useActivityTracker = () => {
     
     // Log in development
     if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Activity tracked:', activity)
+      //console.log('📊 Activity tracked:', activity)
     }
   }
 

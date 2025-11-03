@@ -87,26 +87,13 @@ onBeforeUnmount(() => {
         <ul class="hidden lg:flex flex-row gap-3 items-center">
           <li>
             <NuxtLink 
-              to="/deals" 
-              @click="navigate('/deals')" 
-              :class="['nav-link', isActive('/deals')]"
-              class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative"
-            >
-              <div class="inline-flex items-center gap-1">
-                <span class="text-xl group-hover:animate-pulse">🔥</span>
-                <span class="font-bold">Best Deals</span>
-                </div>
-            </NuxtLink>
-          </li>
-          <li>
-            <NuxtLink 
-              to="/attractionsg" 
-              @click="navigate('/attractionsg')" 
-              :class="['nav-link', isActive('/attractionsg')]"
+              to="/klook" 
+              @click="navigate('/klook')" 
+              :class="['nav-link', isActive('/klook')]"
               class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              <span class="mr-1">🎫</span>
-              SG Attractions
+              <span class="mr-1">🎯</span>
+              Klook
             </NuxtLink>
           </li>
           <li>
@@ -122,13 +109,26 @@ onBeforeUnmount(() => {
           </li>
           <li>
             <NuxtLink 
-              to="/klook" 
-              @click="navigate('/klook')" 
-              :class="['nav-link', isActive('/klook')]"
+              to="/attractionsg" 
+              @click="navigate('/attractionsg')" 
+              :class="['nav-link', isActive('/attractionsg')]"
               class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
             >
-              <span class="mr-1">🎯</span>
-              Klook
+              <span class="mr-1">🎫</span>
+              SG Attractions
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
+              to="/deals" 
+              @click="navigate('/deals')" 
+              :class="['nav-link', isActive('/deals')]"
+              class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative"
+            >
+              <div class="inline-flex items-center gap-1">
+                <span class="text-xl group-hover:animate-pulse">🔥</span>
+                <span class="font-bold">Best Deals</span>
+                </div>
             </NuxtLink>
           </li>
           <li>
@@ -168,22 +168,23 @@ onBeforeUnmount(() => {
         </ul>
 
         <!-- Right Side: Login/Avatar (Always Visible) -->
-        <div class="flex items-center gap-3 flex-shrink-0">
-          <!-- Login or Profile Dropdown -->
-          <div v-if="!isAuthenticated" class="relative">
-            <NuxtLink 
-              to="/login" 
-              @click="navigate('/login')" 
-              :class="['nav-link', isActive('/login')]"
-              class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-600 transition-colors bg-blue-700 font-semibold text-sm sm:text-base"
-            >
-              <span class="mr-1">🔐</span>
-              <span class="hidden sm:inline">Login</span>
-            </NuxtLink>
-          </div>
-          
-          <!-- Profile Dropdown -->
-          <div v-else class="relative">
+        <ClientOnly>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <!-- Login or Profile Dropdown -->
+            <div v-if="!isAuthenticated" class="relative">
+              <NuxtLink 
+                to="/login" 
+                @click="navigate('/login')" 
+                :class="['nav-link', isActive('/login')]"
+                class="px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-blue-600 transition-colors bg-blue-700 font-semibold text-sm sm:text-base"
+              >
+                <span class="mr-1">🔐</span>
+                <span class="hidden sm:inline">Login</span>
+              </NuxtLink>
+            </div>
+            
+            <!-- Profile Dropdown -->
+            <div v-else class="relative">
             <button
               @click="toggleProfileDropdown"
               class="flex items-center gap-2 px-2 sm:px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
@@ -227,7 +228,14 @@ onBeforeUnmount(() => {
               </button>
             </div>
           </div>
-        </div>
+          </div>
+          
+          <template #fallback>
+            <div class="flex items-center gap-3 flex-shrink-0">
+              <div class="w-20 h-10 bg-gray-700 rounded-lg animate-pulse"></div>
+            </div>
+          </template>
+        </ClientOnly>
       </nav>
 
       <!-- Mobile: Hamburger Menu Dropdown (Navigation Items) -->
@@ -240,27 +248,13 @@ onBeforeUnmount(() => {
       >
         <li>
           <NuxtLink 
-            to="/deals" 
-            @click="navigate('/deals')" 
-            :class="['nav-link', isActive('/deals')]"
-            class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative bg-orange-600/20"
-          >
-            <div class="inline-flex items-center gap-1">
-              <span class="text-xl">🔥</span>
-              <span class="font-bold">Best Deals</span>
-              <span class="bg-red-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full">!</span>
-            </div>
-          </NuxtLink>
-        </li>
-        <li>
-          <NuxtLink 
-            to="/attractionsg" 
-            @click="navigate('/attractionsg')" 
-            :class="['nav-link', isActive('/attractionsg')]"
+            to="/klook" 
+            @click="navigate('/klook')" 
+            :class="['nav-link', isActive('/klook')]"
             class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <span class="mr-1">🎫</span>
-            SG Attractions
+            <span class="mr-1">🎯</span>
+            Klook
           </NuxtLink>
         </li>
         <li>
@@ -276,13 +270,27 @@ onBeforeUnmount(() => {
         </li>
         <li>
           <NuxtLink 
-            to="/klook" 
-            @click="navigate('/klook')" 
-            :class="['nav-link', isActive('/klook')]"
+            to="/attractionsg" 
+            @click="navigate('/attractionsg')" 
+            :class="['nav-link', isActive('/attractionsg')]"
             class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <span class="mr-1">🎯</span>
-            Klook
+            <span class="mr-1">🎫</span>
+            SG Attractions
+          </NuxtLink>
+        </li>
+        <li>
+          <NuxtLink 
+            to="/deals" 
+            @click="navigate('/deals')" 
+            :class="['nav-link', isActive('/deals')]"
+            class="px-4 py-2 rounded-lg hover:bg-gradient-to-r hover:from-orange-500 hover:to-red-500 transition-all group relative bg-orange-600/20"
+          >
+            <div class="inline-flex items-center gap-1">
+              <span class="text-xl">🔥</span>
+              <span class="font-bold">Best Deals</span>
+              <span class="bg-red-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full">!</span>
+            </div>
           </NuxtLink>
         </li>
         <li>

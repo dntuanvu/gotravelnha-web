@@ -391,6 +391,7 @@ import { useTripDeeplink } from '~/composables/useTripDeeplink'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 
 definePageMeta({
+  middleware: 'auth',
   layout: 'default'
 })
 

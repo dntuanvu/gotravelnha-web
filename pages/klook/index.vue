@@ -1,162 +1,320 @@
 <template>
   <div class="space-y-8 pb-16">
-    <!-- Limited Time Promo Banner -->
+    <!-- Klook Search Box Hero Section -->
     <section class="max-w-6xl mx-auto px-4">
-      <div class="bg-gradient-to-r from-red-600 via-orange-500 to-pink-600 rounded-2xl shadow-lg overflow-hidden">
-        <div class="flex items-center justify-between p-6 md:p-8">
-          <div class="flex-1">
-            <div class="flex items-center gap-3 mb-2">
-              <span class="text-4xl animate-bounce">🎉</span>
-              <h3 class="text-2xl md:text-3xl font-black text-white">Exclusive Deals Available Now!</h3>
-            </div>
-            <p class="text-lg text-orange-100 font-medium mb-4">
-              Save up to 8% with Klook promo codes + Premium hotel deals
-            </p>
-            <div class="flex items-center gap-4">
-              <NuxtLink to="/deals?tab=promo" class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all group">
-                <span class="text-2xl">🎯</span>
-                <span class="font-bold text-white group-hover:scale-105 transition-transform">Promo Codes</span>
-              </NuxtLink>
-              <NuxtLink to="/deals?tab=hotel" class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg hover:bg-white/30 transition-all group">
-                <span class="text-2xl">🏨</span>
-                <span class="font-bold text-white group-hover:scale-105 transition-transform">Hotel Deals</span>
-              </NuxtLink>
-              <NuxtLink to="/deals" class="flex items-center gap-2 bg-yellow-400 px-4 py-2 rounded-lg hover:bg-yellow-500 transition-all group">
-                <span class="font-black text-gray-900">View All Deals →</span>
-              </NuxtLink>
-            </div>
-          </div>
-          <div class="hidden md:block">
-            <div class="bg-white/10 backdrop-blur-sm rounded-full p-6 border-4 border-white/30">
-              <span class="text-6xl">💎</span>
-            </div>
+      <ClientOnly>
+        <div class="bg-white rounded-2xl shadow-soft overflow-hidden animate-slide-up">
+          <!-- Klook Search Vertical Widget -->
+          <div class="klook-search-widget-container">
+            <ins 
+              class="klk-aff-widget" 
+              data-wid="89020"
+              data-height="340px"
+              data-adid="1041352"
+              data-lang=""
+              data-prod="search_vertical"
+              data-currency=""
+            >
+              <a href="//www.klook.com/?aid=">Klook.com</a>
+            </ins>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- Hero Section for Klook -->
-    <section class="max-w-6xl mx-auto px-4">
-      <div class="bg-gradient-to-br from-orange-500 via-red-500 to-pink-600 text-white p-12 md:p-16 rounded-2xl shadow-soft overflow-hidden animate-slide-up relative">
-        <!-- Decorative background elements -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
-        
-        <div class="relative z-10">
-          <div class="flex items-center justify-center mb-6">
-            <h2 class="text-4xl md:text-5xl font-bold text-white drop-shadow-lg">
-              Klook
-            </h2>
-          </div>
-          
-          <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center drop-shadow-lg">
-            🎯 Discover Amazing Experiences
-          </h1>
-          <p class="text-lg md:text-xl text-center text-orange-100 max-w-2xl mx-auto mb-8">
-            Book tours, activities, and unique experiences with instant confirmation
-          </p>
-          
-          <!-- Feature highlights -->
-          <div class="flex flex-wrap justify-center gap-3">
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-              </svg>
-              <span class="text-sm font-medium">Verified</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-              </svg>
-              <span class="text-sm font-medium">Instant Confirmation</span>
-            </div>
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span class="text-sm font-medium">Best Deals</span>
+        <template #fallback>
+          <div class="bg-white rounded-2xl shadow-soft p-12 text-center">
+            <div class="animate-pulse">
+              <div class="h-16 bg-gray-200 rounded-lg mb-4"></div>
+              <div class="h-12 bg-gray-100 rounded-lg"></div>
             </div>
           </div>
-        </div>
-      </div>
+        </template>
+      </ClientOnly>
     </section>
 
-    <!-- Category Pills -->
-    <section class="max-w-6xl mx-auto px-4">
-      <div class="mb-6">
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">🎨 Explore by Category</h2>
-        <p class="text-gray-600">Find the perfect activity for your trip</p>
-      </div>
-      
-      <div class="flex flex-wrap gap-3 mb-8">
+    <!-- Klook Dynamic Widgets with Tabs -->
+    <section id="klook-widget" class="max-w-6xl mx-auto px-4 space-y-8">
+      <!-- Tab Navigation -->
+      <div class="flex gap-4 border-b-2 border-gray-200">
         <button
-          v-for="category in categories"
-          :key="category.name"
-          @click="scrollToWidget(category)"
-          class="group px-6 py-3 bg-white border-2 border-gray-200 rounded-xl hover:border-primary-500 hover:bg-primary-50 transition-all transform hover:-translate-y-1 shadow-soft"
+          @click="selectedTab = 'things_to_do'"
+          :class="[
+            'px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5',
+            selectedTab === 'things_to_do'
+              ? 'border-orange-500 text-orange-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          ]"
         >
-          <div class="flex items-center gap-3">
-            <span class="text-2xl">{{ category.icon }}</span>
-            <span class="font-semibold text-gray-700 group-hover:text-primary-700">{{ category.name }}</span>
-          </div>
+          <span class="mr-2">🎯</span>
+          Things to Do
+        </button>
+        <button
+          @click="selectedTab = 'hotels'"
+          :class="[
+            'px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5',
+            selectedTab === 'hotels'
+              ? 'border-orange-500 text-orange-600'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          ]"
+        >
+          <span class="mr-2">🏨</span>
+          Hotels
         </button>
       </div>
-    </section>
 
-    <!-- Klook Widget -->
-    <section id="klook-widget" class="max-w-6xl mx-auto px-4">
-      <div class="bg-white rounded-2xl shadow-soft p-6 border border-gray-100">
-        <div class="text-center mb-6">
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">Search Activities</h2>
-          <p class="text-gray-600">
-            Find tours, tickets, and experiences worldwide
-          </p>
+      <!-- Category Pills - Only show for Things to Do tab (Compact Version) -->
+      <template v-if="selectedTab === 'things_to_do'">
+        <ClientOnly>
+          <div class="mb-6">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3">Browse by Category</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <button
+                v-for="category in categories"
+                :key="category.name"
+                @click="scrollToWidget(category)"
+                class="group px-3 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all text-left"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">{{ category.icon }}</span>
+                  <span class="text-sm font-medium text-gray-700 group-hover:text-primary-700">{{ category.name }}</span>
+                </div>
+              </button>
+            </div>
+          </div>
+          <template #fallback>
+            <div class="mb-6">
+              <div class="h-6 bg-gray-200 rounded animate-pulse mb-3 w-40"></div>
+              <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                <div
+                  v-for="i in 6"
+                  :key="i"
+                  class="h-10 bg-gray-100 rounded-lg animate-pulse"
+                />
+              </div>
+            </div>
+          </template>
+        </ClientOnly>
+      </template>
+
+      <!-- Widgets Display -->
+      <ClientOnly>
+        <div
+          v-for="widget in filteredWidgets"
+          :key="widget.id"
+          :id="`widget-${widget.id}`"
+          class="bg-white rounded-2xl shadow-soft p-6 border border-gray-100 animate-fade-in scroll-mt-8"
+        >
+          <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
+              <span>{{ widget.icon }}</span>
+              {{ widget.name }}
+            </h2>
+            <p class="text-gray-600">{{ widget.description }}</p>
+          </div>
+          <div 
+            class="bg-gray-50 p-6 rounded-xl klook-widget-container"
+          >
+            <!-- Klook Dynamic Widget - Product type depends on widget type -->
+            <ins 
+              class="klk-aff-widget" 
+              :data-adid="String(widget.adId)"
+              :data-prod="widget.widgetType === 'hotels' ? 'hotel_dynamic_widget' : 'dynamic_widget'"
+            >
+              <a href="//www.klook.com/">Klook.com</a>
+            </ins>
+          </div>
         </div>
-        <div class="bg-gray-50 p-6 rounded-xl">
-          <ins class="klk-aff-widget" data-wid="89020" data-height="400px" data-adid="1045566" data-lang="" data-prod="search_vertical" data-currency="">
-            <a href="//www.klook.com/?aid=">Klook.com</a>
-          </ins>
-        </div>
+        
+        <template #fallback>
+          <div class="bg-gray-50 rounded-2xl p-6 text-center">
+            <p class="text-gray-500">Loading Klook widgets...</p>
+          </div>
+        </template>
+      </ClientOnly>
+
+      <!-- Info message when no widgets configured -->
+      <div v-if="!filteredWidgets.length" class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
+        <div class="text-5xl mb-4">⚙️</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">No {{ selectedTab === 'hotels' ? 'Hotels' : 'Things to Do' }} Widgets Configured</h3>
+        <p class="text-gray-600 mb-4">
+          Visit Klook affiliate portal to get widget codes and add them to the configuration.
+        </p>
+        <a
+          href="https://affiliate.klook.com/my_ads/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+        >
+          <span>🚀</span>
+          <span>Go to Klook Affiliate Portal</span>
+        </a>
       </div>
     </section>
 
   </div>
 </template>
   
-<script setup>
+<script setup lang="ts">
 import { useActivityTracker } from '~/composables/useActivityTracker'
-import { onMounted } from 'vue'
+import { getActiveKlookWidgets, KLOOK_CATEGORIES } from '~/composables/useKlookWidgets'
+import { ref, computed, onMounted, nextTick, watch } from 'vue'
   
 const { startTracking, trackPageView, trackClick } = useActivityTracker()
 
-const categories = [
-  { name: 'Attractions', icon: '🏰' },
-  { name: 'Tours', icon: '🚶' },
-  { name: 'Theme Parks', icon: '🎢' },
-  { name: 'Transportation', icon: '🚌' },
-  { name: 'Food & Drink', icon: '🍜' },
-  { name: 'Culture & Classes', icon: '🎨' }
-]
+const categories = KLOOK_CATEGORIES
 
-const scrollToWidget = (category) => {
-  trackClick('category', { name: category.name })
-  
-  // Smooth scroll to widget
-  const widgetElement = document.getElementById('klook-widget')
-  if (widgetElement) {
-    widgetElement.scrollIntoView({ behavior: 'smooth', block: 'start' })
+const activeWidgets = ref<any[]>([])
+const selectedTab = ref<'things_to_do' | 'hotels'>('things_to_do')
+
+// Filter widgets by selected tab
+const filteredWidgets = computed(() => {
+  return activeWidgets.value.filter(widget => widget.widgetType === selectedTab.value)
+})
+
+// Load Klook widgets script - using Klook's exact pattern
+// Handles both search_vertical widget and dynamic widgets
+const loadKlookWidgetScripts = () => {
+  if (typeof window === 'undefined') return
+
+  // Wait for widgets to be in DOM
+  nextTick(() => {
+    setTimeout(() => {
+      const widgets = document.querySelectorAll('.klk-aff-widget')
+      
+      if (widgets.length === 0) {
+        return
+      }
+
+      // Use Klook's exact pattern: inject script after EACH widget
+      widgets.forEach((widget) => {
+        // Check if script already exists for this widget
+        // Check for both search widget container and dynamic widget container
+        const widgetContainer = widget.closest('.klook-widget-container') || 
+                               widget.closest('.klook-search-widget-container') ||
+                               widget.parentElement
+        
+        if (!widgetContainer) return
+        
+        const existingScript = widgetContainer.querySelector('script[src*="fetch-iframe-init.js"]')
+        if (existingScript) return // Script already injected for this widget
+
+        // Inject script using Klook's exact IIFE pattern - right after each widget
+        const script = document.createElement('script')
+        script.type = 'text/javascript'
+        script.async = true
+        script.src = 'https://affiliate.klook.com/widget/fetch-iframe-init.js'
+        
+        // Insert right after the widget element (Klook's exact pattern)
+        if (widget.nextSibling) {
+          widget.parentNode?.insertBefore(script, widget.nextSibling)
+        } else {
+          widget.parentNode?.appendChild(script)
+        }
+      })
+    }, 200) // Small delay to ensure DOM is settled
+  })
+}
+
+const loadWidgets = async () => {
+  try {
+    // Load all widgets (both things_to_do and hotels)
+    const response = await $fetch('/api/klook/widgets') as any
+    if (response.success) {
+      activeWidgets.value = response.data || []
+    } else {
+      // Fallback to composable if DB fails
+      activeWidgets.value = getActiveKlookWidgets()
+    }
+  } catch (error) {
+    console.error('Failed to load widgets:', error)
+    // Fallback to composable
+    activeWidgets.value = getActiveKlookWidgets()
   }
 }
 
-onMounted(() => {
+// Watch for tab changes and reload scripts for new widgets
+watch(selectedTab, () => {
+  // Wait for Vue to update DOM, then reload scripts
+  nextTick(() => {
+    setTimeout(() => {
+      loadKlookWidgetScripts()
+    }, 300)
+  })
+})
+
+const scrollToWidget = (category: any) => {
+  trackClick('category', { name: category.name })
+  
+  // Find the widget that matches this category
+  // Try to match by category slug or widget name
+  const matchingWidget = activeWidgets.value.find((widget: any) => {
+    if (!widget || widget.widgetType !== 'things_to_do') return false
+    
+    // Match by category slug if available
+    if (widget.category && category.slug) {
+      return widget.category.toLowerCase().includes(category.slug.toLowerCase()) ||
+             category.slug.toLowerCase().includes(widget.category.toLowerCase())
+    }
+    
+    // Match by widget name
+    const categoryNameLower = category.name.toLowerCase()
+    const widgetNameLower = widget.name.toLowerCase()
+    
+    // Check if category name appears in widget name or vice versa
+    if (categoryNameLower.includes('attractions') || categoryNameLower.includes('shows')) {
+      return widgetNameLower.includes('attraction') || widgetNameLower.includes('show')
+    }
+    if (categoryNameLower.includes('tour') || categoryNameLower.includes('sightseeing')) {
+      return widgetNameLower.includes('tour') || widgetNameLower.includes('sightseeing')
+    }
+    if (categoryNameLower.includes('food') || categoryNameLower.includes('dining')) {
+      return widgetNameLower.includes('food') || widgetNameLower.includes('dining')
+    }
+    if (categoryNameLower.includes('transport') || categoryNameLower.includes('wifi')) {
+      return widgetNameLower.includes('transport') || widgetNameLower.includes('wifi')
+    }
+    if (categoryNameLower.includes('activit') || categoryNameLower.includes('experience')) {
+      return widgetNameLower.includes('activit') || widgetNameLower.includes('experience')
+    }
+    if (categoryNameLower.includes('pass')) {
+      return widgetNameLower.includes('pass') || widgetNameLower.includes('package')
+    }
+    
+    return false
+  })
+  
+  if (matchingWidget) {
+    // Scroll to the specific widget
+    const widgetElement = document.getElementById(`widget-${matchingWidget.id}`)
+    if (widgetElement) {
+      // Add highlight effect
+      widgetElement.classList.add('ring-4', 'ring-orange-300', 'ring-opacity-50')
+      setTimeout(() => {
+        widgetElement.classList.remove('ring-4', 'ring-orange-300', 'ring-opacity-50')
+      }, 2000)
+      
+      widgetElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
+  }
+  
+  // Fallback: scroll to widgets section if no match found
+  const widgetSection = document.getElementById('klook-widget')
+  if (widgetSection) {
+    widgetSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+onMounted(async () => {
   startTracking()
   trackPageView('/klook', { platform: 'klook' })
   
-  const script = document.createElement('script');
-  script.src = 'https://affiliate.klook.com/widget/fetch-iframe-init.js';
-  script.async = true;
-  script.defer = true;
-  document.body.appendChild(script);
-});
+  await loadWidgets()
+  
+  // Wait for Vue to render widgets
+  await nextTick()
+  await nextTick()
+  await nextTick()
+  
+  // Load Klook widget scripts using their exact pattern
+  loadKlookWidgetScripts()
+})
 </script>

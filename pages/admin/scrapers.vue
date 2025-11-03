@@ -391,6 +391,100 @@
           <p class="text-gray-600">No hotel deals imported yet</p>
         </div>
       </div>
+
+      <!-- Klook Dynamic Widgets Configuration -->
+      <div class="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl shadow-sm border-2 border-purple-200 p-6 mt-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-gray-900">🎨 Klook Dynamic Widgets Configuration</h2>
+          <NuxtLink
+            to="/klook"
+            target="_blank"
+            class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 font-semibold transition-all transform hover:scale-105 flex items-center gap-2"
+          >
+            <span>👁️</span>
+            <span>Preview Widgets</span>
+          </NuxtLink>
+        </div>
+
+        <div class="bg-white rounded-lg p-4 mb-4">
+          <div class="flex items-start gap-3">
+            <span class="text-2xl">💡</span>
+            <div>
+              <h4 class="font-semibold text-gray-900 mb-1">How to Configure Widgets</h4>
+              <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+                <li>Login to <a href="https://affiliate.klook.com/my_ads/" target="_blank" class="text-purple-600 hover:underline">Klook Affiliate Portal</a></li>
+                <li>Navigate to "Dynamic Widgets" section</li>
+                <li>Generate widget configs by category/destination</li>
+                <li>Copy widget IDs and Ad IDs</li>
+                <li>Update configuration in <code class="bg-gray-100 px-1 rounded">composables/useKlookWidgets.ts</code></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-4 flex justify-between items-center">
+          <h4 class="font-semibold text-gray-900">Configured Widgets ({{ klookWidgets.length }})</h4>
+          <button
+            @click="openWidgetEditor(null)"
+            class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 font-semibold transition-all flex items-center gap-2"
+          >
+            <span>➕</span>
+            <span>Create Widget</span>
+          </button>
+        </div>
+
+        <div v-if="klookWidgets.length > 0" class="bg-white rounded-lg overflow-hidden">
+          <div class="divide-y divide-gray-200">
+            <div v-for="widget in klookWidgets" :key="widget.id" class="p-4 hover:bg-gray-50 transition-colors">
+              <div class="flex items-start justify-between">
+                <div class="flex items-start gap-3 flex-1">
+                  <span class="text-3xl">{{ widget.icon }}</span>
+                  <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-1">
+                      <h5 class="font-bold text-gray-900">{{ widget.name }}</h5>
+                      <span 
+                        v-if="widget.isActive"
+                        class="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-medium"
+                      >
+                        ✓ Active
+                      </span>
+                      <span 
+                        v-else
+                        class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs font-medium"
+                      >
+                        ⏸ Inactive
+                      </span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">{{ widget.description }}</p>
+                    <div class="flex flex-wrap gap-2 text-xs">
+                      <span class="px-2 py-1 bg-purple-50 text-purple-700 rounded font-medium">
+                        {{ widget.widgetType === 'hotels' ? '🏨 Hotels' : '🎯 Things to Do' }}
+                      </span>
+                      <span v-if="widget.category" class="px-2 py-1 bg-blue-50 text-blue-700 rounded">
+                        Category: {{ widget.category }}
+                      </span>
+                      <span class="px-2 py-1 bg-orange-50 text-orange-700 rounded">
+                        Ad ID: {{ widget.adId }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  @click="openWidgetEditor(widget)"
+                  class="px-3 py-1.5 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+                >
+                  Edit Config
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div v-else class="bg-white rounded-lg p-8 text-center">
+          <div class="text-4xl mb-2">🎨</div>
+          <p class="text-gray-600 mb-4">No widgets configured yet</p>
+          <p class="text-sm text-gray-500">Update composables/useKlookWidgets.ts to add widget configurations</p>
+        </div>
+      </div>
     </div>
 
     <!-- Job Details Modal -->
@@ -741,11 +835,186 @@
         </div>
       </div>
     </div>
+
+    <!-- Widget Editor Modal -->
+    <div
+      v-if="editingWidget"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+      @click="editingWidget = null"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        @click.stop
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h3 class="text-2xl font-bold text-gray-900">
+            {{ widgetForm.id ? '✏️ Edit Widget Configuration' : '➕ Create New Widget' }}
+          </h3>
+          <button
+            @click="editingWidget = null"
+            class="text-gray-400 hover:text-gray-600 text-2xl"
+          >
+            ×
+          </button>
+        </div>
+
+        <form @submit.prevent="saveWidgetConfig" class="space-y-4">
+          <!-- Quick Guide -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h4 class="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+              <span>📋</span>
+              <span>How to Get Ad ID</span>
+            </h4>
+            <ol class="text-sm text-blue-800 space-y-1 list-decimal list-inside">
+              <li>Go to <a href="https://affiliate.klook.com/my_ads/" target="_blank" class="underline font-medium">Klook Portal → My Ads → Dynamic Widgets</a></li>
+              <li>Create a new Dynamic Widget for each category you want to display</li>
+              <li>Copy the <code class="bg-blue-100 px-1 rounded">data-adid</code> value from the widget code</li>
+              <li><strong>Important:</strong> Each category needs its own unique Ad ID from Klook</li>
+              <li>Example: <code class="bg-blue-100 px-1 rounded">data-adid="1154125"</code> → Ad ID is <code class="bg-blue-100 px-1 rounded font-mono">1154125</code></li>
+            </ol>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Icon -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Icon Emoji *
+              </label>
+              <input
+                v-model="widgetForm.icon"
+                type="text"
+                required
+                maxlength="2"
+                placeholder="🎯"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-2xl text-center"
+              />
+            </div>
+
+            <!-- Active Status -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Status
+              </label>
+              <select
+                v-model="widgetForm.isActive"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              >
+                <option :value="true">✓ Active (Show on site)</option>
+                <option :value="false">⏸ Inactive (Hidden)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Widget Name *
+            </label>
+            <input
+              v-model="widgetForm.name"
+              type="text"
+              required
+              placeholder="e.g., Singapore Attractions"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            />
+          </div>
+
+          <!-- Description -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Description *
+            </label>
+            <input
+              v-model="widgetForm.description"
+              type="text"
+              required
+              placeholder="e.g., Discover the best of Singapore"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            />
+          </div>
+
+          <!-- Ad ID -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Ad ID * <span class="text-xs text-gray-500">(required - one per category from Klook portal)</span>
+            </label>
+            <input
+              v-model="widgetForm.adId"
+              type="text"
+              required
+              placeholder="1154125"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent font-mono"
+            />
+            <p class="mt-1 text-xs text-gray-500">Get from <code>data-adid</code> in Klook's Dynamic Widget code. Each category needs its own unique Ad ID.</p>
+          </div>
+
+          <!-- Widget Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+              Widget Type *
+            </label>
+            <select
+              v-model="widgetForm.widgetType"
+              required
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            >
+              <option value="things_to_do">🎯 Things to Do</option>
+              <option value="hotels">🏨 Hotels</option>
+            </select>
+            <p class="mt-1 text-xs text-gray-500">Select whether this widget shows activities/experiences or hotels</p>
+          </div>
+
+          <!-- Category & Display Order -->
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Category <span class="text-xs text-gray-500">(optional)</span>
+              </label>
+              <input
+                v-model="widgetForm.category"
+                type="text"
+                placeholder="attractions, tours, etc."
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Display Order
+              </label>
+              <input
+                v-model.number="widgetForm.displayOrder"
+                type="number"
+                placeholder="0"
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div class="flex gap-3 pt-4">
+            <button
+              type="button"
+              @click="editingWidget = null"
+              class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              class="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 font-semibold transition-all"
+            >
+              💾 Save Configuration
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { KLOOK_WIDGET_CONFIGS } from '~/composables/useKlookWidgets'
 
 definePageMeta({
   layout: 'default',
@@ -791,6 +1060,87 @@ const klookHotelsStats = ref<any>(null)
 const csvFileInputHotels = ref<HTMLInputElement | null>(null)
 const klookHotels = ref<any[]>([])
 const loadingHotels = ref(false)
+
+// Klook Dynamic Widgets
+const klookWidgets = ref<any[]>([])
+const loadingWidgets = ref(false)
+const editingWidget = ref<any>(null)
+const widgetForm = ref<any>({})
+
+const loadKlookWidgets = async () => {
+  loadingWidgets.value = true
+  try {
+    const response = await $fetch('/api/admin/klook-widgets') as any
+    if (response.success) {
+      klookWidgets.value = response.data || []
+    }
+  } catch (error) {
+    console.error('Failed to load widgets:', error)
+    // Fallback to composable config if DB fails
+    klookWidgets.value = KLOOK_WIDGET_CONFIGS
+  } finally {
+    loadingWidgets.value = false
+  }
+}
+
+const openWidgetEditor = (widget: any) => {
+  if (widget) {
+    // Edit existing widget
+    editingWidget.value = widget
+    widgetForm.value = { ...widget }
+  } else {
+    // Create new widget
+    editingWidget.value = { isNew: true }
+    widgetForm.value = {
+      icon: '🎯',
+      name: '',
+      description: '',
+      adId: '',
+      widgetType: 'things_to_do',
+      category: '',
+      isActive: true,
+      displayOrder: 0
+    }
+  }
+}
+
+const saveWidgetConfig = async () => {
+  try {
+    // Validate required fields
+    if (!widgetForm.value.adId || !widgetForm.value.name || !widgetForm.value.description) {
+      alert('❌ Please fill in all required fields (Ad ID, Name, Description)')
+      return
+    }
+
+    let response: any
+
+    if (widgetForm.value.id) {
+      // Update existing widget
+      response = await $fetch(`/api/admin/klook-widgets/${widgetForm.value.id}`, {
+        method: 'PUT',
+        body: widgetForm.value
+      }) as any
+    } else {
+      // Create new widget
+      response = await $fetch('/api/admin/klook-widgets', {
+        method: 'POST',
+        body: widgetForm.value
+      }) as any
+    }
+
+    if (response.success) {
+      alert(`✅ Widget ${widgetForm.value.id ? 'updated' : 'created'} successfully!`)
+      await loadKlookWidgets() // Reload from DB
+      editingWidget.value = null
+      widgetForm.value = {}
+    } else {
+      alert('❌ Failed to save: ' + (response.error || 'Unknown error'))
+    }
+  } catch (error: any) {
+    console.error('Error saving widget:', error)
+    alert('❌ Failed to save widget configuration: ' + (error.message || 'Unknown error'))
+  }
+}
 
 const getPlatformIcon = (platform: string) => {
   const icons: Record<string, string> = {
@@ -1143,6 +1493,7 @@ onMounted(async () => {
   await loadDataStats()
   await loadKlookPromoCodes()
   await loadKlookHotels()
+  await loadKlookWidgets()
   
   // Auto-refresh every 10 seconds
   const interval = setInterval(async () => {

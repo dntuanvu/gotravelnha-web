@@ -189,6 +189,26 @@ model KlookHotelDeal {
   @@map("klook_hotel_deals")
 }
 
+model KlookWidget {
+  id            String   @id @default(uuid())
+  adId          String   // Ad ID from Klook portal (one per category)
+  name          String
+  description   String
+  icon          String
+  category      String?
+  widgetType    String   @default("things_to_do") // things_to_do or hotels
+  isActive      Boolean  @default(true)
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([name])
+  @@index([isActive])
+  @@index([displayOrder])
+  @@index([widgetType])
+  @@map("klook_widgets")
+}
+
 model DataComparison {
   id             String   @id @default(uuid())
   title          String
