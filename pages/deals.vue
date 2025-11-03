@@ -444,7 +444,11 @@ async function loadDeals() {
     let allDeals: any[] = []
     
     if (tripResponse && tripResponse.success) {
-      allDeals = tripResponse.data || []
+      // Transform Trip.com deals to include platform field from job
+      allDeals = tripResponse.data.map((deal: any) => ({
+        ...deal,
+        platform: deal.job?.platform || 'trip'
+      })) || []
     }
     
     // Load Klook promo codes
