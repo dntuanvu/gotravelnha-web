@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
             class="flex items-center gap-2 font-bold text-xl hover:text-blue-300 transition-colors"
           >
             <Logo :size="'32'" />
-            <span>GoVietHub</span>
+            <span class="hidden sm:inline">GoVietHub</span>
           </NuxtLink>
         </div>
 
@@ -90,9 +90,9 @@ onBeforeUnmount(() => {
               to="/klook" 
               @click="navigate('/klook')" 
               :class="['nav-link', isActive('/klook')]"
-              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
+              class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center"
             >
-              <span class="mr-1">🎯</span>
+              <KlookIcon :size="18" />
               Klook
             </NuxtLink>
           </li>
@@ -253,7 +253,7 @@ onBeforeUnmount(() => {
             :class="['nav-link', isActive('/klook')]"
             class="px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <span class="mr-1">🎯</span>
+            <KlookIcon :size="18" />
             Klook
           </NuxtLink>
         </li>

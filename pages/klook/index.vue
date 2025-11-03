@@ -43,7 +43,7 @@
               : 'border-transparent text-gray-500 hover:text-gray-700'
           ]"
         >
-          <span class="mr-2">🎯</span>
+          <KlookIcon :size="20" class="mr-2" />
           Things to Do
         </button>
         <button

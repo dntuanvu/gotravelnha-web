@@ -54,6 +54,40 @@ export default defineEventHandler(async (event) => {
       }
     })
 
+    // Process referral if code provided
+    if (body.referralCode) {
+      try {
+        const referral = await prisma.referral.findUnique({
+          where: { referralCode: body.referralCode }
+        })
+
+        if (referral && referral.referrerId !== user.id) {
+          // Update referral to link to new user
+          await prisma.referral.update({
+            where: { id: referral.id },
+            data: {
+              refereeId: user.id,
+              status: 'SIGNED_UP',
+              signupAt: new Date(),
+              email: user.email
+            }
+          })
+
+          // Award points to referrer (when referee signs up)
+          await prisma.loyaltyPoint.create({
+            data: {
+              userId: referral.referrerId,
+              points: 100, // Points for successful referral signup
+              reason: `Referral signup: ${user.username}`
+            }
+          })
+        }
+      } catch (referralError) {
+        console.error('Error processing referral:', referralError)
+        // Don't fail registration if referral processing fails
+      }
+    }
+
     // Return user data (without password)
     const { password, ...userWithoutPassword } = user
 

@@ -34,6 +34,8 @@ model User {
   // Relations
   bookings      Booking[]
   loyaltyPoints LoyaltyPoint[]
+  referrals     Referral[]      @relation("Referrer")
+  referredBy    Referral?       @relation("Referee")
   
   @@unique([provider, providerId], name: "provider_unique")
   @@map("users")
@@ -64,6 +66,94 @@ model LoyaltyPoint {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@map("loyalty_points")
+}
+
+model Referral {
+  id              String   @id @default(uuid())
+  referrerId      String   // User who shared the referral
+  refereeId       String?  @unique // User who signed up via referral (nullable until they sign up) - unique so one user can only use one referral
+  referralCode    String   @unique // Unique code for sharing
+  email           String?  // Email of person who clicked referral (before signup)
+  status          ReferralStatus @default(PENDING) // PENDING, SIGNED_UP, COMPLETED_BOOKING, REWARDED
+  rewardPoints    Int      @default(0) // Points given to referrer
+  signupAt        DateTime?
+  firstBookingAt  DateTime?
+  rewardedAt      DateTime?
+  metadata        Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  referrer User @relation("Referrer", fields: [referrerId], references: [id], onDelete: Cascade)
+  referee  User? @relation("Referee", fields: [refereeId], references: [id], onDelete: SetNull)
+  
+  @@index([referralCode])
+  @@index([referrerId])
+  @@index([status])
+  @@map("referrals")
+}
+
+enum ReferralStatus {
+  PENDING            // Link clicked but user not signed up yet
+  SIGNED_UP          // User signed up via referral
+  COMPLETED_BOOKING  // User made their first booking
+  REWARDED           // Points rewarded to referrer
+}
+
+model NewsletterSubscriber {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?
+  source        String?  // homepage, deals, blog, etc
+  isActive      Boolean  @default(true)
+  subscribedAt  DateTime @default(now())
+  unsubscribedAt DateTime?
+  metadata      Json?
+  
+  @@map("newsletter_subscribers")
+}
+
+model BlogPost {
+  id          String   @id @default(uuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String   // Markdown or HTML
+  authorId    String
+  category    String?
+  tags        String[]
+  featuredImage String?
+  isPublished Boolean  @default(false)
+  publishedAt DateTime?
+  views       Int      @default(0)
+  seoMeta     Json?    // SEO metadata
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@index([slug])
+  @@index([category])
+  @@index([isPublished])
+  @@map("blog_posts")
+}
+
+model PriceAlert {
+  id            String   @id @default(uuid())
+  userId        String
+  platform      String   // trip, klook, attractionsg
+  productType   String   // hotel, flight, activity
+  productId     String   // ID or URL of the product
+  productName   String
+  currentPrice  Float?
+  targetPrice   Float?   // Alert when price drops to this
+  originalUrl   String
+  isActive      Boolean  @default(true)
+  triggeredAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([userId])
+  @@index([platform, productType])
+  @@index([isActive])
+  @@map("price_alerts")
 }
 
 model ScraperJob {

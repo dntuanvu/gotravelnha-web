@@ -6,28 +6,66 @@ export default defineNuxtConfig({
     css: ['@/assets/css/tailwind.css'],
     app: {
         head: {
-          title: 'Go Travel Nha | Compare and Find best deals across platforms.',
+          title: 'GoVietHub - Discover, Compare & Book Travel Deals | Trip.com, Klook & More',
+          htmlAttrs: {
+            lang: 'en'
+          },
           meta: [
+            { charset: 'utf-8' },
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-            { name: 'description', content: 'Compare and book top flight, hotel and attraction deals across platforms.' },
+            { name: 'description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and attractions. Your all-in-one travel platform.' },
+            { name: 'keywords', content: 'travel deals, compare travel prices, trip.com deals, klook deals, vietnam travel, singapore attractions, hotel bookings, flight bookings, travel comparison' },
+            { name: 'author', content: 'GoVietHub' },
+            { name: 'robots', content: 'index, follow' },
+            { name: 'language', content: 'English' },
+            { name: 'revisit-after', content: '7 days' },
     
             // Social: Open Graph (Facebook, WhatsApp)
-            { property: 'og:title', content: 'Go Travel Nha ✈️ | 🏨' },
-            { property: 'og:description', content: 'Compare and book top flight, hotel and attraction deals across platforms.' },
+            { property: 'og:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
+            { property: 'og:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and more.' },
             { property: 'og:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' },
             { property: 'og:url', content: 'https://gotravelnha.com/' },
             { property: 'og:type', content: 'website' },
+            { property: 'og:site_name', content: 'GoVietHub' },
+            { property: 'og:locale', content: 'en_US' },
     
             // Social: Twitter
             { name: 'twitter:card', content: 'summary_large_image' },
-            { name: 'twitter:title', content: 'Go Travel Nha ✈️ | 🏨' },
-            { name: 'twitter:description', content: 'Compare and book top flight, hotel and attraction deals across platforms.' },
-            { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' }
+            { name: 'twitter:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
+            { name: 'twitter:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions.' },
+            { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png' },
+            { name: 'twitter:site', content: '@GoVietHub' }
           ],
           link: [
             { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
             { rel: 'icon', type: 'image/png', href: 'https://storage.googleapis.com/travella_assets_images/favicon.png' },
-            { rel: 'apple-touch-icon', href: '/apple-touch-icon.svg' }
+            { rel: 'apple-touch-icon', href: '/apple-touch-icon.svg' },
+            { rel: 'canonical', href: 'https://gotravelnha.com/' }
+          ],
+          script: [
+            {
+              type: 'application/ld+json',
+              children: JSON.stringify({
+                '@context': 'https://schema.org',
+                '@type': 'TravelAgency',
+                name: 'GoVietHub',
+                alternateName: 'GoTravelNha',
+                url: 'https://gotravelnha.com',
+                logo: 'https://storage.googleapis.com/travella_assets_images/app_icon.png',
+                description: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions',
+                sameAs: [],
+                contactPoint: {
+                  '@type': 'ContactPoint',
+                  contactType: 'Customer Service',
+                  availableLanguage: ['English', 'Vietnamese']
+                },
+                areaServed: 'Worldwide',
+                offers: {
+                  '@type': 'AggregateOffer',
+                  priceCurrency: 'USD'
+                }
+              })
+            }
           ]
         }
     },

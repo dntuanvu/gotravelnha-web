@@ -192,6 +192,9 @@
               View Rewards Catalog →
             </button>
           </div>
+
+          <!-- Referral Program -->
+          <ReferralShare />
         </div>
       </div>
     </div>
@@ -202,6 +205,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthState } from '~/composables/useAuthState'
+import ReferralShare from '~/components/ReferralShare.vue'
 
 definePageMeta({
   layout: 'default',

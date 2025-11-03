@@ -47,7 +47,7 @@
           <div class="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up-delayed">
             <NuxtLink to="/klook" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
               <div class="flex items-center gap-2">
-                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎯</span>
+                <KlookIcon :size="24" class="group-hover:scale-125 transition-transform duration-300" />
                 <span class="text-white font-bold text-base md:text-lg">Klook</span>
                 <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
               </div>
@@ -147,7 +147,7 @@
         <NuxtLink to="/deals?tab=promo" class="group bg-gradient-to-br from-orange-500 to-pink-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
           <div class="aspect-video bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
             <div class="absolute inset-0 flex items-center justify-center">
-              <span class="text-6xl">🎯</span>
+              <KlookIcon :size="64" />
             </div>
             <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold text-sm">
               Up to 8% OFF
@@ -216,7 +216,8 @@
             @click="() => trackClick('klook_link', { campaign: 'homepage-cta-activities', route: '/klook' })"
             class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
           >
-            🎯 Find Activities
+            <KlookIcon :size="20" class="inline-block mr-1.5" />
+            Find Activities
           </NuxtLink>
           <a
             :href="flightLink"
@@ -239,16 +240,43 @@
         </div>
       </div>
     </section>
+
+    <!-- Newsletter Signup Section -->
+    <section class="max-w-6xl mx-auto px-4">
+      <NewsletterSignup source="homepage" />
+    </section>
   </div>
 </template>
 
 <script setup>
 import AffiliateCard from '~/components/AffiliateCard.vue'
+import NewsletterSignup from '~/components/NewsletterSignup.vue'
 import { useTripDeeplink } from '~/composables/useTripDeeplink'
 import { useActivityTracker } from '~/composables/useActivityTracker'
+import { useSEO } from '~/composables/useSEO'
 
 const { generateDeeplink } = useTripDeeplink()
 const { trackClick } = useActivityTracker()
+const { setPageSEO } = useSEO()
+
+// Set SEO for homepage
+setPageSEO({
+  title: 'GoVietHub - Discover, Compare & Book Travel Deals',
+  description: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and attractions. Your all-in-one travel platform.',
+  keywords: 'travel deals, compare travel prices, trip.com deals, klook deals, vietnam travel, singapore attractions, hotel bookings, flight bookings',
+  url: 'https://gotravelnha.com',
+  structuredData: {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'GoVietHub',
+    url: 'https://gotravelnha.com',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: 'https://gotravelnha.com/search?q={search_term_string}',
+      'query-input': 'required name=search_term_string'
+    }
+  }
+})
 
 // Generate deep links for homepage CTAs
 const flightLink = generateDeeplink({

@@ -194,8 +194,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthState } from '~/composables/useAuthState'
+import { useReferral } from '~/composables/useReferral'
 import Logo from '~/components/Logo.vue'
 
 definePageMeta({
@@ -240,6 +241,11 @@ const handleRegister = async () => {
   success.value = null
 
   try {
+    // Track referral click if code exists (before signup)
+    if (referralCode) {
+      await trackReferralClick(referralCode, registerForm.value.email)
+    }
+
     // Call registration API
     const response = await $fetch('/api/auth/register', {
       method: 'POST',
@@ -248,7 +254,8 @@ const handleRegister = async () => {
         lastName: registerForm.value.lastName,
         username: registerForm.value.username,
         email: registerForm.value.email,
-        password: registerForm.value.password
+        password: registerForm.value.password,
+        referralCode: referralCode || null
       }
     })
 
@@ -269,8 +276,24 @@ const handleRegister = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   console.log('👤 Registration page loaded')
+  
+  // Track referral click if code exists in URL (before user fills form)
+  if (referralCode) {
+    await trackReferralClick(referralCode)
+    
+    // Show referral bonus message
+    if (document.querySelector('.referral-banner') === null) {
+      const banner = document.createElement('div')
+      banner.className = 'referral-banner mb-4 p-3 bg-purple-50 border border-purple-200 rounded-lg text-center'
+      banner.innerHTML = `<span class="text-purple-700 font-semibold">🎁 Using referral code! You'll both get rewards when you sign up!</span>`
+      const form = document.querySelector('form')
+      if (form) {
+        form.insertBefore(banner, form.firstChild)
+      }
+    }
+  }
 })
 </script>
 
