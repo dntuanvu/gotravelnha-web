@@ -118,12 +118,12 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
         <AffiliateCard
           link="/trip"
-          img="https://storage.googleapis.com/travella_assets_images/trip-logo.png"
+          img="/trip-logo.png"
           desc="Great travel deals, flights, hotels."
         />
         <AffiliateCard
           link="/klook"
-          img="https://storage.googleapis.com/travella_assets_images/klook-logo.png"
+          img="/klook-logo.png"
           desc="Tours, activities & experiences worldwide."
         />
         <AffiliateCard
