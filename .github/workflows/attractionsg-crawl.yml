@@ -8,6 +8,8 @@ on:
 jobs:
   crawl:
     runs-on: ubuntu-latest
+    environment:
+      name: production
 
     steps:
       - name: Checkout repository
@@ -28,6 +30,6 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           ATTRACTIONSG_EMAIL: ${{ secrets.ATTRACTIONSG_EMAIL }}
           ATTRACTIONSG_PASSWORD: ${{ secrets.ATTRACTIONSG_PASSWORD }}
-          CRAWL_FULL: "true"
-          CRAWL_MAX_PAGES: "40"
+          CRAWL_FULL: ${{ secrets.CRAWL_FULL || 'true' }}
+          CRAWL_MAX_PAGES: ${{ secrets.CRAWL_MAX_PAGES || '40' }}
 
