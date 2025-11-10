@@ -113,23 +113,6 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
           <div class="flex items-center gap-2">
-            <label for="category" class="text-sm font-medium text-gray-600">Category</label>
-            <select
-              id="category"
-              v-model="selectedCategory"
-              class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
-            >
-              <option value="all">All</option>
-              <option
-                v-for="category in availableCategories"
-                :key="category"
-                :value="category"
-              >
-                {{ category }}
-              </option>
-            </select>
-          </div>
-          <div class="flex items-center gap-2">
             <label for="sort" class="text-sm font-medium text-gray-600">Sort by</label>
             <select
               id="sort"
@@ -137,17 +120,17 @@
               class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
               @change="loadTickets"
             >
+              <option value="alpha">Name: A → Z</option>
               <option value="latest">Latest updates</option>
               <option value="priceAsc">Price: Low to High</option>
               <option value="priceDesc">Price: High to Low</option>
-              <option value="alpha">Name: A → Z</option>
             </select>
           </div>
         </div>
       </div>
 
       <!-- Tickets Grid -->
-      <div v-else-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
           v-for="ticket in filteredTickets" 
           :key="ticket.id || ticket.title" 
@@ -264,8 +247,7 @@ const error = ref(null)
 // Store scroll position when navigating away
 let savedScrollPosition = 0
 
-const sortOption = ref('latest')
-const selectedCategory = ref('all')
+const sortOption = ref('alpha')
 const searchTerm = ref('')
 
 const loadTickets = async () => {
@@ -329,16 +311,6 @@ const handleImageError = (event) => {
   event.target.style.display = 'none'
 }
 
-const availableCategories = computed(() => {
-  const categories = new Set<string>()
-  tickets.value.forEach(ticket => {
-    if (ticket.category) {
-      categories.add(ticket.category)
-    }
-  })
-  return Array.from(categories).sort()
-})
-
 const normalizedTickets = computed(() => {
   return tickets.value.map(ticket => {
     const priceAmount = typeof ticket.priceAmount === 'number'
@@ -360,25 +332,24 @@ const sortedTickets = computed(() => {
       return items.sort((a, b) => (a.priceAmount ?? Infinity) - (b.priceAmount ?? Infinity))
     case 'priceDesc':
       return items.sort((a, b) => (b.priceAmount ?? -Infinity) - (a.priceAmount ?? -Infinity))
-    case 'alpha':
-      return items.sort((a, b) => a.title.localeCompare(b.title))
     case 'latest':
-    default:
       return items.sort((a, b) => {
         const aTime = a.lastUpdated ? a.lastUpdated.getTime() : 0
         const bTime = b.lastUpdated ? b.lastUpdated.getTime() : 0
         return bTime - aTime
       })
+    case 'alpha':
+    default:
+      return items.sort((a, b) => a.title.localeCompare(b.title))
   }
 })
 
 const filteredTickets = computed(() => {
   return sortedTickets.value.filter(ticket => {
-    const matchCategory = selectedCategory.value === 'all' || (ticket.category && ticket.category === selectedCategory.value)
     const matchSearch = !searchTerm.value ||
       ticket.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       (ticket.location && ticket.location.toLowerCase().includes(searchTerm.value.toLowerCase()))
-    return matchCategory && matchSearch
+    return matchSearch
   })
 })
 
@@ -397,9 +368,8 @@ const formatRelativeTime = (date: Date | null) => {
 }
 
 const resetFilters = () => {
-  selectedCategory.value = 'all'
   searchTerm.value = ''
-  sortOption.value = 'latest'
+  sortOption.value = 'alpha'
   loadTickets()
 }
 
