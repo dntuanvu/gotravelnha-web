@@ -130,6 +130,7 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
 
   return {
     id: record.id,
+    slug: record.slug ?? raw?.slug,
     title: record.title,
     description: record.description ?? raw?.description ?? '',
     price: record.priceText ?? raw?.price ?? '',

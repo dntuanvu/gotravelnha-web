@@ -190,7 +190,7 @@
             </div>
             
             <NuxtLink
-              :to="`/attractionsg/${ticket.id}`"
+              :to="`/attractionsg/${ticket.slug || ticket.id}`"
               class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 font-semibold shadow-md mt-auto"
               @click.stop
             >
@@ -302,9 +302,11 @@ const loadTickets = async () => {
   }
 }
 
-const handleCardClick = (ticket) => {
-  if (!ticket || !ticket.id) return
-  navigateTo(`/attractionsg/${ticket.id}`)
+const handleCardClick = (ticket: any) => {
+  if (!ticket) return
+  const slug = ticket.slug || ticket.id
+  if (!slug) return
+  navigateTo(`/attractionsg/${slug}`)
 }
 
 const handleImageError = (event) => {

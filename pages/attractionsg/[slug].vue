@@ -334,8 +334,8 @@ const copyCode = async (code) => {
 }
 
 onMounted(async () => {
-  const slug = route.params.slug
-  console.log(`🔍 Looking for event with ID: ${slug}`)
+  const slugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
+  console.log(`🔍 Looking for event with slug/ID: ${slugParam}`)
   
   try {
     // Fetch all events (slug already contains the ID)
@@ -383,13 +383,17 @@ onMounted(async () => {
     console.log(`🔍 First 3 event IDs:`, allEvents.slice(0, 3).map(e => e.id))
     
     // Find the matching event by ID
-    const foundEvent = allEvents.find(e => e.id === slug)
+    const foundEvent = allEvents.find(e => e.slug === slugParam || e.id === slugParam)
     
     if (foundEvent) {
       console.log(`✅ Found event: ${foundEvent.title}`)
       event.value = foundEvent
+      if (foundEvent.slug && foundEvent.slug !== slugParam) {
+        console.log(`🔄 Updating slug in URL to canonical slug: ${foundEvent.slug}`)
+        navigateTo(`/attractionsg/${foundEvent.slug}`, { replace: true })
+      }
     } else {
-      console.error(`❌ Event not found with ID: ${slug}`)
+      console.error(`❌ Event not found with slug/ID: ${slugParam}`)
     }
   } catch (err) {
     console.error('❌ Error loading event:', err)

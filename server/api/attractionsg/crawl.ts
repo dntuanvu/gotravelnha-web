@@ -17,6 +17,7 @@ interface CrawlRequest {
 
 interface EventData {
   id: string
+  slug?: string
   title: string
   description?: string
   price?: string
@@ -341,6 +342,7 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
 
     const detailedEvent: EventData = {
       ...event,
+      slug: event.slug || generateTitleSlug(event.title),
       description: description,
       image: detailImage,
       price: detailPriceText || event.price,
@@ -421,6 +423,7 @@ function extractEvents(html: string): EventData[] {
         const originalText = priceInfo.originalPriceText || $item.find('.original-price, .old-price, [class*="original"]').first().text().trim()
         const event: EventData = {
           id,
+          slug: generateTitleSlug(title),
           title,
           description: $item.find('.description, p, [class*="desc"]').first().text().trim(),
           price: priceText || undefined,
@@ -467,6 +470,14 @@ function generateEventId(title: string, link: string): string {
   const linkHash = link.length > 0 ? link.split('/').pop()?.split('?')[0] : ''
   
   return `${slug}-${linkHash || Date.now().toString().slice(-6)}`
+}
+
+function generateTitleSlug(title: string): string {
+  const slug = title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+  return slug || `attraction-${Date.now().toString(36)}`
 }
 
 interface PriceInfo {
@@ -625,6 +636,7 @@ function mergeEventData(target: EventData, source: EventData) {
   target.gallery = source.gallery || target.gallery
   target.lastUpdated = source.lastUpdated || target.lastUpdated
   target.options = source.options || target.options
+  target.slug = source.slug || target.slug
 }
 
 function extractGalleryImages($: cheerio.CheerioAPI): string[] {
@@ -748,7 +760,7 @@ async function persistEventsToDatabase(events: EventData[]) {
           where: { id: event.id },
           update: {
             title: event.title,
-            slug: event.id,
+            slug: event.slug || generateTitleSlug(event.title),
             description: event.description,
             priceText: event.price,
             priceAmount: priceAmount ?? null,
@@ -771,7 +783,7 @@ async function persistEventsToDatabase(events: EventData[]) {
           create: {
             id: event.id,
             title: event.title,
-            slug: event.id,
+            slug: event.slug || generateTitleSlug(event.title),
             description: event.description,
             priceText: event.price,
             priceAmount: priceAmount ?? null,
@@ -826,6 +838,7 @@ function mapDbEventToEventData(record: any): EventData {
 
   return {
     id: record.id,
+    slug: record.slug ?? raw?.slug,
     title: record.title,
     description: record.description ?? raw?.description,
     price: record.priceText ?? raw?.price,
