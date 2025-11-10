@@ -99,7 +99,12 @@
         <div 
           v-for="ticket in tickets" 
           :key="ticket.id || ticket.title" 
-          class="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col"
+          class="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          role="button"
+          tabindex="0"
+          @click="handleCardClick(ticket)"
+          @keydown.enter.prevent="handleCardClick(ticket)"
+          @keydown.space.prevent="handleCardClick(ticket)"
         >
           <div class="relative overflow-hidden flex-shrink-0">
             <img 
@@ -148,6 +153,7 @@
             <NuxtLink
               :to="`/attractionsg/${ticket.id}`"
               class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 font-semibold shadow-md mt-auto"
+              @click.stop
             >
               View Details
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -238,6 +244,11 @@ const loadTickets = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const handleCardClick = (ticket) => {
+  if (!ticket || !ticket.id) return
+  navigateTo(`/attractionsg/${ticket.id}`)
 }
 
 const handleImageError = (event) => {

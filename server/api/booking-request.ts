@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
   await transporter.sendMail({
     from: `GoTravelNha <${config.SMTP_USER}>`,
     to: 'enjoytravelticket@gmail.com',
-    cc: ['chloenguyenvuthanhtruc@gmail.com', 'sales@gotravelnha.com'],
+    cc: ['chloenguyenvuthanhtruc@gmail.com', 'sales@gotravelnha.com', 'admin@gotravelnha.com'],
     replyTo: body.email,
     subject: `🎫 New Booking Request: ${body.eventTitle}`,
     html: emailHtml,

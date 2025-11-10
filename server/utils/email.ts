@@ -14,14 +14,25 @@ const getTransporter = (): Transporter | null => {
     return null
   }
 
+  const port = parseInt(config.SMTP_PORT as string, 10) || 587
+  const allowSecure = config.SMTP_SECURE === 'true'
+  const allowStartTls = config.SMTP_REQUIRE_STARTTLS !== 'false'
+  const explicitSecure = allowSecure || port === 465
+
   if (!transporter) {
     transporter = nodemailer.createTransport({
       host: config.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(config.SMTP_PORT as string) || 587,
-      secure: false, // true for 465, false for other ports
+      port,
+      secure: explicitSecure,
+      requireTLS: !explicitSecure && allowStartTls,
       auth: {
         user: config.SMTP_USER,
         pass: config.SMTP_PASS
+      },
+      tls: {
+        rejectUnauthorized: config.SMTP_TLS_REJECT_UNAUTHORIZED === 'false' ? false : true,
+        minVersion: config.SMTP_TLS_MIN_VERSION || undefined,
+        ciphers: config.SMTP_TLS_CIPHERS || undefined
       }
     })
   }
