@@ -7,7 +7,8 @@ import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
 import prisma from '~/server/utils/prisma'
-import type { AttractionsgEvent as AttractionsgEventModel } from '@prisma/client'
+
+const db = prisma as any
 
 interface CrawlRequest {
   fullCrawl?: boolean
@@ -111,18 +112,20 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
       console.log('🌐 Serverless environment detected - delegating crawl to webhook')
       try {
         const fetch = await import('ofetch')
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json'
+        }
+        if (config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET) {
+          headers.Authorization = `Bearer ${config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET}`
+        }
+
         await fetch.$fetch(webhook, {
           method: 'POST',
           body: {
             fullCrawl: body.fullCrawl ?? false,
             maxPages: body.maxPages || 20
           },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET
-              ? `Bearer ${config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET}`
-              : undefined
-          }
+          headers
         })
         console.log('✅ Delegated crawl webhook triggered')
       } catch (error) {
@@ -723,25 +726,25 @@ async function persistEventsToDatabase(events: EventData[]) {
     const now = new Date()
     const seenIds = Array.from(new Set(events.map(event => event.id)))
 
-    await prisma.$transaction(async (tx) => {
-      await tx.attractionsgEvent.updateMany({
-        where: {
-          NOT: {
-            id: {
-              in: seenIds
-            }
+    await db.attractionsgEvent.updateMany({
+      where: {
+        NOT: {
+          id: {
+            in: seenIds
           }
-        },
-        data: {
-          isActive: false
         }
-      })
+      },
+      data: {
+        isActive: false
+      }
+    })
 
-      for (const event of events) {
+    for (const event of events) {
+      try {
         const priceAmount = parsePriceAmount(event.price)
         const originalPriceAmount = parsePriceAmount(event.originalPrice)
 
-        await tx.attractionsgEvent.upsert({
+        await db.attractionsgEvent.upsert({
           where: { id: event.id },
           update: {
             title: event.title,
@@ -789,8 +792,10 @@ async function persistEventsToDatabase(events: EventData[]) {
             raw: event
           }
         })
+      } catch (error) {
+        console.error(`⚠️ Failed to upsert AttractionsSG event ${event.id}:`, error)
       }
-    })
+    }
 
     console.log(`💾 Persisted ${events.length} AttractionsSG events to PostgreSQL`)
   } catch (error) {
@@ -800,7 +805,7 @@ async function persistEventsToDatabase(events: EventData[]) {
 
 async function loadCacheFromDatabase() {
   try {
-    const records = await prisma.attractionsgEvent.findMany({
+    const records = await db.attractionsgEvent.findMany({
       where: { isActive: true },
       orderBy: { updatedAt: 'desc' },
       take: 500 // reasonable upper bound for cache
@@ -816,7 +821,7 @@ async function loadCacheFromDatabase() {
   }
 }
 
-function mapDbEventToEventData(record: AttractionsgEventModel): EventData {
+function mapDbEventToEventData(record: any): EventData {
   const raw = record.raw as EventData | undefined
 
   return {
