@@ -135,6 +135,37 @@ model BlogPost {
   @@map("blog_posts")
 }
 
+model AttractionsgEvent {
+  id                   String   @id
+  title                String
+  slug                 String?
+  description          String?
+  priceText            String?
+  priceAmount          Float?
+  originalPriceText    String?
+  originalPriceAmount  Float?
+  image                String?
+  category             String?
+  location             String?
+  rating               Float?
+  link                 String? @unique
+  duration             String?
+  ageRestriction       String?
+  cancellation         String?
+  validFrom            String?
+  validTo              String?
+  lastSeenAt           DateTime @default(now())
+  isActive             Boolean  @default(true)
+  raw                  Json?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("attractionsg_events")
+  @@index([category])
+  @@index([isActive])
+  @@index([title])
+}
+
 model PriceAlert {
   id            String   @id @default(uuid())
   userId        String

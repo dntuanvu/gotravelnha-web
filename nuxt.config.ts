@@ -76,6 +76,8 @@ export default defineNuxtConfig({
       SMTP_PASS: process.env.SMTP_PASS,
       ATTRACTIONSG_EMAIL: process.env.ATTRACTIONSG_EMAIL,
       ATTRACTIONSG_PASSWORD: process.env.ATTRACTIONSG_PASSWORD,
+      ATTRACTIONSG_BACKGROUND_SYNC: process.env.ATTRACTIONSG_BACKGROUND_SYNC,
+      ATTRACTIONSG_SYNC_INTERVAL: process.env.ATTRACTIONSG_SYNC_INTERVAL,
       public: {
         exchangeApiKey: process.env.EXCHANGE_API_KEY,
         apiBase: process.env.NUXT_PUBLIC_API_BASE,

@@ -1,10 +1,13 @@
 import { defineEventHandler, readBody } from 'h3'
+import type { H3Event } from 'h3'
 import { chromium } from 'playwright'
 import * as cheerio from 'cheerio'
 import { createError } from 'h3'
 import { writeFile, readFile, mkdir } from 'fs/promises'
 import { existsSync } from 'fs'
 import { join } from 'path'
+import prisma from '~/server/utils/prisma'
+import type { AttractionsgEvent as AttractionsgEventModel } from '@prisma/client'
 
 interface CrawlRequest {
   fullCrawl?: boolean
@@ -28,6 +31,7 @@ interface EventData {
   ageRestriction?: string
   cancellation?: string
   lastUpdated: string
+  gallery?: string[]
 }
 
 // In-memory cache for quick access
@@ -40,188 +44,178 @@ const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
 const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
 const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
 
-export default defineEventHandler(async (event) => {
+export async function runAttractionsgCrawl(body: CrawlRequest = {}, event?: H3Event) {
+  return executeCrawl(body, event)
+}
+
+async function executeCrawl(body: CrawlRequest, event?: H3Event) {
+  // Load cache from disk or database if needed
+  if (eventsCache.length === 0 || (Date.now() - cacheTimestamp) > CACHE_DURATION) {
+    await loadCacheFromDisk()
+
+    if (eventsCache.length === 0) {
+      await loadCacheFromDatabase()
+    }
+  }
+
+  // If cache is still valid and not full crawl requested, return cached data
+  if (!body.fullCrawl && eventsCache.length > 0 && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
+    return {
+      success: true,
+      cached: true,
+      total: eventsCache.length,
+      timestamp: new Date(cacheTimestamp).toISOString()
+    }
+  }
+
+  // On serverless environments, rely on cached/DB data (Playwright not supported)
+  if (process.env.VERCEL || process.env.NETLIFY) {
+    console.log('🌐 Serverless environment detected - returning cached/database data only')
+
+    if (eventsCache.length === 0) {
+      await loadCacheFromDatabase()
+    }
+
+    return {
+      success: true,
+      cached: true,
+      total: eventsCache.length,
+      timestamp: cacheTimestamp ? new Date(cacheTimestamp).toISOString() : new Date().toISOString(),
+      message: 'Playwright not available on serverless. Using cached/database data. Run crawler locally or via worker to refresh.'
+    }
+  }
+
+  // Perform fresh crawl (local/background)
+  console.log('🕷️ Starting AttractionsSG crawl...')
+
+  const config = useRuntimeConfig(event)
+  const email = config.ATTRACTIONSG_EMAIL || 'enjoytravelticket@gmail.com'
+  const password = config.ATTRACTIONSG_PASSWORD || 'Truc1@3456101112'
+  const maxPages = body.maxPages || 20
+
+  const browser = await chromium.launch({
+    headless: true,
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--disable-gpu'
+    ]
+  })
+
+  const context = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  })
+
+  const page = await context.newPage()
+
   try {
-    const body = (await readBody(event)) as CrawlRequest
-    
-    // Load cache from disk if available
-    if (eventsCache.length === 0 || (Date.now() - cacheTimestamp) > CACHE_DURATION) {
-      await loadCacheFromDisk()
-    }
-    
-    // If cache is still valid and not full crawl requested, return cached data
-    if (!body.fullCrawl && eventsCache.length > 0 && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
-      return {
-        success: true,
-        cached: true,
-        total: eventsCache.length,
-        timestamp: new Date(cacheTimestamp).toISOString()
+    console.log('🔐 Logging into AttractionsSG...')
+    await page.goto('https://mobile.attractionsg.com/', {
+      waitUntil: 'networkidle',
+      timeout: 30000
+    })
+
+    await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 })
+    await page.fill('input[type="email"], input[name="email"]', email)
+    await page.fill('input[type="password"], input[name="password"]', password)
+    await page.click('button[type="submit"], input[type="submit"]')
+    await page.waitForTimeout(3000)
+    console.log('✅ Successfully logged in')
+
+    const allEvents: EventData[] = []
+
+    console.log('📄 Crawling main page...')
+    const mainContent = await page.content()
+    const mainEvents = extractEvents(mainContent)
+    allEvents.push(...mainEvents)
+    console.log(`✅ Found ${mainEvents.length} events on main page`)
+
+    const categories = ['attractions', 'tours', 'theater', 'museums', 'parks']
+
+    for (const category of categories) {
+      try {
+        console.log(`📄 Crawling category: ${category}...`)
+        const categoryUrl = `https://mobile.attractionsg.com/category/${category}`
+        await page.goto(categoryUrl, {
+          waitUntil: 'networkidle',
+          timeout: 30000
+        })
+        await page.waitForTimeout(2000)
+
+        const content = await page.content()
+        const categoryEvents = extractEvents(content)
+        allEvents.push(...categoryEvents)
+        console.log(`✅ Found ${categoryEvents.length} events in ${category}`)
+      } catch (err) {
+        console.error(`⚠️ Error crawling category ${category}:`, err)
       }
     }
 
-    // MVP: On Vercel, only return cached data (Playwright doesn't work on serverless)
-    if (process.env.VERCEL || process.env.NETLIFY) {
-      console.log('🌐 Running on serverless platform - returning cached data only')
-      return {
-        success: true,
-        cached: true,
-        total: eventsCache.length,
-        timestamp: new Date(cacheTimestamp).toISOString(),
-        message: 'Playwright not available on serverless. Using pre-populated data. Run crawler locally to update data.'
-      }
-    }
+    if (body.fullCrawl) {
+      const searchTerms = ['singapore', 'zoo', 'aquarium', 'museum', 'garden', 'sentosa', 'universal', 'flyer']
 
-    // Perform fresh crawl (local development only)
-    console.log('🕷️ Starting AttractionsSG crawl...')
-    
-    const config = useRuntimeConfig()
-    const email = config.ATTRACTIONSG_EMAIL || 'enjoytravelticket@gmail.com'
-    const password = config.ATTRACTIONSG_PASSWORD || 'Truc1@3456101112'
-    
-    const maxPages = body.maxPages || 20
-
-    // Always run in headless mode for background operation
-    const browser = await chromium.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu'
-      ]
-    })
-
-    const context = await browser.newContext({
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    })
-
-    const page = await context.newPage()
-
-    try {
-      // Login
-      console.log('🔐 Logging into AttractionsSG...')
-      await page.goto('https://mobile.attractionsg.com/', {
-        waitUntil: 'networkidle',
-        timeout: 30000
-      })
-
-      await page.waitForSelector('input[type="email"], input[name="email"]', { timeout: 10000 })
-      await page.fill('input[type="email"], input[name="email"]', email)
-      await page.fill('input[type="password"], input[name="password"]', password)
-      await page.click('button[type="submit"], input[type="submit"]')
-      await page.waitForTimeout(3000)
-      console.log('✅ Successfully logged in')
-
-      const allEvents: EventData[] = []
-      
-      // Crawl main page
-      console.log('📄 Crawling main page...')
-      const mainContent = await page.content()
-      const mainEvents = extractEvents(mainContent)
-      allEvents.push(...mainEvents)
-      console.log(`✅ Found ${mainEvents.length} events on main page`)
-
-      // Crawl all categories
-      const categories = ['attractions', 'tours', 'theater', 'museums', 'parks']
-      
-      for (const category of categories) {
+      for (const term of searchTerms) {
         try {
-          console.log(`📄 Crawling category: ${category}...`)
-          const categoryUrl = `https://mobile.attractionsg.com/category/${category}`
-          await page.goto(categoryUrl, {
+          console.log(`🔍 Searching for: ${term}...`)
+          const searchUrl = `https://mobile.attractionsg.com/search?q=${encodeURIComponent(term)}`
+          await page.goto(searchUrl, {
             waitUntil: 'networkidle',
             timeout: 30000
           })
           await page.waitForTimeout(2000)
-          
+
           const content = await page.content()
-          const categoryEvents = extractEvents(content)
-          allEvents.push(...categoryEvents)
-          console.log(`✅ Found ${categoryEvents.length} events in ${category}`)
-          
+          const searchEvents = extractEvents(content)
+          allEvents.push(...searchEvents)
+          console.log(`✅ Found ${searchEvents.length} events for "${term}"`)
         } catch (err) {
-          console.error(`⚠️ Error crawling category ${category}:`, err)
+          console.error(`⚠️ Error searching for ${term}:`, err)
         }
       }
-
-      // Crawl search pages if full crawl requested
-      if (body.fullCrawl) {
-        const searchTerms = ['singapore', 'zoo', 'aquarium', 'museum', 'garden', 'sentosa', 'universal', 'flyer']
-        
-        for (const term of searchTerms) {
-          try {
-            console.log(`🔍 Searching for: ${term}...`)
-            const searchUrl = `https://mobile.attractionsg.com/search?q=${encodeURIComponent(term)}`
-            await page.goto(searchUrl, {
-              waitUntil: 'networkidle',
-              timeout: 30000
-            })
-            await page.waitForTimeout(2000)
-            
-            const content = await page.content()
-            const searchEvents = extractEvents(content)
-            allEvents.push(...searchEvents)
-            console.log(`✅ Found ${searchEvents.length} events for "${term}"`)
-            
-          } catch (err) {
-            console.error(`⚠️ Error searching for ${term}:`, err)
-          }
-        }
-      }
-
-      // Remove duplicates based on title and link
-      const uniqueEvents = deduplicateEvents(allEvents)
-      
-      console.log(`✅ Total unique events found: ${uniqueEvents.length}`)
-
-      // Crawl detailed information for each event if fullCrawl is requested
-      if (body.fullCrawl) {
-        console.log('📋 Crawling detailed information...')
-        const detailedEvents = []
-        const maxDetailEvents = body.maxPages || 30 // Default to 30 events for detailed crawl
-        
-        for (const event of uniqueEvents.slice(0, maxDetailEvents)) {
-          if (event.link && event.link.startsWith('https://')) {
-            try {
-              const detailedEvent = await crawlEventDetails(page, event)
-              detailedEvents.push(detailedEvent)
-              console.log(`✅ Detailed info for: ${event.title}`)
-              await page.waitForTimeout(1000) // Increased rate limiting for stability
-            } catch (err) {
-              console.error(`⚠️ Error crawling details for ${event.title}:`, err)
-              detailedEvents.push(event) // Use original if detail crawl fails
-            }
-          } else {
-            detailedEvents.push(event)
-          }
-        }
-        
-        // Merge detailed events with remaining events
-        const remainingEvents = uniqueEvents.slice(maxDetailEvents)
-        eventsCache = [...detailedEvents, ...remainingEvents]
-      } else {
-        eventsCache = uniqueEvents
-      }
-      
-      cacheTimestamp = Date.now()
-
-      // Save to disk
-      await saveCacheToDisk(eventsCache)
-
-      await browser.close()
-
-      return {
-        success: true,
-        total: eventsCache.length,
-        cached: false,
-        timestamp: new Date().toISOString()
-      }
-
-    } catch (error: any) {
-      await browser.close()
-      throw error
     }
+
+    const uniqueEvents = deduplicateEvents(allEvents)
+
+    console.log(`✅ Total unique events found: ${uniqueEvents.length}`)
+
+    const maxDetailEvents = body.maxPages || 30
+    const detailEnrichmentLimit = body.fullCrawl ? maxDetailEvents : Math.min(maxDetailEvents, 40)
+    const enrichmentTargets = body.fullCrawl
+      ? uniqueEvents.slice(0, detailEnrichmentLimit)
+      : uniqueEvents.filter(shouldFetchDetails).slice(0, detailEnrichmentLimit)
+
+    if (enrichmentTargets.length > 0) {
+      console.log(`📋 Enriching ${enrichmentTargets.length} events with detailed data...`)
+      await enrichEventsWithDetails(page, enrichmentTargets)
+    }
+
+    eventsCache = uniqueEvents
+
+    cacheTimestamp = Date.now()
+
+    await persistEventsToDatabase(eventsCache)
+    await saveCacheToDisk(eventsCache)
+
+    return {
+      success: true,
+      total: eventsCache.length,
+      cached: false,
+      timestamp: new Date().toISOString()
+    }
+  } catch (error) {
+    console.error('❌ Error during AttractionsSG crawl:', error)
+    throw error
+  } finally {
+    await browser.close()
+  }
+}
+
+export default defineEventHandler(async (event) => {
+  try {
+    const body = (await readBody(event)) as CrawlRequest
+    return await executeCrawl(body, event)
   } catch (error: any) {
     console.error('Crawl error:', error)
     throw createError({
@@ -243,34 +237,12 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
     const content = await page.content()
     const $ = cheerio.load(content)
     
-    // Try multiple image selectors
-    const imgSelectors = [
-      '.main-image img',
-      '.product-image img',
-      '.hero-image img',
-      '.detail-image img',
-      '.banner-image img',
-      'img[class*="main"]',
-      'img[class*="hero"]',
-      'img[class*="detail"]',
-      'img[class*="banner"]',
-      '.image-gallery img',
-      '.slider img',
-      'img'
-    ]
-    
-    let detailImage = event.image
-    for (const selector of imgSelectors) {
-      const img = $(selector).first()
-      if (img.length) {
-        const src = img.attr('src') || img.attr('data-src') || img.attr('data-lazy-src')
-        if (src && !src.includes('placeholder') && !src.includes('logo') && !src.includes('icon')) {
-          detailImage = normalizeUrl(src)
-          console.log(`✅ Found image: ${detailImage}`)
-          break
-        }
-      }
+    const galleryImages = extractGalleryImages($)
+    if (galleryImages.length > 0) {
+      console.log(`🖼️ Found ${galleryImages.length} image(s) for "${event.title}"`)
     }
+    let detailImage = galleryImages.length > 0 ? galleryImages[0] : event.image
+    const detailPrices = extractPriceInfo($, $('body'))
     
     // Try multiple description selectors
     const descSelectors = [
@@ -296,18 +268,23 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
     }
     
     // Extract detailed information
+    const detailPriceText = detailPrices.priceText || extractPrice($('body'))
+    const detailOriginalText = detailPrices.originalPriceText || event.originalPrice
+
     const detailedEvent: EventData = {
       ...event,
       description: description,
       image: detailImage,
-      price: extractPrice($('body')) || event.price,
+      price: detailPriceText || event.price,
+      originalPrice: detailOriginalText || event.originalPrice,
       rating: extractRating($('body')) || event.rating,
       location: extractLocation($('body')) || event.location,
       duration: $('.duration, [class*="duration"]').first().text().trim(),
       ageRestriction: $('.age-restriction, [class*="age"]').first().text().trim(),
       cancellation: $('.cancellation, [class*="cancellation"]').first().text().trim(),
       validFrom: $('.valid-from, [class*="valid"]').first().text().trim(),
-      validTo: $('.valid-to, [class*="valid-to"]').first().text().trim()
+      validTo: $('.valid-to, [class*="valid-to"]').first().text().trim(),
+      gallery: galleryImages.length > 0 ? galleryImages : event.gallery
     }
     
     return detailedEvent
@@ -370,12 +347,15 @@ function extractEvents(html: string): EventData[] {
         // Fix link URL
         const normalizedLink = normalizeUrl(link)
 
+        const priceInfo = extractPriceInfo($, $item)
+        const priceText = priceInfo.priceText || extractPrice($item)
+        const originalText = priceInfo.originalPriceText || $item.find('.original-price, .old-price, [class*="original"]').first().text().trim()
         const event: EventData = {
           id,
           title,
           description: $item.find('.description, p, [class*="desc"]').first().text().trim(),
-          price: extractPrice($item),
-          originalPrice: $item.find('.original-price, .old-price, [class*="original"]').first().text().trim(),
+          price: priceText || undefined,
+          originalPrice: originalText || undefined,
           image,
           category: extractCategory($item),
           location: extractLocation($item),
@@ -420,6 +400,79 @@ function generateEventId(title: string, link: string): string {
   return `${slug}-${linkHash || Date.now().toString().slice(-6)}`
 }
 
+interface PriceInfo {
+  priceText?: string
+  priceAmount?: number
+  originalPriceText?: string
+  originalPriceAmount?: number
+}
+
+function extractPriceInfo($: cheerio.CheerioAPI, $context: cheerio.Cheerio<any>): PriceInfo {
+  const priceCandidates: PriceInfo[] = []
+  const originalCandidates: PriceInfo[] = []
+  const seen = new Set<string>()
+
+  $context.find('*').each((_, element) => {
+    const text = $(element).text().trim().replace(/\s+/g, ' ')
+    if (!text || text.length > 80) return
+    if (seen.has(text)) return
+    if (!/(\$|SGD|S\$)/i.test(text)) return
+    if (/credit|top up|total/i.test(text)) return
+
+    const amountMatch = text.match(/(?:SGD|S\$|\$)\s*([0-9][0-9.,]*)/)
+    if (!amountMatch) return
+
+    const amount = parseFloat(amountMatch[1].replace(/,/g, ''))
+    if (isNaN(amount)) return
+
+    seen.add(text)
+
+    const candidate: PriceInfo = {
+      priceText: text,
+      priceAmount: amount
+    }
+
+    const tag = (((element as any).tagName || (element as any).name) || '').toLowerCase()
+    const className = ($(element).attr('class') || '').toLowerCase()
+
+    if (
+      /RP|UP|ORIGINAL|RETAIL|WAS/i.test(text) ||
+      tag === 'del' ||
+      tag === 's' ||
+      className.includes('strike') ||
+      className.includes('line-through')
+    ) {
+      originalCandidates.push({
+        originalPriceText: text,
+        originalPriceAmount: amount
+      })
+    } else {
+      priceCandidates.push(candidate)
+    }
+  })
+
+  const pickLowest = (candidates: PriceInfo[]) =>
+    candidates.slice().sort((a, b) => (a.priceAmount ?? Infinity) - (b.priceAmount ?? Infinity))[0]
+
+  const pickHighest = (candidates: PriceInfo[]) =>
+    candidates.slice().sort((a, b) => (b.originalPriceAmount ?? -Infinity) - (a.originalPriceAmount ?? -Infinity))[0]
+
+  const priceCandidate = pickLowest(priceCandidates)
+  const originalCandidate =
+    originalCandidates.length > 0
+      ? pickHighest(originalCandidates)
+      : priceCandidates.length > 1
+        ? pickHighest(priceCandidates.map(c => ({ originalPriceText: c.priceText, originalPriceAmount: c.priceAmount })))
+        : undefined
+
+  return {
+    priceText: priceCandidate?.priceText,
+    priceAmount: priceCandidate?.priceAmount,
+    originalPriceText: originalCandidate?.originalPriceText,
+    originalPriceAmount: originalCandidate?.originalPriceAmount
+  }
+}
+
 function extractPrice($item: cheerio.Cheerio<any>): string | undefined {
   const patterns = [
     '.price',
@@ -457,6 +510,228 @@ function extractRating($item: cheerio.Cheerio<any>): number | undefined {
   const ratingText = $item.find('.rating, [class*="rating"]').first().text().trim()
   const rating = parseFloat(ratingText)
   return isNaN(rating) ? undefined : rating
+}
+
+function shouldFetchDetails(event: EventData): boolean {
+  if (!event.link || !event.link.startsWith('https://')) return false
+  if (!event.image) return true
+
+  const priceAmount = parsePriceAmount(event.price)
+  const originalAmount = parsePriceAmount(event.originalPrice)
+  if (!event.originalPrice || !originalAmount || !priceAmount || priceAmount === originalAmount) {
+    return true
+  }
+
+  const lower = event.image.toLowerCase()
+  const badIndicators = ['placeholder', 'default', 'no-image', 'missing', 'blank']
+  return badIndicators.some(indicator => lower.includes(indicator))
+}
+
+async function enrichEventsWithDetails(page: any, events: EventData[]) {
+  for (const event of events) {
+    try {
+      const detailed = await crawlEventDetails(page, event)
+      mergeEventData(event, detailed)
+      console.log(`✅ Enriched event: ${event.title}`)
+      await page.waitForTimeout(800)
+    } catch (error) {
+      console.error(`⚠️ Failed to enrich event ${event.title}:`, error)
+    }
+  }
+}
+
+function mergeEventData(target: EventData, source: EventData) {
+  target.description = source.description || target.description
+  target.price = source.price || target.price
+  target.originalPrice = source.originalPrice || target.originalPrice
+  target.image = source.image || target.image
+  target.category = source.category || target.category
+  target.location = source.location || target.location
+  target.rating = source.rating ?? target.rating
+  target.duration = source.duration || target.duration
+  target.ageRestriction = source.ageRestriction || target.ageRestriction
+  target.cancellation = source.cancellation || target.cancellation
+  target.validFrom = source.validFrom || target.validFrom
+  target.validTo = source.validTo || target.validTo
+  target.gallery = source.gallery || target.gallery
+  target.lastUpdated = source.lastUpdated || target.lastUpdated
+}
+
+function extractGalleryImages($: cheerio.CheerioAPI): string[] {
+  const selectors = [
+    '.main-image img',
+    '.product-image img',
+    '.hero-image img',
+    '.detail-image img',
+    '.banner-image img',
+    'img[class*="main"]',
+    'img[class*="hero"]',
+    'img[class*="detail"]',
+    'img[class*="banner"]',
+    '.image-gallery img',
+    '.slider img',
+    'picture img',
+    'img'
+  ]
+
+  const images = new Set<string>()
+
+  for (const selector of selectors) {
+    $(selector).each((_, element) => {
+      const img = $(element)
+      const src =
+        img.attr('src') ||
+        img.attr('data-src') ||
+        img.attr('data-lazy-src') ||
+        img.attr('data-original') ||
+        img.attr('data-lazy')
+
+      if (src && !src.includes('placeholder') && !src.includes('logo') && !src.includes('icon')) {
+        const normalized = normalizeUrl(src)
+        if (normalized) {
+          images.add(normalized)
+        }
+      }
+    })
+
+    if (images.size > 0) {
+      break
+    }
+  }
+
+  return Array.from(images)
+}
+
+async function persistEventsToDatabase(events: EventData[]) {
+  if (!events.length) return
+
+  try {
+    const now = new Date()
+    const seenIds = Array.from(new Set(events.map(event => event.id)))
+
+    await prisma.$transaction(async (tx) => {
+      await tx.attractionsgEvent.updateMany({
+        where: {
+          NOT: {
+            id: {
+              in: seenIds
+            }
+          }
+        },
+        data: {
+          isActive: false
+        }
+      })
+
+      for (const event of events) {
+        const priceAmount = parsePriceAmount(event.price)
+        const originalPriceAmount = parsePriceAmount(event.originalPrice)
+
+        await tx.attractionsgEvent.upsert({
+          where: { id: event.id },
+          update: {
+            title: event.title,
+            slug: event.id,
+            description: event.description,
+            priceText: event.price,
+            priceAmount: priceAmount ?? null,
+            originalPriceText: event.originalPrice,
+            originalPriceAmount: originalPriceAmount ?? null,
+            image: event.image,
+            category: event.category,
+            location: event.location,
+            rating: typeof event.rating === 'number' ? event.rating : null,
+            link: event.link,
+            duration: event.duration,
+            ageRestriction: event.ageRestriction,
+            cancellation: event.cancellation,
+            validFrom: event.validFrom,
+            validTo: event.validTo,
+            lastSeenAt: now,
+            isActive: true,
+            raw: event
+          },
+          create: {
+            id: event.id,
+            title: event.title,
+            slug: event.id,
+            description: event.description,
+            priceText: event.price,
+            priceAmount: priceAmount ?? null,
+            originalPriceText: event.originalPrice,
+            originalPriceAmount: originalPriceAmount ?? null,
+            image: event.image,
+            category: event.category,
+            location: event.location,
+            rating: typeof event.rating === 'number' ? event.rating : null,
+            link: event.link,
+            duration: event.duration,
+            ageRestriction: event.ageRestriction,
+            cancellation: event.cancellation,
+            validFrom: event.validFrom,
+            validTo: event.validTo,
+            lastSeenAt: now,
+            isActive: true,
+            raw: event
+          }
+        })
+      }
+    })
+
+    console.log(`💾 Persisted ${events.length} AttractionsSG events to PostgreSQL`)
+  } catch (error) {
+    console.error('⚠️ Error persisting AttractionsSG events to database:', error)
+  }
+}
+
+async function loadCacheFromDatabase() {
+  try {
+    const records = await prisma.attractionsgEvent.findMany({
+      where: { isActive: true },
+      orderBy: { updatedAt: 'desc' },
+      take: 500 // reasonable upper bound for cache
+    })
+
+    if (records.length > 0) {
+      eventsCache = records.map(mapDbEventToEventData)
+      cacheTimestamp = Date.now()
+      console.log(`✅ Loaded ${records.length} events from database cache`)
+    }
+  } catch (error) {
+    console.error('⚠️ Error loading AttractionsSG events from database:', error)
+  }
+}
+
+function mapDbEventToEventData(record: AttractionsgEventModel): EventData {
+  const raw = record.raw as EventData | undefined
+
+  return {
+    id: record.id,
+    title: record.title,
+    description: record.description ?? raw?.description,
+    price: record.priceText ?? raw?.price,
+    originalPrice: record.originalPriceText ?? raw?.originalPrice,
+    image: record.image ?? raw?.image,
+    category: record.category ?? raw?.category,
+    location: record.location ?? raw?.location,
+    rating: typeof record.rating === 'number' ? record.rating : raw?.rating,
+    link: record.link ?? raw?.link,
+    validFrom: record.validFrom ?? raw?.validFrom,
+    validTo: record.validTo ?? raw?.validTo,
+    duration: record.duration ?? raw?.duration,
+    ageRestriction: record.ageRestriction ?? raw?.ageRestriction,
+    cancellation: record.cancellation ?? raw?.cancellation,
+    lastUpdated: record.updatedAt.toISOString(),
+    gallery: raw?.gallery
+  }
+}
+
+function parsePriceAmount(price?: string): number | undefined {
+  if (!price) return undefined
+  const numericMatch = price.replace(/[^0-9.,]/g, '').replace(/,/g, '')
+  if (!numericMatch) return undefined
+  const parsed = parseFloat(numericMatch)
+  return isNaN(parsed) ? undefined : parsed
 }
 
 async function loadCacheFromDisk() {
@@ -514,6 +789,14 @@ export function getCacheTimestamp(): number {
 
 function normalizeUrl(url?: string): string | undefined {
   if (!url) return undefined
+
+  if (url.startsWith('data:')) {
+    return url
+  }
+
+  if (url.startsWith('//')) {
+    return `https:${url}`
+  }
   
   // Already absolute URL
   if (url.startsWith('http://') || url.startsWith('https://')) {

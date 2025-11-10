@@ -1,696 +1,675 @@
 {
   "events": [
     {
+      "id": "altitudex-former-ifly-aa4f1ee2-8959-45ce-8076-8f5909fc6261",
+      "title": "AltitudeX (former iFly)",
+      "description": "",
+      "price": "SGD70.00",
+      "originalPrice": "RP SGD129.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/aa4f1ee2-8959-45ce-8076-8f5909fc6261/AX IS Branding Shot 1 v2 (lowres).jpg",
+      "link": "https://mobile.attractionsg.com/attractions/view/aa4f1ee2-8959-45ce-8076-8f5909fc6261",
+      "lastUpdated": "2025-11-10T06:29:26.438Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/aa4f1ee2-8959-45ce-8076-8f5909fc6261/AX IS Branding Shot 1 v2 (lowres).jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/aa4f1ee2-8959-45ce-8076-8f5909fc6261/mceclip0.png"
+      ]
+    },
+    {
       "id": "gardens-by-the-bay-cbe0af31-f059-44dc-89da-057ddd6cbaba",
       "title": "Gardens by the Bay",
       "description": "Please visit our website for closure dates for monthly maintenance at https://www.gardensbythebay.com.sg/en/plan-your-visit/opening-hours.html",
-      "price": "RP SGD46.00",
-      "originalPrice": "RP SGD46.00",
+      "price": "SGD20.00",
+      "originalPrice": "RP SGD60.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/cbe0af31-f059-44dc-89da-057ddd6cbaba/e8f1f8fa-c548-46a3-97ac-7af9edca99e0.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/cbe0af31-f059-44dc-89da-057ddd6cbaba",
-      "lastUpdated": "2025-11-02T03:45:34.301Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.439Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/cbe0af31-f059-44dc-89da-057ddd6cbaba/e8f1f8fa-c548-46a3-97ac-7af9edca99e0.jpg"
+      ]
     },
     {
       "id": "hyperdrive-933747e5-611d-4435-94e2-4cc039b1a1b1",
       "title": "HyperDrive",
       "description": "HyperDrive requires advance booking at: https://www.apex-timing.com/gokarts/sessions_booking.php?center=559&category=104 using the XXXXXXX-XXXX code below the barcode on your confirmation slip",
-      "price": "RP SGD48.00",
-      "originalPrice": "RP SGD48.00",
+      "price": "RP SGD43.00",
+      "originalPrice": "HyperDrive RP SGD43.00 Please select date Fixed Date Today Instant Require info",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/933747e5-611d-4435-94e2-4cc039b1a1b1/1lo4e12000m1chkip6C03_C_1200_800_Q70.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/933747e5-611d-4435-94e2-4cc039b1a1b1",
-      "lastUpdated": "2025-11-02T03:45:34.301Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.439Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/933747e5-611d-4435-94e2-4cc039b1a1b1/1lo4e12000m1chkip6C03_C_1200_800_Q70.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/0dbdea79-1008-4e86-9c78-f5477946f903/mceclip0.png"
+      ]
+    },
+    {
+      "id": "rws-10-feast-meal-voucher-no-min-spend-ee27695d-e75a-48a8-8d39-43c8ffe59290",
+      "title": "RWS $10 FEAST MEAL VOUCHER NO MIN SPEND",
+      "description": "Offer Includes :- Feast $10 Meal Voucher (No Min Spend)",
+      "price": "SGD9.00",
+      "originalPrice": "RP SGD10.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ee27695d-e75a-48a8-8d39-43c8ffe59290/thumbnail (1).jpg",
+      "link": "https://mobile.attractionsg.com/attractions/view/ee27695d-e75a-48a8-8d39-43c8ffe59290",
+      "lastUpdated": "2025-11-10T06:29:26.439Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ee27695d-e75a-48a8-8d39-43c8ffe59290/thumbnail (1).jpg"
+      ]
     },
     {
       "id": "singapore-cable-car-skyorb-cabin-round-trip-f2fdb838-e9ac-4ec9-a3fb-e68b9db24f77",
       "title": "Singapore Cable Car SkyOrb Cabin (Round Trip)",
       "description": "",
-      "price": "RP SGD48.00",
-      "originalPrice": "RP SGD48.00",
+      "price": "SGD20.00",
+      "originalPrice": "RP SGD50.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/f2fdb838-e9ac-4ec9-a3fb-e68b9db24f77/New-Web_720-x-560_SkyOrb3.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/f2fdb838-e9ac-4ec9-a3fb-e68b9db24f77",
-      "lastUpdated": "2025-11-02T03:45:34.302Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.440Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/f2fdb838-e9ac-4ec9-a3fb-e68b9db24f77/New-Web_720-x-560_SkyOrb3.jpg"
+      ]
     },
     {
       "id": "uss-wicked-movie-premiere-package-2025-november-13-2025-2c11b26a-3631-405c-98ff-5329dffdb90f",
       "title": "USS Wicked Movie Premiere Package 2025 *November 13, 2025*",
       "description": "The cast of Wicked: For Good will be in Universal Studios Singapore on 13 November 2025 for the premiere of the film. Day guests in the park may catch a glimpse of the cast as they grace the 'yellow carpet' on their way to the premiere.",
-      "price": "RP SGD93.00",
-      "originalPrice": "RP SGD93.00",
+      "price": "SGD 5 Meal Voucher (with min. SGD 25 spend)",
+      "originalPrice": "SGD 5 Retail Voucher (with min. SGD 60 spend)",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/2c11b26a-3631-405c-98ff-5329dffdb90f/WICKED.png",
       "link": "https://mobile.attractionsg.com/attractions/view/2c11b26a-3631-405c-98ff-5329dffdb90f",
-      "lastUpdated": "2025-11-02T03:45:34.302Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.440Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/2c11b26a-3631-405c-98ff-5329dffdb90f/WICKED.png"
+      ]
     },
     {
       "id": "outdoor-audio-tour-at-gardens-by-the-bay-4182c753-35d6-48ad-9a70-fa81a638e665",
       "title": "Outdoor Audio Tour at Gardens by the Bay",
       "description": "Mandarin Audio Tour: 10:30am, 11:30am, 2:00pm & 4:00pm",
-      "price": "RP SGD10.00",
+      "price": "SGD4.20",
       "originalPrice": "RP SGD10.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/4182c753-35d6-48ad-9a70-fa81a638e665/GBTB RED TRAM.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/4182c753-35d6-48ad-9a70-fa81a638e665",
-      "lastUpdated": "2025-11-02T03:45:34.302Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.440Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/4182c753-35d6-48ad-9a70-fa81a638e665/GBTB RED TRAM.jpg"
+      ]
     },
     {
       "id": "floral-fantasy-be7313db-3b84-4840-b51d-235553ffd67e",
       "title": "Floral Fantasy",
       "description": "Please be informed that Floral Fantasy will be closed from 4 to 10 Dec 2025, and will reopen on 11 Dec 2025. We kindly request that you share this information with your teams and guests to assist with itinerary planning.",
-      "price": "RP SGD20.00",
+      "price": "SGD6.20",
       "originalPrice": "RP SGD20.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/be7313db-3b84-4840-b51d-235553ffd67e/floral-fantasy-main.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/be7313db-3b84-4840-b51d-235553ffd67e",
-      "lastUpdated": "2025-11-02T03:45:34.302Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.440Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/be7313db-3b84-4840-b51d-235553ffd67e/floral-fantasy-main.jpg"
+      ]
     },
     {
       "id": "bird-paradise-for-tourist-only-slot-booking-required-33fa7ff0-9ec9-4a08-8344-ca624eecfe41",
       "title": "Bird Paradise (For Tourist Only) *Slot Booking Required*",
       "description": "Reservation of time slot is mandatoryComplimentary in-park shuttle service is included in all admission tickets.",
-      "price": "RP SGD49.00",
+      "price": "SGD28.90",
       "originalPrice": "RP SGD49.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/33fa7ff0-9ec9-4a08-8344-ca624eecfe41/bp-main-kv-cw-1308x738.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/33fa7ff0-9ec9-4a08-8344-ca624eecfe41",
-      "lastUpdated": "2025-11-02T03:45:34.302Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.441Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/33fa7ff0-9ec9-4a08-8344-ca624eecfe41/bp-main-kv-cw-1308x738.jpg"
+      ]
     },
     {
       "id": "night-safari-with-tram-for-tourist-only-time-slot-booking-required-067f0b21-3364-49da-88f9-465ae7b18eff",
       "title": "Night Safari with tram (For Tourist Only) *Time Slot Booking Required*",
       "description": "",
-      "price": "RP SGD58.00",
+      "price": "SGD28.70",
       "originalPrice": "RP SGD58.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/067f0b21-3364-49da-88f9-465ae7b18eff/ns-main-kv-1024x1024.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/067f0b21-3364-49da-88f9-465ae7b18eff",
-      "lastUpdated": "2025-11-02T03:45:34.303Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.441Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/067f0b21-3364-49da-88f9-465ae7b18eff/ns-main-kv-1024x1024.jpg"
+      ]
     },
     {
       "id": "rainforest-wild-asia-for-tourist-only-booking-required-16b6d767-5b9b-436b-8f4f-818c3bc6a029",
       "title": "Rainforest Wild Asia (For Tourist Only) *Booking Required*",
       "description": "Experience Asia’s first wildlife adventure park, where every chance encounter journey is a story to tell.",
-      "price": "RP SGD45.00",
+      "price": "SGD28.05",
       "originalPrice": "RP SGD45.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/16b6d767-5b9b-436b-8f4f-818c3bc6a029/RFW ASIA_MainKV_1920x1080px.png",
       "link": "https://mobile.attractionsg.com/attractions/view/16b6d767-5b9b-436b-8f4f-818c3bc6a029",
-      "lastUpdated": "2025-11-02T03:45:34.303Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.441Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/16b6d767-5b9b-436b-8f4f-818c3bc6a029/RFW ASIA_MainKV_1920x1080px.png"
+      ]
     },
     {
       "id": "river-wonders-admission-only-for-tourist-only-booking-required-d1c51967-2e65-439c-9306-5ace5331a7ff",
       "title": "River Wonders Admission Only (For Tourist Only) *Booking Required*",
       "description": "",
-      "price": "RP SGD43.00",
-      "originalPrice": "RP SGD43.00",
+      "price": "SGD28.05",
+      "originalPrice": "RP SGD48.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/d1c51967-2e65-439c-9306-5ace5331a7ff/rw-main-kv-976x821.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/d1c51967-2e65-439c-9306-5ace5331a7ff",
-      "lastUpdated": "2025-11-02T03:45:34.303Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.441Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/d1c51967-2e65-439c-9306-5ace5331a7ff/rw-main-kv-976x821.jpg"
+      ]
     },
     {
       "id": "singapore-zoo-w-tram-for-tourist-only-visit-date-booking-required-9da19f06-43d3-459d-a803-04347496bba8",
       "title": "Singapore Zoo w/ Tram (For Tourist Only) *Visit date booking required*",
       "description": "",
-      "price": "RP SGD49.00",
+      "price": "SGD28.90",
       "originalPrice": "RP SGD49.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/9da19f06-43d3-459d-a803-04347496bba8/sz-main-kv-600x600.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/9da19f06-43d3-459d-a803-04347496bba8",
-      "lastUpdated": "2025-11-02T03:45:34.303Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.441Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/9da19f06-43d3-459d-a803-04347496bba8/sz-main-kv-600x600.jpg"
+      ]
     },
     {
       "id": "park-hopper-plus-4in1-sg-zoo-night-safari-river-wonders-bird-paradise-for-tourist-800f3827-838d-43cb-8d42-51ccdd9902e2",
       "title": "Park Hopper Plus 4in1 [SG Zoo, Night Safari, River Wonders & Bird Paradise] (For Tourist)",
       "description": "IMPORTANT:Booking of date is for Night Safari. Other parks can be used the same date as the Night Safari or within 7 days after date booked. *Must visit Night Safari on the first date selected.Visit all 4 wildlife parks with 7 days",
-      "price": "RP SGD193.00",
+      "price": "SGD76.50",
       "originalPrice": "RP SGD193.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/800f3827-838d-43cb-8d42-51ccdd9902e2/4-parks-1200x1200.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/800f3827-838d-43cb-8d42-51ccdd9902e2",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/800f3827-838d-43cb-8d42-51ccdd9902e2/4-parks-1200x1200.jpg"
+      ]
     },
     {
       "id": "madame-tussauds-singapore-e0374961-be7c-49d7-a5f4-4f1baa84d484",
       "title": "Madame Tussauds Singapore",
       "description": "Early closure schedule for 9 October 2025Open: 10:00 amLast Entry: 5:00 pmClose Attraction: 6:00 pm",
-      "price": "RP SGD42.00",
-      "originalPrice": "RP SGD42.00",
+      "price": "SGD22.50",
+      "originalPrice": "RP SGD58.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e0374961-be7c-49d7-a5f4-4f1baa84d484/2F0016B4BDC345D15.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/e0374961-be7c-49d7-a5f4-4f1baa84d484",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e0374961-be7c-49d7-a5f4-4f1baa84d484/2F0016B4BDC345D15.jpg"
+      ]
     },
     {
       "id": "singapore-big-bus-tour-45a03cce-dd14-4aac-a4ec-c2b10bce9221",
       "title": "Singapore Big Bus Tour",
       "description": "",
-      "price": "RP SGD65.00",
+      "price": "SGD44.00",
       "originalPrice": "RP SGD65.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/45a03cce-dd14-4aac-a4ec-c2b10bce9221/BIG bus.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/45a03cce-dd14-4aac-a4ec-c2b10bce9221",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/45a03cce-dd14-4aac-a4ec-c2b10bce9221/BIG bus.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/45a03cce-dd14-4aac-a4ec-c2b10bce9221/mceclip0.png"
+      ]
     },
     {
       "id": "singapore-ducktours-10858b22-a59d-427a-a376-4e1274542579",
       "title": "Singapore Ducktours",
       "description": "",
-      "price": "RP SGD49.00",
-      "originalPrice": "RP SGD49.00",
+      "price": "SGD31.20",
+      "originalPrice": "RP SGD53.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/10858b22-a59d-427a-a376-4e1274542579/Duck Tour.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/10858b22-a59d-427a-a376-4e1274542579",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/10858b22-a59d-427a-a376-4e1274542579/Duck Tour.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/10858b22-a59d-427a-a376-4e1274542579/mceclip0.png",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/10858b22-a59d-427a-a376-4e1274542579/mceclip1.png"
+      ]
     },
     {
       "id": "cable-car-mount-faber-line-a1497b1c-06a3-478b-8ff9-573a8297cc90",
       "title": "Cable Car (Mount Faber Line)",
       "description": "Mount Faber Line (Round Trip) refers to one round trip on Mount Faber Line for a day only.\nTicket purchased has a validity period of 90 days upon date of purchase. \nCable Car operating hours: 8.45am - 10pm (Last boarding 9.30pm).\nChild is defined as 4 to 12 years old (before 13th birthday). Free admission for children below 4 years old.\nFlammable materials like liquids, gases, ionised and non-ionised lithium batteries; and devices that contain flammable materials such as Motorized Personal Mobility devices and electronic scooters and helium balloons are prohibited onboard the Singapore Cable Car.",
-      "price": "RP SGD33.00",
+      "price": "MSP SGD15.00",
       "originalPrice": "RP SGD33.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/a1497b1c-06a3-478b-8ff9-573a8297cc90/cc.png",
       "link": "https://mobile.attractionsg.com/attractions/view/a1497b1c-06a3-478b-8ff9-573a8297cc90",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/a1497b1c-06a3-478b-8ff9-573a8297cc90/cc.png"
+      ]
     },
     {
       "id": "singapore-cable-car-722f81bd-38bb-4fa0-b9e0-ec63791c46fb",
       "title": "Singapore Cable Car",
       "description": "",
-      "price": "RP SGD35.00",
+      "price": "SGD19.00",
       "originalPrice": "RP SGD35.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/722f81bd-38bb-4fa0-b9e0-ec63791c46fb/cable car.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/722f81bd-38bb-4fa0-b9e0-ec63791c46fb",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.442Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/722f81bd-38bb-4fa0-b9e0-ec63791c46fb/cable car.jpg"
+      ]
     },
     {
       "id": "wings-of-time-fireworks-symphony-6cd317bb-a7c2-4863-b130-809fc9e18699",
       "title": "Wings of Time Fireworks Symphony",
       "description": "The magical adventure begins with Shahbaz, a prehistoric bird. Together with his friends, Rachel and Felix, they travel across beautiful landscapes and the mysteries of time, featuring artistic interpretations of the Industrial Revolution, the Silk Road era, Mayan Pyramids, Underwater World and African Savanna. As Shahbaz’s friends discover more about themselves, will they find the courage to be who they really are? Will Shahbaz find his way home and will the trio find true friendship at the end of the journey?\n \n\nTimeslot booking is mandatory. Please make timeslot booking at the following URL:\n\nFor Wings of Time Open Dated tickets, please proceed tohttps://viewbookings.mountfaberleisure.com/merchant/4398 and enter your ticketconfirmation code to choose from an available Date & Time slot before heading to theattraction.\nShow Mobile Ticket for redemption\nPlease remember to reserve your seat and timeslot prior to your arrival\nat Wings of Time (located at Beach Station)",
-      "price": "RP SGD22.00",
+      "price": "SGD13.00",
       "originalPrice": "RP SGD22.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/6cd317bb-a7c2-4863-b130-809fc9e18699/wot.png",
       "link": "https://mobile.attractionsg.com/attractions/view/6cd317bb-a7c2-4863-b130-809fc9e18699",
-      "lastUpdated": "2025-11-02T03:45:34.304Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/6cd317bb-a7c2-4863-b130-809fc9e18699/wot.png"
+      ]
     },
     {
       "id": "wings-of-time-fireworks-symphony-premium-seat-b6d96e4a-a7e8-44f8-9b43-d40b57dce919",
       "title": "Wings of Time Fireworks Symphony - Premium Seat",
       "description": "Wings of Times will be close on November 3 to 16, 2025",
-      "price": "RP SGD27.00",
+      "price": "SGD20.50",
       "originalPrice": "RP SGD27.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/b6d96e4a-a7e8-44f8-9b43-d40b57dce919/WOT PREMIUM 1.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/b6d96e4a-a7e8-44f8-9b43-d40b57dce919",
-      "lastUpdated": "2025-11-02T03:45:34.305Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/b6d96e4a-a7e8-44f8-9b43-d40b57dce919/WOT PREMIUM 1.jpg"
+      ]
     },
     {
       "id": "harry-potter-visions-of-magic-dated-time-minimum-15paxs-ac2c12c2-7e15-4959-b7fb-a0668cad7ac9",
       "title": "Harry Potter: Visions of Magic *Dated Time* [MINIMUM 15PAXS]",
       "description": "",
       "price": "RP SGD59.00",
-      "originalPrice": "RP SGD59.00",
+      "originalPrice": "RP SGD59.00 Please select date",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ac2c12c2-7e15-4959-b7fb-a0668cad7ac9/Harry-Potter-Visions-of-Magic-shareable.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/ac2c12c2-7e15-4959-b7fb-a0668cad7ac9",
-      "lastUpdated": "2025-11-02T03:45:34.305Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ac2c12c2-7e15-4959-b7fb-a0668cad7ac9/Harry-Potter-Visions-of-Magic-shareable.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ac2c12c2-7e15-4959-b7fb-a0668cad7ac9/blobid0.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/ac2c12c2-7e15-4959-b7fb-a0668cad7ac9/mceclip0.png"
+      ]
     },
     {
       "id": "harry-potter-visions-of-magic-reservation-required-e6401ddb-af45-48e2-a642-e72a827f52a6",
       "title": "Harry Potter: Visions of Magic *Reservation Required*",
-      "description": "",
-      "price": "RP SGD59.00",
-      "originalPrice": "RP SGD59.00",
+      "description": "Harry Potter: Visions Of Magic - Early closure on 1 Sep to 16 Nov 25Opening hours: 11AM – 7PM (Last entry 6PM)",
+      "price": "SGD45.80",
+      "originalPrice": "RP SGD79.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e6401ddb-af45-48e2-a642-e72a827f52a6/Harry-Potter-Visions-of-Magic-shareable.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/e6401ddb-af45-48e2-a642-e72a827f52a6",
-      "lastUpdated": "2025-11-02T03:45:34.305Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e6401ddb-af45-48e2-a642-e72a827f52a6/Harry-Potter-Visions-of-Magic-shareable.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e6401ddb-af45-48e2-a642-e72a827f52a6/blobid1.jpg",
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/e6401ddb-af45-48e2-a642-e72a827f52a6/mceclip0.png"
+      ]
     },
     {
       "id": "singapore-cable-car-wings-of-time-open-dated-7-40pm-8-40pm-standard-seat-58e7f5f1-a69a-4829-9d80-3ef9bf45409d",
       "title": "Singapore Cable Car + Wings of Time Open Dated (7.40pm/8.40pm) - Standard Seat",
-      "description": "",
-      "price": "RP SGD53.00",
-      "originalPrice": "RP SGD53.00",
+      "description": "Wings of Times will be close on November 3 to 16, 2025",
+      "price": "SGD24.50",
+      "originalPrice": "RP SGD54.00",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/58e7f5f1-a69a-4829-9d80-3ef9bf45409d/CC WOT.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/58e7f5f1-a69a-4829-9d80-3ef9bf45409d",
-      "lastUpdated": "2025-11-02T03:45:34.305Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/58e7f5f1-a69a-4829-9d80-3ef9bf45409d/CC WOT.jpg"
+      ]
     },
     {
       "id": "skyhelix-sentosa-7f942034-5213-4c95-a636-64a3a52a5cf6",
       "title": "SkyHelix Sentosa",
-      "description": "",
-      "price": "RP SGD18.00",
-      "originalPrice": "RP SGD18.00",
+      "description": "SkyHelix Sentosa will be close on 24 October 2025 10am – 12pm",
+      "price": "SGD11.70",
+      "originalPrice": "[ADULT] SkyHelix SKYHELIXCSVAD RP SGD18.00 Valid From 01 Jun 2025 To 18 Dec 2025",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/7f942034-5213-4c95-a636-64a3a52a5cf6/skyhelix-sentosa1.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/7f942034-5213-4c95-a636-64a3a52a5cf6",
-      "lastUpdated": "2025-11-02T03:45:34.305Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.443Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/7f942034-5213-4c95-a636-64a3a52a5cf6/skyhelix-sentosa1.jpg"
+      ]
     },
     {
       "id": "singapore-flyer-f2781e26-a535-4af6-8285-7af119668cab",
       "title": "Singapore Flyer",
-      "description": "",
+      "description": "Please use this ticket to gain direct entry into the Flyer.",
       "price": "RP SGD40.00",
-      "originalPrice": "RP SGD40.00",
+      "originalPrice": "Singapore Flyer RP SGD40.00 Please select date Fixed Date Today Instant",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/f2781e26-a535-4af6-8285-7af119668cab/FLYER 1.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/f2781e26-a535-4af6-8285-7af119668cab",
-      "lastUpdated": "2025-11-02T03:45:34.306Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/f2781e26-a535-4af6-8285-7af119668cab/FLYER 1.jpg"
+      ]
     },
     {
       "id": "legoland-malaysia-theme-park-b77b2988-c0a8-46de-878b-b8ad19cbc396",
       "title": "LEGOLAND® Malaysia (THEME PARK)",
-      "description": "",
-      "price": "RP SGD76.75",
+      "description": "For Legoland Operating Days and Closure, please check this linkOpening Hours | LEGOLAND® Malaysia Resort",
+      "price": "SGD40.50",
       "originalPrice": "RP SGD76.75",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/b77b2988-c0a8-46de-878b-b8ad19cbc396/76CDBED9469031B67.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/b77b2988-c0a8-46de-878b-b8ad19cbc396",
-      "lastUpdated": "2025-11-02T03:45:34.306Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/attractions/b77b2988-c0a8-46de-878b-b8ad19cbc396/76CDBED9469031B67.jpg"
+      ]
     },
     {
       "id": "legoland-malaysia-1day-2days-combo-04f10865-a2f9-4de7-9a6a-d9592cd1cf6f",
       "title": "LEGOLAND® Malaysia 1Day / 2Days Combo",
-      "description": "",
-      "price": "RP SGD98.32",
-      "originalPrice": "RP SGD98.32",
+      "description": "For Legoland Operating Days and Closure, please check this linkOpening Hours | LEGOLAND® Malaysia Resort",
+      "price": "SGD52.27",
+      "originalPrice": "RP SGD122.98",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/04f10865-a2f9-4de7-9a6a-d9592cd1cf6f/LLM_19_1_DAY_COMBO_(TP_WP_SLC).jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/04f10865-a2f9-4de7-9a6a-d9592cd1cf6f",
-      "lastUpdated": "2025-11-02T03:45:34.306Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/04f10865-a2f9-4de7-9a6a-d9592cd1cf6f/LLM_19_1_DAY_COMBO_(TP_WP_SLC).jpg"
+      ]
     },
     {
       "id": "legoland-malaysia-waterpark-sea-life-stand-alone-a92b759f-9d65-4d90-9aa7-058c0c93be62",
       "title": "LEGOLAND® Malaysia WATERPARK / SEA LIFE (STAND ALONE)",
-      "description": "",
-      "price": "RP SGD30.51",
-      "originalPrice": "RP SGD30.51",
+      "description": "Temporary Closure Notice: LEGOLAND®️ Water Park (22 May 2025)",
+      "price": "SGD17.53",
+      "originalPrice": "RP SGD55.17",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/a92b759f-9d65-4d90-9aa7-058c0c93be62/seawater.png",
       "link": "https://mobile.attractionsg.com/attractions/view/a92b759f-9d65-4d90-9aa7-058c0c93be62",
-      "lastUpdated": "2025-11-02T03:45:34.306Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/a92b759f-9d65-4d90-9aa7-058c0c93be62/seawater.png"
+      ]
     },
     {
       "id": "captain-explorer-dukw-tour-349b88b9-fae2-42d9-b5d4-bdda21654bec",
       "title": "Captain Explorer DUKW™ Tour",
       "description": "",
-      "price": "RP SGD40.00",
-      "originalPrice": "RP SGD40.00",
+      "price": "SGD22.30",
+      "originalPrice": "Adult DUKWA RP SGD40.00 Valid From 03 Oct 2024 To 06 Jan 2026 SGD29.30",
+      "image": "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/349b88b9-fae2-42d9-b5d4-bdda21654bec/1527664559_1460689424_dukw_boat.jpg",
       "link": "https://mobile.attractionsg.com/attractions/view/349b88b9-fae2-42d9-b5d4-bdda21654bec",
-      "lastUpdated": "2025-11-02T03:45:34.307Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
-    },
-    {
-      "id": "ifly-singapore-14184690-9a23-476e-a647-8842ee2eb46e",
-      "title": "iFly Singapore",
-      "description": "",
-      "price": "RP SGD89.00",
-      "originalPrice": "RP SGD89.00",
-      "link": "https://mobile.attractionsg.com/attractions/view/14184690-9a23-476e-a647-8842ee2eb46e",
-      "lastUpdated": "2025-11-02T03:45:34.307Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z",
+      "gallery": [
+        "https://cattpl.s3.ap-southeast-1.amazonaws.com/local/attractions/349b88b9-fae2-42d9-b5d4-bdda21654bec/1527664559_1460689424_dukw_boat.jpg"
+      ]
     },
     {
       "id": "api-dinoventure-17474f7b-36dc-4812-9d6d-a115a7e1a042",
       "title": "[API] DinoVenture",
       "description": "",
-      "price": "RP SGD15.00",
-      "originalPrice": "RP SGD15.00",
+      "price": "SGD11.20",
+      "originalPrice": "[API] DinoVenture RP SGD15.00 SGD11.20 Open Date Today Instant",
       "link": "https://mobile.attractionsg.com/attractions/view/17474f7b-36dc-4812-9d6d-a115a7e1a042",
-      "lastUpdated": "2025-11-02T03:45:34.307Z",
-      "duration": "",
-      "ageRestriction": "",
-      "cancellation": "",
-      "validFrom": "",
-      "validTo": ""
+      "lastUpdated": "2025-11-10T06:29:26.444Z"
     },
     {
       "id": "api-good-old-days-0694d890-27c6-408c-b8f9-bd4be1b31cc1",
       "title": "[API] Good Old Days",
       "description": "",
-      "price": "RP SGD28.00",
-      "originalPrice": "RP SGD28.00",
+      "price": "SGD18.00",
+      "originalPrice": "[API] Good Old Days RP SGD28.00 SGD18.00 Open Date Today Instant",
       "link": "https://mobile.attractionsg.com/attractions/view/0694d890-27c6-408c-b8f9-bd4be1b31cc1",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "api-sentosa-island-bus-tour-sibt-e8cca229-422f-4f47-bd32-469cd475a3b5",
       "title": "[API] Sentosa Island Bus Tour (SIBT)",
       "description": "",
-      "price": "RP SGD25.00",
-      "originalPrice": "RP SGD25.00",
+      "price": "SGD15.20",
+      "originalPrice": "[API] Sentosa Island Bus Tour (SIBT) RP SGD25.00 SGD15.20",
       "link": "https://mobile.attractionsg.com/attractions/view/e8cca229-422f-4f47-bd32-469cd475a3b5",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "city-skyline-cruise-mocktail-1hr-dated-time-67781d05-872e-4a50-bdc6-3a2ba9e85194",
       "title": "City Skyline Cruise + Mocktail (1Hr) [DATED-TIME]",
       "description": "",
       "price": "RP SGD60.00",
-      "originalPrice": "RP SGD60.00",
+      "originalPrice": "City Skyline Cruise + Mocktail (1Hr) [DATED-TIME] RP SGD60.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/67781d05-872e-4a50-bdc6-3a2ba9e85194",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "fun-discovery-pass-sentosa-fun-pass-0ffc29fe-20f5-465c-b2bf-5fd8278d7cdb",
       "title": "Fun Discovery Pass (Sentosa Fun Pass)",
       "description": "",
-      "price": "RP SGD120.00",
-      "originalPrice": "RP SGD120.00",
+      "price": "SGD98.55",
+      "originalPrice": "Fun Discovery Pass (Sentosa Fun Pass) RP SGD120.00 SGD98.55",
       "link": "https://mobile.attractionsg.com/attractions/view/0ffc29fe-20f5-465c-b2bf-5fd8278d7cdb",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "southern-islands-speedboat-tour-sentosa-45-mins-dated-75bab795-bda3-4ddd-a855-9414654fc796",
       "title": "Southern Islands Speedboat Tour (Sentosa) - 45 Mins - DATED",
       "description": "",
       "price": "RP SGD39.00",
-      "originalPrice": "RP SGD39.00",
+      "originalPrice": "RP SGD39.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/75bab795-bda3-4ddd-a855-9414654fc796",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "speedboat-tour-and-dine-dated-9fc1fcf0-464a-483e-8540-553f77236ba9",
       "title": "Speedboat Tour And Dine - Dated",
       "description": "",
       "price": "RP SGD109.00",
-      "originalPrice": "RP SGD109.00",
+      "originalPrice": "Speedboat Tour And Dine - Dated RP SGD109.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/9fc1fcf0-464a-483e-8540-553f77236ba9",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "national-gallery-singapore-for-tourist-only-6f5cffd7-8015-4d4a-9586-eaca7b24456b",
       "title": "National Gallery Singapore (For Tourist Only)",
       "description": "",
-      "price": "RP SGD20.00",
-      "originalPrice": "RP SGD20.00",
+      "price": "SGD11.70",
+      "originalPrice": "RP SGD20.00 SGD11.70",
       "link": "https://mobile.attractionsg.com/attractions/view/6f5cffd7-8015-4d4a-9586-eaca7b24456b",
-      "lastUpdated": "2025-11-02T03:45:34.307Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "national-orchid-garden-8a84c18e-14be-4a49-a394-31bb84ae8207",
       "title": "National Orchid Garden",
       "description": "",
-      "price": "RP SGD15.00",
-      "originalPrice": "RP SGD15.00",
+      "price": "SGD7.70",
+      "originalPrice": "National Orchid Garden RP SGD15.00 SGD7.70 Open Date Today Instant",
       "link": "https://mobile.attractionsg.com/attractions/view/8a84c18e-14be-4a49-a394-31bb84ae8207",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.445Z"
     },
     {
       "id": "science-centre-singapore-b037b969-58c6-4a9e-8bef-85dd5e8b2f05",
       "title": "Science Centre Singapore",
       "description": "",
-      "price": "RP SGD12.00",
-      "originalPrice": "RP SGD12.00",
+      "price": "SGD8.30",
+      "originalPrice": "Science Centre Singapore RP SGD12.00 SGD8.30 Open Date Today Instant",
       "link": "https://mobile.attractionsg.com/attractions/view/b037b969-58c6-4a9e-8bef-85dd5e8b2f05",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "skypark-sentosa-by-aj-hackett-b6775b74-8f30-4c18-8c81-f649d34f4a38",
       "title": "Skypark Sentosa by AJ Hackett",
       "description": "",
-      "price": "RP SGD15.00",
-      "originalPrice": "RP SGD15.00",
+      "price": "SGD9.00",
+      "originalPrice": "Skypark Sentosa by AJ Hackett 圣淘沙极限冒险 RP SGD15.00 SGD9.00",
       "link": "https://mobile.attractionsg.com/attractions/view/b6775b74-8f30-4c18-8c81-f649d34f4a38",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "ultragolf-8da12fe0-fef8-4cde-8c41-6bce4f67f20d",
       "title": "UltraGolf",
       "description": "",
-      "price": "RP SGD22.00",
-      "originalPrice": "RP SGD22.00",
+      "price": "SGD15.00",
+      "originalPrice": "UltraGolf RP SGD22.00 SGD15.00 Open Date Today Instant",
       "link": "https://mobile.attractionsg.com/attractions/view/8da12fe0-fef8-4cde-8c41-6bce4f67f20d",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-discovery-centre-black-lake-shadow-grid-4b5a0993-90c6-4973-a0ff-28124f1f3489",
       "title": "Singapore Discovery Centre - Black Lake Shadow Grid",
       "description": "",
-      "price": "RP SGD10.00",
-      "originalPrice": "RP SGD10.00",
+      "price": "SGD8.30",
+      "originalPrice": "Singapore Discovery Centre - Black Lake Shadow Grid RP SGD10.00 SGD8.30",
       "link": "https://mobile.attractionsg.com/attractions/view/4b5a0993-90c6-4973-a0ff-28124f1f3489",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-discovery-centre-s-black-lake-facility-escape-room-e730bc25-8382-4be3-98fb-f3ed0719a06f",
       "title": "Singapore Discovery Centre’s Black Lake Facility (Escape Room)",
       "description": "",
-      "price": "RP SGD30.00",
-      "originalPrice": "RP SGD30.00",
+      "price": "SGD24.80",
+      "originalPrice": "RP SGD30.00 SGD24.80",
       "link": "https://mobile.attractionsg.com/attractions/view/e730bc25-8382-4be3-98fb-f3ed0719a06f",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-discovery-centre-s-black-lake-laser-battlefield-laser-tag-dc40cb72-74d3-4433-b8c5-69130d73c8ac",
       "title": "Singapore Discovery Centre’s Black Lake Laser Battlefield (Laser Tag)",
       "description": "",
-      "price": "RP SGD15.00",
-      "originalPrice": "RP SGD15.00",
+      "price": "SGD12.80",
+      "originalPrice": "RP SGD15.00 SGD12.80",
       "link": "https://mobile.attractionsg.com/attractions/view/dc40cb72-74d3-4433-b8c5-69130d73c8ac",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-discovery-centre-s-permanent-exhibits-gallery-through-the-lens-of-time-and-sandbox-c0c75ca6-1967-4e3a-a848-3854a98e30c7",
       "title": "Singapore Discovery Centre’s Permanent Exhibits Gallery (Through the Lens of Time and Sandbox)",
       "description": "",
-      "price": "RP SGD10.00",
-      "originalPrice": "RP SGD10.00",
+      "price": "SGD8.70",
+      "originalPrice": "RP SGD10.00 SGD8.70",
       "link": "https://mobile.attractionsg.com/attractions/view/c0c75ca6-1967-4e3a-a848-3854a98e30c7",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-discovery-centre-s-singapore-navy-museum-d9732efe-622f-429c-acf7-c7bf3d1dce5f",
       "title": "Singapore Discovery Centre’s Singapore Navy Museum",
       "description": "",
-      "price": "RP SGD8.00",
-      "originalPrice": "RP SGD8.00",
+      "price": "SGD6.40",
+      "originalPrice": "Singapore Discovery Centre’s Singapore Navy Museum RP SGD8.00 SGD6.40",
       "link": "https://mobile.attractionsg.com/attractions/view/d9732efe-622f-429c-acf7-c7bf3d1dce5f",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "singapore-speedboat-adventure-on-the-southern-albatross-b66e6995-ff2c-48f6-972e-9ed9abf7b085",
       "title": "Singapore Speedboat Adventure on the Southern Albatross",
       "description": "",
-      "price": "RP SGD45.00",
-      "originalPrice": "RP SGD45.00",
+      "price": "SGD28.25",
+      "originalPrice": "Singapore Speedboat Adventure on the Southern Albatross RP SGD45.00 SGD28.25",
       "link": "https://mobile.attractionsg.com/attractions/view/b66e6995-ff2c-48f6-972e-9ed9abf7b085",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.446Z"
     },
     {
       "id": "new-universal-studios-singapore-uss-express-pass-dated-67726b5b-3afc-47c2-b9f9-7f48f1a251e9",
       "title": "[NEW] Universal Studios Singapore USS Express Pass - Dated",
       "description": "",
       "price": "RP SGD92.00",
-      "originalPrice": "RP SGD92.00",
+      "originalPrice": "RP SGD92.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/67726b5b-3afc-47c2-b9f9-7f48f1a251e9",
-      "lastUpdated": "2025-11-02T03:45:34.308Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "singapore-oceanarium-sgo-former-sea-aquarium-545083db-591b-4729-92ae-aa8c3c401848",
       "title": "Singapore Oceanarium [SGO] - former SEA Aquarium",
       "description": "",
       "price": "RP SGD50.00",
-      "originalPrice": "RP SGD50.00",
+      "originalPrice": "Singapore Oceanarium [SGO] - former SEA Aquarium RP SGD50.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/545083db-591b-4729-92ae-aa8c3c401848",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "universal-studios-singapore-uss-dated-bf57c7f7-6131-492c-937f-d938fbf5692a",
       "title": "Universal Studios Singapore USS - Dated",
       "description": "",
       "price": "RP SGD83.00",
-      "originalPrice": "RP SGD83.00",
+      "originalPrice": "Universal Studios Singapore USS - Dated RP SGD83.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/bf57c7f7-6131-492c-937f-d938fbf5692a",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "universal-studios-singapore-vip-experience-ab92c72e-8f6b-4342-aec7-14e7d4f00835",
       "title": "Universal Studios Singapore VIP Experience",
       "description": "",
       "price": "RP SGD358.00",
-      "originalPrice": "RP SGD358.00",
+      "originalPrice": "Universal Studios Singapore VIP Experience RP SGD358.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/ab92c72e-8f6b-4342-aec7-14e7d4f00835",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "uss-meal-voucher-retail-voucher-open-date-60-days-e34de7ee-6faf-450b-affe-b17a5ae94699",
       "title": "USS  - Meal Voucher/Retail Voucher - Open Date 60 Days",
       "description": "",
       "price": "RP SGD10.00",
-      "originalPrice": "RP SGD10.00",
+      "originalPrice": "RP SGD10.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/e34de7ee-6faf-450b-affe-b17a5ae94699",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
-      "id": "uss-sgo-1day-series-bundle-2025-open-dated-7-days-a51282da-d8f9-44e5-97c2-4830c2538f5e",
-      "title": "USS/SGO 1DAY SERIES BUNDLE 2025 [OPEN DATED 7 DAYS]",
+      "id": "uss-universal-studios-singapore-sgo-singapore-oceanarium-20-voucher-bundle-open-dated-7-days-a51282da-d8f9-44e5-97c2-4830c2538f5e",
+      "title": "USS (Universal Studios Singapore + SGO (Singapore Oceanarium)+$20 VOUCHER BUNDLE [OPEN DATED 7 DAYS]",
       "description": "",
       "price": "RP SGD157.00",
-      "originalPrice": "RP SGD157.00",
+      "originalPrice": "RP SGD157.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/a51282da-d8f9-44e5-97c2-4830c2538f5e",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "dolphin-connection-with-singapore-oceanarium-dated-80330d4d-90b5-4926-bb8d-3585808ff76d",
       "title": "Dolphin Connection (with Singapore Oceanarium) - Dated",
       "description": "",
       "price": "RP SGD194.00",
-      "originalPrice": "RP SGD194.00",
+      "originalPrice": "RP SGD194.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/80330d4d-90b5-4926-bb8d-3585808ff76d",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "dolphin-exploration-with-singapore-oceanarium-dated-c7b2c7ea-bc85-4bcf-8b39-e39ab3b9cb7d",
       "title": "Dolphin Exploration (with Singapore Oceanarium) - Dated",
       "description": "",
       "price": "RP SGD90.00",
-      "originalPrice": "RP SGD90.00",
+      "originalPrice": "RP SGD90.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/c7b2c7ea-bc85-4bcf-8b39-e39ab3b9cb7d",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.447Z"
     },
     {
       "id": "dolphin-immersion-with-singapore-oceanarium-dated-b88b66d3-e9ff-45a4-bfb3-fd2db369c185",
       "title": "Dolphin Immersion (with Singapore Oceanarium) - Dated",
       "description": "",
       "price": "RP SGD150.00",
-      "originalPrice": "RP SGD150.00",
+      "originalPrice": "RP SGD150.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/b88b66d3-e9ff-45a4-bfb3-fd2db369c185",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.448Z"
     },
     {
       "id": "m1-12-tourist-sim-redeem-at-changi-airport-only-c69fb859-5692-408a-9cc2-b052f67397b1",
       "title": "M1 $12 Tourist Sim (Redeem at Changi Airport Only)",
       "description": "",
-      "price": "RP SGD12.00",
-      "originalPrice": "RP SGD12.00",
+      "price": "SGD7.20",
+      "originalPrice": "M1 $12 Tourist Sim (Redeem at Changi Airport Only) RP SGD12.00 SGD7.20",
       "link": "https://mobile.attractionsg.com/attractions/view/c69fb859-5692-408a-9cc2-b052f67397b1",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.448Z"
     },
     {
       "id": "night-safari-admission-tourist-only-dated-time-f9fd783e-d9fe-42a7-af4c-ef8775cfc8db",
       "title": "Night Safari Admission (Tourist Only) [DATED - TIME]",
       "description": "",
       "price": "RP SGD58.00",
-      "originalPrice": "RP SGD58.00",
+      "originalPrice": "RP SGD58.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/f9fd783e-d9fe-42a7-af4c-ef8775cfc8db",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.448Z"
     },
     {
       "id": "river-wonders-admission-tourist-only-dated-afeb846f-9a9e-4054-b050-b687a425fdfb",
       "title": "River Wonders Admission (Tourist Only) [DATED]",
       "description": "",
       "price": "RP SGD45.00",
-      "originalPrice": "RP SGD45.00",
+      "originalPrice": "River Wonders Admission (Tourist Only) [DATED] RP SGD45.00 Please select date",
       "link": "https://mobile.attractionsg.com/attractions/view/afeb846f-9a9e-4054-b050-b687a425fdfb",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
-    },
-    {
-      "id": "singapore-zoo-admission-tourist-only-dated-3b8a743b-b10d-412c-bbd9-b896d322822b",
-      "title": "Singapore Zoo Admission (Tourist Only) [DATED]",
-      "description": "",
-      "price": "RP SGD49.00",
-      "originalPrice": "RP SGD49.00",
-      "link": "https://mobile.attractionsg.com/attractions/view/3b8a743b-b10d-412c-bbd9-b896d322822b",
-      "lastUpdated": "2025-11-02T03:45:34.309Z"
+      "lastUpdated": "2025-11-10T06:29:26.448Z"
     }
   ],
-  "timestamp": "2025-11-02T03:48:35.056Z",
+  "timestamp": "2025-11-10T06:32:02.582Z",
   "total": 60
 }

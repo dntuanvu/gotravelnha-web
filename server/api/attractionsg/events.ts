@@ -1,9 +1,8 @@
 import { defineEventHandler, readBody } from 'h3'
 import { createError } from 'h3'
 import { getEventsCache, getCacheTimestamp } from './crawl'
-import { readFile } from 'fs/promises'
-import { existsSync } from 'fs'
-import { join } from 'path'
+import prisma from '~/server/utils/prisma'
+import type { Prisma, AttractionsgEvent as AttractionsgEventModel } from '@prisma/client'
 
 interface EventsRequest {
   search?: string
@@ -14,128 +13,67 @@ interface EventsRequest {
   sortOrder?: 'asc' | 'desc'
 }
 
-// Check both public/data (for deployment) and data/ (for local dev)
-const DATA_DIR = join(process.cwd(), 'data')
-const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
-const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
-const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
-
 export default defineEventHandler(async (event) => {
   try {
     const body = (await readBody(event)) as EventsRequest
-    const page = body.page || 1
-    const limit = body.limit || 20
+    const page = Math.max(1, body.page || 1)
+    const limit = Math.max(1, Math.min(body.limit || 20, 100))
     const offset = (page - 1) * limit
+    const sortOrder = body.sortOrder === 'desc' ? 'desc' : 'asc'
 
-    // Load events from cache or disk
-    let events = getEventsCache()
-    
-    console.log(`📦 Initial cache: ${events.length} events from memory`)
-    
-    if (events.length === 0) {
-      // Try to load from public/data first (for deployment), then data/ (for local)
-      const filesToTry = [
-        { path: PUBLIC_EVENTS_FILE, name: 'public/data/attractionsg-events.json' },
-        { path: EVENTS_FILE, name: 'data/attractionsg-events.json' }
-      ]
-      
-      for (const fileInfo of filesToTry) {
-        console.log(`📂 Checking file: ${fileInfo.name}`)
-        console.log(`📂 File exists: ${existsSync(fileInfo.path)}`)
-        
-        if (existsSync(fileInfo.path)) {
-          try {
-            const data = await readFile(fileInfo.path, 'utf-8')
-            const parsed = JSON.parse(data)
-            events = parsed.events || []
-            console.log(`✅ Loaded ${events.length} events from ${fileInfo.name}`)
-            break
-          } catch (error) {
-            console.error(`Error loading events from ${fileInfo.name}:`, error)
-          }
-        }
-      }
-      
-      // If still no events and we're on Vercel, try fetching from public URL
-      if (events.length === 0 && process.env.VERCEL) {
-        console.log('🌐 On Vercel, trying to fetch from public URL...')
-        try {
-          const baseUrl = process.env.VERCEL_URL 
-            ? `https://${process.env.VERCEL_URL}` 
-            : 'https://www.gotravelnha.com'
-          
-          const fetch = await import('ofetch')
-          const publicData = await fetch.$fetch(`${baseUrl}/data/attractionsg-events.json`)
-          events = publicData.events || []
-          console.log(`✅ Loaded ${events.length} events from public URL`)
-        } catch (error) {
-          console.error('❌ Error fetching from public URL:', error)
-        }
-      }
-      
-      if (events.length === 0) {
-        console.error(`⚠️ No events file found in any location`)
-        console.error(`⚠️ Current working directory: ${process.cwd()}`)
-      }
+    const where: Prisma.AttractionsgEventWhereInput = {
+      isActive: true
     }
 
-    // Apply filters
-    let filteredEvents = [...events]
-
-    // Search filter
     if (body.search) {
-      const searchLower = body.search.toLowerCase()
-      filteredEvents = filteredEvents.filter(event => 
-        event.title.toLowerCase().includes(searchLower) ||
-        event.description?.toLowerCase().includes(searchLower) ||
-        event.location?.toLowerCase().includes(searchLower) ||
-        event.category?.toLowerCase().includes(searchLower)
-      )
+      where.OR = [
+        { title: { contains: body.search, mode: 'insensitive' } },
+        { description: { contains: body.search, mode: 'insensitive' } },
+        { category: { contains: body.search, mode: 'insensitive' } },
+        { location: { contains: body.search, mode: 'insensitive' } }
+      ]
     }
 
-    // Category filter
     if (body.category) {
-      const categoryLower = body.category.toLowerCase()
-      filteredEvents = filteredEvents.filter(event =>
-        event.category?.toLowerCase() === categoryLower
-      )
+      where.category = { equals: body.category, mode: 'insensitive' }
     }
 
-    // Sorting
-    if (body.sortBy) {
-      filteredEvents.sort((a, b) => {
-        let aVal: any = a[body.sortBy || 'title']
-        let bVal: any = b[body.sortBy || 'title']
+    const orderBy = buildOrderBy(body, sortOrder)
 
-        // Handle price sorting (extract numeric value)
-        if (body.sortBy === 'price') {
-          aVal = extractNumericPrice(a.price || '0')
-          bVal = extractNumericPrice(b.price || '0')
-        }
-
-        // Handle rating sorting
-        if (body.sortBy === 'rating') {
-          aVal = a.rating || 0
-          bVal = b.rating || 0
-        }
-
-        if (typeof aVal === 'string') {
-          aVal = aVal.toLowerCase()
-          bVal = bVal?.toLowerCase() || ''
-        }
-
-        const comparison = aVal > bVal ? 1 : aVal < bVal ? -1 : 0
-        return body.sortOrder === 'desc' ? -comparison : comparison
+    const [records, totalCount, maxUpdated] = await Promise.all([
+      prisma.attractionsgEvent.findMany({
+        where,
+        orderBy,
+        skip: offset,
+        take: limit
+      }),
+      prisma.attractionsgEvent.count({ where }),
+      prisma.attractionsgEvent.aggregate({
+        where,
+        _max: { updatedAt: true }
       })
-    }
+    ])
 
-    // Pagination
-    const total = filteredEvents.length
-    const paginatedEvents = filteredEvents.slice(offset, offset + limit)
+    let total = totalCount
+    let data = records.map(mapRecordToEvent)
+    let cached = false
+    let timestamp = maxUpdated._max.updatedAt
+      ? maxUpdated._max.updatedAt.toISOString()
+      : new Date().toISOString()
+
+    if (data.length === 0) {
+      const cache = getEventsCache()
+      if (cache.length > 0) {
+        cached = true
+        total = cache.length
+        data = cache.slice(offset, offset + limit)
+        timestamp = new Date(getCacheTimestamp()).toISOString()
+      }
+    }
 
     return {
       success: true,
-      data: paginatedEvents,
+      data,
       pagination: {
         page,
         limit,
@@ -146,10 +84,9 @@ export default defineEventHandler(async (event) => {
         search: body.search,
         category: body.category
       },
-      cached: true,
-      timestamp: new Date(getCacheTimestamp()).toISOString()
+      cached,
+      timestamp
     }
-
   } catch (error: any) {
     console.error('Events API error:', error)
     throw createError({
@@ -159,10 +96,54 @@ export default defineEventHandler(async (event) => {
   }
 })
 
-function extractNumericPrice(priceString: string): number {
-  const match = priceString.match(/[\d,]+\.?\d*/)
-  if (match) {
-    return parseFloat(match[0].replace(/,/g, ''))
+function buildOrderBy(params: EventsRequest, sortOrder: 'asc' | 'desc'): Prisma.AttractionsgEventOrderByWithRelationInput[] {
+  const order: Prisma.AttractionsgEventOrderByWithRelationInput[] = []
+
+  switch (params.sortBy) {
+    case 'price':
+      order.push({ priceAmount: sortOrder }, { priceText: sortOrder })
+      break
+    case 'rating':
+      order.push({ rating: sortOrder })
+      break
+    case 'date':
+      order.push({ lastSeenAt: sortOrder === 'asc' ? 'asc' : 'desc' })
+      break
+    case 'title':
+      order.push({ title: sortOrder })
+      break
+    default:
+      order.push({ lastSeenAt: 'desc' })
+      break
   }
-  return 0
+
+  // Deterministic fallback ordering
+  if (params.sortBy !== 'title') {
+    order.push({ title: 'asc' })
+  }
+
+  return order
+}
+
+function mapRecordToEvent(record: AttractionsgEventModel) {
+  const raw = record.raw as Record<string, any> | null
+
+  return {
+    id: record.id,
+    title: record.title,
+    description: record.description ?? raw?.description ?? '',
+    price: record.priceText ?? raw?.price ?? '',
+    originalPrice: record.originalPriceText ?? raw?.originalPrice ?? '',
+    image: record.image ?? raw?.image,
+    category: record.category ?? raw?.category,
+    location: record.location ?? raw?.location,
+    rating: record.rating ?? (typeof raw?.rating === 'number' ? raw.rating : undefined),
+    link: record.link ?? raw?.link,
+    duration: record.duration ?? raw?.duration,
+    ageRestriction: record.ageRestriction ?? raw?.ageRestriction,
+    cancellation: record.cancellation ?? raw?.cancellation,
+    validFrom: record.validFrom ?? raw?.validFrom,
+    validTo: record.validTo ?? raw?.validTo,
+    lastUpdated: record.updatedAt.toISOString()
+  }
 }
