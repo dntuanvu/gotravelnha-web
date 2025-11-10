@@ -168,6 +168,18 @@
                 </div>
               </div>
             </div>
+            <div v-else class="mt-4">
+              <button
+                @click="handleRequestWithoutOption"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 11.5c0 7-7.5 9.5-7.5 9.5s-7.5-2.5-7.5-9.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                Request via GoVietHub
+              </button>
+            </div>
 
             <!-- Additional Info -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
@@ -258,7 +270,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import BookingRequestForm from '~/components/BookingRequestForm.vue'
 
@@ -269,6 +281,12 @@ const selectedOption = ref(null)
 const bookingFormRef = ref(null)
 const copyMessage = ref('')
 let copyTimeout = null
+
+const requestURL = useRequestURL()
+const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
+
+const initialSlugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
+const currentSlug = ref(initialSlugParam)
 
 const ticketOptions = computed(() => {
   const options = event.value?.options || event.value?.raw?.options || []
@@ -317,6 +335,15 @@ const handleRequestOption = (option) => {
   })
 }
 
+const handleRequestWithoutOption = () => {
+  selectedOption.value = null
+  nextTick(() => {
+    if (bookingFormRef.value?.scrollIntoView) {
+      bookingFormRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  })
+}
+
 const copyCode = async (code) => {
   if (!code) return
   try {
@@ -333,9 +360,26 @@ const copyCode = async (code) => {
   }
 }
 
+const resolveImageUrl = (image?: string | null) => {
+  if (!image) return `${baseUrl.value}/sg-attractions-logo.svg`
+  if (image.startsWith('//')) return `https:${image}`
+  if (/^https?:\/\//i.test(image)) return image
+  return `${baseUrl.value}${image.startsWith('/') ? image : `/${image}`}`
+}
+
+const shareImage = computed(() => resolveImageUrl(activeImage.value || event.value?.image))
+const pageTitle = computed(() =>
+  event.value ? `${event.value.title} | Singapore Attractions Deals | GoVietHub` : 'Attraction Details | GoVietHub'
+)
+const pageDescription = computed(() =>
+  event.value?.description || 'Book Singapore attractions with exclusive deals from GoVietHub.'
+)
+const canonicalUrl = computed(() =>
+  `${baseUrl.value}/attractionsg/${event.value?.slug || event.value?.id || currentSlug.value || ''}`
+)
+
 onMounted(async () => {
-  const slugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
-  console.log(`🔍 Looking for event with slug/ID: ${slugParam}`)
+  console.log(`🔍 Looking for event with slug/ID: ${currentSlug.value}`)
   
   try {
     // Fetch all events (slug already contains the ID)
@@ -383,17 +427,18 @@ onMounted(async () => {
     console.log(`🔍 First 3 event IDs:`, allEvents.slice(0, 3).map(e => e.id))
     
     // Find the matching event by ID
-    const foundEvent = allEvents.find(e => e.slug === slugParam || e.id === slugParam)
+    const foundEvent = allEvents.find(e => e.slug === currentSlug.value || e.id === currentSlug.value)
     
     if (foundEvent) {
       console.log(`✅ Found event: ${foundEvent.title}`)
       event.value = foundEvent
-      if (foundEvent.slug && foundEvent.slug !== slugParam) {
+      currentSlug.value = foundEvent.slug || foundEvent.id || currentSlug.value
+      if (foundEvent.slug && foundEvent.slug !== initialSlugParam) {
         console.log(`🔄 Updating slug in URL to canonical slug: ${foundEvent.slug}`)
         navigateTo(`/attractionsg/${foundEvent.slug}`, { replace: true })
       }
     } else {
-      console.error(`❌ Event not found with slug/ID: ${slugParam}`)
+      console.error(`❌ Event not found with slug/ID: ${currentSlug.value}`)
     }
   } catch (err) {
     console.error('❌ Error loading event:', err)
@@ -430,12 +475,22 @@ watch(
 
 // SEO
 useHead(() => ({
-  title: event.value ? `${event.value.title} | GoTravelNha` : 'Attraction Details',
+  title: pageTitle.value,
   meta: [
-    {
-      name: 'description',
-      content: event.value?.description || 'Book your Singapore attraction tickets'
-    }
+    { name: 'description', content: pageDescription.value },
+    { property: 'og:title', content: pageTitle.value },
+    { property: 'og:description', content: pageDescription.value },
+    { property: 'og:image', content: shareImage.value },
+    { property: 'og:url', content: canonicalUrl.value },
+    { property: 'og:type', content: 'article' },
+    { property: 'og:site_name', content: 'GoVietHub' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: pageTitle.value },
+    { name: 'twitter:description', content: pageDescription.value },
+    { name: 'twitter:image', content: shareImage.value }
+  ],
+  link: [
+    { rel: 'canonical', href: canonicalUrl.value }
   ]
 }))
 

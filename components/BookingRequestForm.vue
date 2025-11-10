@@ -169,28 +169,28 @@ const error = ref(null)
 const success = ref(false)
 const lastPrefilledNotes = ref('')
 
-const selectedOptionSummary = computed(() => {
-  if (!props.selectedOption) return ''
-  const parts = []
-  if (props.selectedOption.name) parts.push(props.selectedOption.name)
-  if (props.selectedOption.code) parts.push(`Code: ${props.selectedOption.code}`)
-  if (props.selectedOption.priceText) parts.push(`Price: ${props.selectedOption.priceText}`)
-  if (
-    props.selectedOption.originalPriceText &&
-    props.selectedOption.originalPriceText !== props.selectedOption.priceText
-  ) {
-    parts.push(`Retail: ${props.selectedOption.originalPriceText}`)
+const buildSummary = (option) => {
+  if (!option) {
+    return props.eventTitle ? `General request for ${String(props.eventTitle)}` : 'General attraction request'
   }
-  if (props.selectedOption.validity) parts.push(props.selectedOption.validity)
+  const parts = []
+  if (option.name) parts.push(option.name)
+  if (option.code) parts.push(`Code: ${option.code}`)
+  if (option.priceText) parts.push(`Price: ${option.priceText}`)
+  if (option.originalPriceText && option.originalPriceText !== option.priceText) {
+    parts.push(`Retail: ${option.originalPriceText}`)
+  }
+  if (option.validity) parts.push(option.validity)
   return parts.join(' • ')
-})
+}
+
+const selectedOptionSummary = computed(() => buildSummary(props.selectedOption))
 
 watch(
   () => props.selectedOption,
   (option) => {
-    if (!option) return
-    const summary = selectedOptionSummary.value
-    if (!form.value.notes || form.value.notes === lastPrefilledNotes.value) {
+    const summary = props.selectedOption ? selectedOptionSummary.value : buildSummary(null)
+    if (!form.value.notes || form.value.notes === lastPrefilledNotes.value || !props.selectedOption) {
       form.value.notes = summary
       lastPrefilledNotes.value = summary
     }

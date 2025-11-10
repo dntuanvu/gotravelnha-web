@@ -164,6 +164,32 @@ const categories = KLOOK_CATEGORIES
 const activeWidgets = ref<any[]>([])
 const selectedTab = ref<'things_to_do' | 'hotels'>('things_to_do')
 
+const requestURL = useRequestURL()
+const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
+const klookTitle = 'Klook Activities, Tours & Deals | GoVietHub'
+const klookDescription = 'Discover curated Klook activities, tours, passes and hotel deals. Explore our embedded Klook widgets, promo codes and trending experiences.'
+const klookOgImage = computed(() => `${baseUrl.value}/klook-logo.png`)
+
+useHead(() => ({
+  title: klookTitle,
+  meta: [
+    { name: 'description', content: klookDescription },
+    { property: 'og:title', content: klookTitle },
+    { property: 'og:description', content: klookDescription },
+    { property: 'og:image', content: klookOgImage.value },
+    { property: 'og:url', content: `${baseUrl.value}/klook` },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'GoVietHub' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: klookTitle },
+    { name: 'twitter:description', content: klookDescription },
+    { name: 'twitter:image', content: klookOgImage.value }
+  ],
+  link: [
+    { rel: 'canonical', href: `${baseUrl.value}/klook` }
+  ]
+}))
+
 // Filter widgets by selected tab
 const filteredWidgets = computed(() => {
   return activeWidgets.value.filter(widget => widget.widgetType === selectedTab.value)

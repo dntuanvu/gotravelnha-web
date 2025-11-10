@@ -250,6 +250,32 @@ let savedScrollPosition = 0
 const sortOption = ref('alpha')
 const searchTerm = ref('')
 
+const requestURL = useRequestURL()
+const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
+const listingTitle = 'Singapore Attractions & Tickets | GoVietHub'
+const listingDescription = 'Browse exclusive Singapore Attractions tickets, passes, and experiences curated by GoVietHub. Compare deals, find promo codes, and plan your adventure.'
+const listingImage = computed(() => `${baseUrl.value}/sg-attractions-logo.svg`)
+
+useHead(() => ({
+  title: listingTitle,
+  meta: [
+    { name: 'description', content: listingDescription },
+    { property: 'og:title', content: listingTitle },
+    { property: 'og:description', content: listingDescription },
+    { property: 'og:image', content: listingImage.value },
+    { property: 'og:url', content: `${baseUrl.value}/attractionsg` },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'GoVietHub' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: listingTitle },
+    { name: 'twitter:description', content: listingDescription },
+    { name: 'twitter:image', content: listingImage.value }
+  ],
+  link: [
+    { rel: 'canonical', href: `${baseUrl.value}/attractionsg` }
+  ]
+}))
+
 const loadTickets = async () => {
   try {
     loading.value = true

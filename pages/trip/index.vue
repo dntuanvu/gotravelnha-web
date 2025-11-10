@@ -66,15 +66,41 @@
   </div>
 </template>
   
-<script setup>
+<script setup lang="ts">
 import PopularDeals from '~/components/PopularDeals.vue'
 import StaticBanner from '~/components/StaticBanner.vue'
 import DynamicBanner from '~/components/DynamicBanner.vue'
 import ResponsiveTripSearchBox from '~/components/ResponsiveTripSearchBox.vue'
 import { useActivityTracker } from '~/composables/useActivityTracker'
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 
 const { startTracking, trackPageView } = useActivityTracker()
+
+const requestURL = useRequestURL()
+const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
+const tripTitle = 'Trip.com Hotel Deals & Search | GoVietHub'
+const tripDescription = 'Plan your stay with Trip.com hotel deals, search widgets, and curated travel banners powered by GoVietHub.'
+const tripOgImage = computed(() => `${baseUrl.value}/trip-logo.png`)
+
+useHead(() => ({
+  title: tripTitle,
+  meta: [
+    { name: 'description', content: tripDescription },
+    { property: 'og:title', content: tripTitle },
+    { property: 'og:description', content: tripDescription },
+    { property: 'og:image', content: tripOgImage.value },
+    { property: 'og:url', content: `${baseUrl.value}/trip` },
+    { property: 'og:type', content: 'website' },
+    { property: 'og:site_name', content: 'GoVietHub' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: tripTitle },
+    { name: 'twitter:description', content: tripDescription },
+    { name: 'twitter:image', content: tripOgImage.value }
+  ],
+  link: [
+    { rel: 'canonical', href: `${baseUrl.value}/trip` }
+  ]
+}))
 
 onMounted(() => {
   startTracking()
