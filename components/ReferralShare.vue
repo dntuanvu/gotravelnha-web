@@ -49,7 +49,9 @@
           @click="shareViaWhatsApp"
           class="flex-1 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors font-semibold flex items-center justify-center gap-2"
         >
-          <span>📱</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M12 2.04c-5.51 0-9.96 4.45-9.96 9.96 0 1.76.47 3.49 1.36 5.01L2 22l5.16-1.33c1.46.8 3.1 1.23 4.78 1.23h.01c5.51 0 9.96-4.45 9.96-9.96 0-2.66-1.04-5.17-2.93-7.07A9.92 9.92 0 0 0 12 2.04zm5.73 14.27c-.24.67-1.19 1.23-1.92 1.39-.51.11-1.18.2-3.44-.74-2.89-1.2-4.74-4.15-4.88-4.34-.14-.19-1.17-1.56-1.17-2.98s.74-2.12 1.01-2.41c.24-.27.64-.39 1.04-.39.12 0 .23.01.33.01.29.01.44.03.63.49.24.58.83 1.99.9 2.13.08.14.13.32.04.51-.09.19-.14.31-.26.48-.14.17-.3.39-.43.52-.14.14-.28.29-.12.57.17.28.77 1.26 1.64 2.04 1.13 1.01 2.09 1.33 2.39 1.47.31.15.49.13.67-.08.18-.21.77-.9.98-1.2.21-.31.42-.25.7-.15.29.1 1.84.87 2.16 1.04.31.17.52.24.6.38.07.14.07.82-.17 1.49z"/>
+          </svg>
           <span>WhatsApp</span>
         </button>
         <button
@@ -63,7 +65,9 @@
           @click="shareViaTelegram"
           class="flex-1 px-4 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors font-semibold flex items-center justify-center gap-2"
         >
-          <span>✈️</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+            <path d="M22 3.24c-.24-.24-.6-.31-.9-.19L2.35 11.01a.75.75 0 0 0 .02 1.4l5.32 2.02 2.05 5.44c.11.3.39.5.7.52h.05c.29 0 .56-.16.69-.42l2.39-4.68 4.35 4.35a.75.75 0 0 0 .53.22h.06a.75.75 0 0 0 .53-.33c2.53-3.79 3.71-7.12 3.81-10.54a.76.76 0 0 0-.22-.56zM9.51 13.86l-3.38-1.29 10.94-5.01-7.56 6.3zM12.1 17.08l-1.21-3.21 3.27-2.72-2.06 4.83z"/>
+          </svg>
           <span>Telegram</span>
         </button>
       </div>
