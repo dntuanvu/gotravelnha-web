@@ -9,7 +9,8 @@
         "generate": "nuxt generate",
         "preview": "nuxt preview",
         "postinstall": "nuxt prepare",
-        "vercel-build": "npx prisma generate && npx prisma migrate deploy && nuxt build"
+        "vercel-build": "npx prisma generate && npx prisma migrate deploy && nuxt build",
+        "crawl:attractionsg": "tsx scripts/run-attractionsg-crawl.ts"
     },
     "prisma": {
         "seed": "tsx prisma/seed.ts"

@@ -1,0 +1,33 @@
+name: AttractionsSG Crawl
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 18 * * *" # Daily at 18:30 UTC (02:30 SG/09:30 SG depending on DST)
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run AttractionsSG crawler
+        run: npm run crawl:attractionsg
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ATTRACTIONSG_EMAIL: ${{ secrets.ATTRACTIONSG_EMAIL }}
+          ATTRACTIONSG_PASSWORD: ${{ secrets.ATTRACTIONSG_PASSWORD }}
+          CRAWL_FULL: "true"
+          CRAWL_MAX_PAGES: "40"
+

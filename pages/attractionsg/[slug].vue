@@ -15,8 +15,8 @@
       <!-- Hero Image -->
       <div class="relative h-96 overflow-hidden bg-gradient-to-br from-yellow-50 to-yellow-100">
         <img 
-          v-if="event.image" 
-          :src="event.image" 
+          v-if="activeImage" 
+          :src="activeImage" 
           :alt="event.title"
           class="w-full h-full object-cover"
         />
@@ -39,6 +39,21 @@
             </svg>
             Back to Attractions
           </NuxtLink>
+        </div>
+      </div>
+
+      <!-- Gallery Thumbnails -->
+      <div v-if="galleryImages.length > 1" class="px-8 md:px-12 pt-6">
+        <div class="flex gap-4 overflow-x-auto pb-2">
+          <button
+            v-for="(image, index) in galleryImages"
+            :key="image"
+            @click="setActiveImage(index)"
+            class="relative w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 border-2"
+            :class="index === activeImageIndex ? 'border-green-500' : 'border-transparent hover:border-green-300'"
+          >
+            <img :src="image" :alt="`${event.title} photo ${index + 1}`" class="w-full h-full object-cover" />
+          </button>
         </div>
       </div>
 
@@ -66,6 +81,92 @@
             <div v-if="event.description" class="prose max-w-none">
               <h2 class="text-2xl font-bold text-gray-900 mb-4">About</h2>
               <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ event.description }}</p>
+            </div>
+
+            <div
+              v-if="copyMessage"
+              class="flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-2"
+            >
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>{{ copyMessage }}</span>
+            </div>
+
+            <!-- Ticket Options -->
+            <div v-if="hasOptions" class="space-y-4 pt-8 border-t border-gray-200">
+              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-900">Available Ticket Options</h2>
+                  <p class="text-gray-600 text-sm">
+                    Compare packages, promo codes and validity before you book.
+                  </p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 gap-4">
+                <div
+                  v-for="option in ticketOptions"
+                  :key="option.code || option.name"
+                  class="border border-gray-200 rounded-2xl p-6 shadow-sm hover:border-emerald-300 transition-colors bg-white/60"
+                >
+                  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                    <div class="space-y-2">
+                      <h3 class="text-xl font-semibold text-gray-900">
+                        {{ option.name || 'Ticket Option' }}
+                      </h3>
+                      <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                        <span v-if="option.code" class="px-2 py-1 bg-emerald-100 text-emerald-700 font-mono rounded-lg">
+                          {{ option.code }}
+                        </span>
+                        <span v-if="option.validity">{{ option.validity }}</span>
+                        <span v-if="option.details" class="text-gray-500">{{ option.details }}</span>
+                      </div>
+                    </div>
+                    <div class="text-right">
+                      <div v-if="option.priceText" class="text-3xl font-bold text-emerald-600">
+                        {{ option.priceText }}
+                      </div>
+                      <div
+                        v-if="option.originalPriceText && option.originalPriceText !== option.priceText"
+                        class="text-gray-400 line-through text-sm"
+                      >
+                        {{ option.originalPriceText }}
+                      </div>
+                      <div
+                        v-if="savingsText(option)"
+                        class="text-sm font-semibold text-emerald-600"
+                      >
+                        {{ savingsText(option) }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="flex flex-wrap gap-3 mt-4">
+                    <button
+                      v-if="option.code"
+                      @click="copyCode(option.code)"
+                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:border-gray-400 transition-colors"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8a2 2 0 002-2V7a2 2 0 00-2-2h-5l-3 3v6a2 2 0 002 2z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 16v2a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2h1" />
+                      </svg>
+                      Copy Code
+                    </button>
+                    <button
+                      @click="handleRequestOption(option)"
+                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm"
+                    >
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 11.5c0 7-7.5 9.5-7.5 9.5s-7.5-2.5-7.5-9.5a7.5 7.5 0 1115 0z" />
+                      </svg>
+                      Request via GoVietHub
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Additional Info -->
@@ -123,12 +224,16 @@
 
           <!-- Booking Sidebar -->
           <div class="lg:w-96">
-            <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 sticky top-24">
+            <div
+              class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 sticky top-24"
+              ref="bookingFormRef"
+            >
               <h2 class="text-2xl font-bold text-gray-900 mb-6">Book Your Ticket</h2>
               
               <BookingRequestForm 
                 :event-title="event.title" 
                 :event-price="event.price || ''"
+                :selected-option="selectedOption"
               />
             </div>
           </div>
@@ -154,12 +259,79 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import BookingRequestForm from '~/components/BookingRequestForm.vue'
 
 const route = useRoute()
 const loading = ref(true)
 const event = ref(null)
+const selectedOption = ref(null)
+const bookingFormRef = ref(null)
+const copyMessage = ref('')
+let copyTimeout = null
+
+const ticketOptions = computed(() => {
+  const options = event.value?.options || event.value?.raw?.options || []
+  return Array.isArray(options) ? options : []
+})
+
+const galleryImages = computed(() => {
+  const images = [
+    event.value?.image,
+    ...(Array.isArray(event.value?.gallery) ? event.value.gallery : [])
+  ].filter((value, index, self) => value && self.indexOf(value) === index)
+  return images
+})
+
+const activeImageIndex = ref(0)
+
+const activeImage = computed(() => galleryImages.value[activeImageIndex.value] || null)
+
+const setActiveImage = (index) => {
+  activeImageIndex.value = index
+}
+
+const hasOptions = computed(() => ticketOptions.value.length > 0)
+
+const savingsText = (option) => {
+  if (!option?.originalPriceAmount || !option?.priceAmount) return ''
+  const diff = option.originalPriceAmount - option.priceAmount
+  if (diff <= 0) return ''
+  return `Save ${formatCurrency(diff)}`
+}
+
+const formatCurrency = (amount) => {
+  if (typeof amount !== 'number' || Number.isNaN(amount)) return ''
+  return new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency: 'SGD'
+  }).format(amount)
+}
+
+const handleRequestOption = (option) => {
+  selectedOption.value = option
+  nextTick(() => {
+    if (bookingFormRef.value?.scrollIntoView) {
+      bookingFormRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  })
+}
+
+const copyCode = async (code) => {
+  if (!code) return
+  try {
+    await navigator.clipboard.writeText(code)
+    copyMessage.value = `Copied ${code} to clipboard`
+  } catch (err) {
+    console.error('Clipboard error:', err)
+    copyMessage.value = 'Copy failed, please copy manually.'
+  } finally {
+    if (copyTimeout) clearTimeout(copyTimeout)
+    copyTimeout = setTimeout(() => {
+      copyMessage.value = ''
+    }, 4000)
+  }
+}
 
 onMounted(async () => {
   const slug = route.params.slug
@@ -226,11 +398,44 @@ onMounted(async () => {
   }
 })
 
+watch(
+  () => event.value,
+  (value) => {
+    if (!value) {
+      selectedOption.value = null
+      activeImageIndex.value = 0
+    } else {
+      activeImageIndex.value = 0
+    }
+  }
+)
+
+watch(
+  galleryImages,
+  (images) => {
+  if (!Array.isArray(images) || images.length === 0) {
+    activeImageIndex.value = 0
+    return
+  }
+  if (activeImageIndex.value >= images.length) {
+    activeImageIndex.value = 0
+  }
+  },
+  { immediate: true }
+)
+
 // SEO
-useHead({
+useHead(() => ({
   title: event.value ? `${event.value.title} | GoTravelNha` : 'Attraction Details',
   meta: [
-    { name: 'description', content: event.value?.description || 'Book your Singapore attraction tickets' }
+    {
+      name: 'description',
+      content: event.value?.description || 'Book your Singapore attraction tickets'
+    }
   ]
+}))
+
+onUnmounted(() => {
+  if (copyTimeout) clearTimeout(copyTimeout)
 })
 </script>

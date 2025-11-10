@@ -32,6 +32,18 @@ interface EventData {
   cancellation?: string
   lastUpdated: string
   gallery?: string[]
+  options?: TicketOption[]
+}
+
+interface TicketOption {
+  name?: string
+  code?: string
+  priceText?: string
+  priceAmount?: number
+  originalPriceText?: string
+  originalPriceAmount?: number
+  validity?: string
+  details?: string
 }
 
 // In-memory cache for quick access
@@ -43,6 +55,27 @@ const DATA_DIR = join(process.cwd(), 'data')
 const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
 const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
 const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
+
+function getRuntimeConfig(event?: H3Event) {
+  try {
+    // @ts-ignore - useRuntimeConfig is auto provided by Nitro at runtime
+    if (typeof useRuntimeConfig === 'function') {
+      // @ts-ignore
+      return useRuntimeConfig(event)
+    }
+  } catch (error) {
+    // ignore, we'll fall back to process.env
+  }
+
+  return {
+    ATTRACTIONSG_EMAIL: process.env.ATTRACTIONSG_EMAIL,
+    ATTRACTIONSG_PASSWORD: process.env.ATTRACTIONSG_PASSWORD,
+    ATTRACTIONSG_BACKGROUND_SYNC: process.env.ATTRACTIONSG_BACKGROUND_SYNC,
+    ATTRACTIONSG_SYNC_INTERVAL: process.env.ATTRACTIONSG_SYNC_INTERVAL,
+    ATTRACTIONSG_CRAWLER_WEBHOOK: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK,
+    ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET
+  }
+}
 
 export async function runAttractionsgCrawl(body: CrawlRequest = {}, event?: H3Event) {
   return executeCrawl(body, event)
@@ -68,9 +101,36 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
     }
   }
 
-  // On serverless environments, rely on cached/DB data (Playwright not supported)
-  if (process.env.VERCEL || process.env.NETLIFY) {
-    console.log('🌐 Serverless environment detected - returning cached/database data only')
+  const config = getRuntimeConfig(event)
+  const isServerless = process.env.VERCEL || process.env.NETLIFY
+
+  if (isServerless) {
+    const webhook = config.ATTRACTIONSG_CRAWLER_WEBHOOK || process.env.ATTRACTIONSG_CRAWLER_WEBHOOK
+
+    if (webhook) {
+      console.log('🌐 Serverless environment detected - delegating crawl to webhook')
+      try {
+        const fetch = await import('ofetch')
+        await fetch.$fetch(webhook, {
+          method: 'POST',
+          body: {
+            fullCrawl: body.fullCrawl ?? false,
+            maxPages: body.maxPages || 20
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET
+              ? `Bearer ${config.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET}`
+              : undefined
+          }
+        })
+        console.log('✅ Delegated crawl webhook triggered')
+      } catch (error) {
+        console.error('❌ Failed to call crawler webhook:', error)
+      }
+    } else {
+      console.log('🌐 Serverless environment detected - returning cached/database data only')
+    }
 
     if (eventsCache.length === 0) {
       await loadCacheFromDatabase()
@@ -81,14 +141,15 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
       cached: true,
       total: eventsCache.length,
       timestamp: cacheTimestamp ? new Date(cacheTimestamp).toISOString() : new Date().toISOString(),
-      message: 'Playwright not available on serverless. Using cached/database data. Run crawler locally or via worker to refresh.'
+      message: webhook
+        ? 'Delegated crawl to webhook. Ensure external worker runs the Playwright crawler.'
+        : 'Playwright not available on serverless. Using cached/database data. Run crawler via GitHub Action, local job, or external worker to refresh.'
     }
   }
 
   // Perform fresh crawl (local/background)
   console.log('🕷️ Starting AttractionsSG crawl...')
 
-  const config = useRuntimeConfig(event)
   const email = config.ATTRACTIONSG_EMAIL || 'enjoytravelticket@gmail.com'
   const password = config.ATTRACTIONSG_PASSWORD || 'Truc1@3456101112'
   const maxPages = body.maxPages || 20
@@ -243,6 +304,10 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
     }
     let detailImage = galleryImages.length > 0 ? galleryImages[0] : event.image
     const detailPrices = extractPriceInfo($, $('body'))
+    const ticketOptions = extractTicketOptions($)
+    if (ticketOptions.length > 0) {
+      console.log(`🎟️ Found ${ticketOptions.length} ticket option(s) for "${event.title}"`)
+    }
     
     // Try multiple description selectors
     const descSelectors = [
@@ -284,7 +349,8 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
       cancellation: $('.cancellation, [class*="cancellation"]').first().text().trim(),
       validFrom: $('.valid-from, [class*="valid"]').first().text().trim(),
       validTo: $('.valid-to, [class*="valid-to"]').first().text().trim(),
-      gallery: galleryImages.length > 0 ? galleryImages : event.gallery
+      gallery: galleryImages.length > 0 ? galleryImages : event.gallery,
+      options: ticketOptions.length > 0 ? ticketOptions : event.options
     }
     
     return detailedEvent
@@ -555,6 +621,7 @@ function mergeEventData(target: EventData, source: EventData) {
   target.validTo = source.validTo || target.validTo
   target.gallery = source.gallery || target.gallery
   target.lastUpdated = source.lastUpdated || target.lastUpdated
+  target.options = source.options || target.options
 }
 
 function extractGalleryImages($: cheerio.CheerioAPI): string[] {
@@ -600,6 +667,53 @@ function extractGalleryImages($: cheerio.CheerioAPI): string[] {
   }
 
   return Array.from(images)
+}
+
+function extractTicketOptions($: cheerio.CheerioAPI): TicketOption[] {
+  const options: TicketOption[] = []
+
+  $('.tickets-wrapper .row').each((_, row) => {
+    const $row = $(row)
+    const infoCol = $row.children().first()
+    const priceCol = $row.children().eq(1)
+    const actionCol = $row.children().eq(2)
+
+    const name = infoCol.find('b').first().text().trim()
+    const code = infoCol.find('i').first().text().trim()
+    const originalPriceText = infoCol.find('span').first().text().trim()
+    const validityText = infoCol.find('div').filter((_, el) => $(el).text().toLowerCase().includes('valid')).first().text().trim()
+
+    const priceText = priceCol.text().trim()
+
+    const details = (() => {
+      const clone = infoCol.clone()
+      clone.find('b, i, span, div').remove()
+      return clone.text().trim().replace(/\s+/g, ' ')
+    })()
+
+    if (!name && !priceText) {
+      return
+    }
+
+    const option: TicketOption = {
+      name: name || undefined,
+      code: code || undefined,
+      priceText: priceText || undefined,
+      priceAmount: parsePriceAmount(priceText),
+      originalPriceText: originalPriceText || undefined,
+      originalPriceAmount: parsePriceAmount(originalPriceText),
+      validity: validityText || undefined,
+      details: details || undefined
+    }
+
+    if (actionCol && actionCol.text().trim()) {
+      option.details = [option.details, actionCol.text().trim().replace(/\s+/g, ' ')].filter(Boolean).join(' ')
+    }
+
+    options.push(option)
+  })
+
+  return options
 }
 
 async function persistEventsToDatabase(events: EventData[]) {
@@ -722,7 +836,8 @@ function mapDbEventToEventData(record: AttractionsgEventModel): EventData {
     ageRestriction: record.ageRestriction ?? raw?.ageRestriction,
     cancellation: record.cancellation ?? raw?.cancellation,
     lastUpdated: record.updatedAt.toISOString(),
-    gallery: raw?.gallery
+    gallery: raw?.gallery,
+    options: (raw?.options as TicketOption[] | undefined) ?? undefined
   }
 }
 

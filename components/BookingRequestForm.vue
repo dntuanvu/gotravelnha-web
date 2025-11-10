@@ -1,5 +1,12 @@
 <template>
   <div class="space-y-4">
+    <div
+      v-if="selectedOptionSummary"
+      class="p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-800"
+    >
+      <p class="font-semibold mb-1">Selected Package</p>
+      <p>{{ selectedOptionSummary }}</p>
+    </div>
     <form @submit.prevent="submitBooking" class="space-y-4">
       <!-- Customer Name -->
       <div>
@@ -131,7 +138,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch, computed } from 'vue'
 
 const props = defineProps({
   eventTitle: {
@@ -141,6 +148,10 @@ const props = defineProps({
   eventPrice: {
     type: String,
     default: ''
+  },
+  selectedOption: {
+    type: Object,
+    default: null
   }
 })
 
@@ -156,6 +167,36 @@ const form = ref({
 const submitting = ref(false)
 const error = ref(null)
 const success = ref(false)
+const lastPrefilledNotes = ref('')
+
+const selectedOptionSummary = computed(() => {
+  if (!props.selectedOption) return ''
+  const parts = []
+  if (props.selectedOption.name) parts.push(props.selectedOption.name)
+  if (props.selectedOption.code) parts.push(`Code: ${props.selectedOption.code}`)
+  if (props.selectedOption.priceText) parts.push(`Price: ${props.selectedOption.priceText}`)
+  if (
+    props.selectedOption.originalPriceText &&
+    props.selectedOption.originalPriceText !== props.selectedOption.priceText
+  ) {
+    parts.push(`Retail: ${props.selectedOption.originalPriceText}`)
+  }
+  if (props.selectedOption.validity) parts.push(props.selectedOption.validity)
+  return parts.join(' • ')
+})
+
+watch(
+  () => props.selectedOption,
+  (option) => {
+    if (!option) return
+    const summary = selectedOptionSummary.value
+    if (!form.value.notes || form.value.notes === lastPrefilledNotes.value) {
+      form.value.notes = summary
+      lastPrefilledNotes.value = summary
+    }
+  },
+  { immediate: true }
+)
 
 const submitBooking = async () => {
   try {

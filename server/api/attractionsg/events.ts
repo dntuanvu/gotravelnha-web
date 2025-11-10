@@ -133,7 +133,9 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
     title: record.title,
     description: record.description ?? raw?.description ?? '',
     price: record.priceText ?? raw?.price ?? '',
+    priceAmount: record.priceAmount ?? raw?.priceAmount,
     originalPrice: record.originalPriceText ?? raw?.originalPrice ?? '',
+    originalPriceAmount: record.originalPriceAmount ?? raw?.originalPriceAmount,
     image: record.image ?? raw?.image,
     category: record.category ?? raw?.category,
     location: record.location ?? raw?.location,
@@ -144,6 +146,9 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
     cancellation: record.cancellation ?? raw?.cancellation,
     validFrom: record.validFrom ?? raw?.validFrom,
     validTo: record.validTo ?? raw?.validTo,
+    gallery: raw?.gallery ?? [],
+    options: raw?.options ?? [],
+    raw,
     lastUpdated: record.updatedAt.toISOString()
   }
 }
