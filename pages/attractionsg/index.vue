@@ -94,10 +94,62 @@
         </button>
       </div>
 
+      <!-- Controls -->
+      <div v-if="tickets.length > 0" class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <div class="flex-1">
+          <label class="sr-only" for="search">Search attractions</label>
+          <div class="relative">
+            <input
+              id="search"
+              v-model="searchTerm"
+              type="search"
+              placeholder="Search by attraction name or location..."
+              class="w-full px-4 py-3 pl-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+            />
+            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 117.5-7.5 7.5 7.5 0 01-7.5 7.5z"></path>
+            </svg>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
+          <div class="flex items-center gap-2">
+            <label for="category" class="text-sm font-medium text-gray-600">Category</label>
+            <select
+              id="category"
+              v-model="selectedCategory"
+              class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+            >
+              <option value="all">All</option>
+              <option
+                v-for="category in availableCategories"
+                :key="category"
+                :value="category"
+              >
+                {{ category }}
+              </option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="sort" class="text-sm font-medium text-gray-600">Sort by</label>
+            <select
+              id="sort"
+              v-model="sortOption"
+              class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+              @change="loadTickets"
+            >
+              <option value="latest">Latest updates</option>
+              <option value="priceAsc">Price: Low to High</option>
+              <option value="priceDesc">Price: High to Low</option>
+              <option value="alpha">Name: A → Z</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
       <!-- Tickets Grid -->
-      <div v-else-if="tickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-else-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
-          v-for="ticket in tickets" 
+          v-for="ticket in filteredTickets" 
           :key="ticket.id || ticket.title" 
           class="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
           role="button"
@@ -150,6 +202,10 @@
               <span v-if="ticket.originalPrice" class="text-sm text-gray-500 line-through">{{ ticket.originalPrice }}</span>
             </div>
             
+            <div v-if="ticket.lastUpdated" class="text-xs text-gray-500 mb-3">
+              Updated {{ formatRelativeTime(ticket.lastUpdated) }}
+            </div>
+            
             <NuxtLink
               :to="`/attractionsg/${ticket.id}`"
               class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 font-semibold shadow-md mt-auto"
@@ -162,6 +218,18 @@
             </NuxtLink>
           </div>
         </div>
+      </div>
+
+      <!-- No Matches -->
+      <div v-else-if="tickets.length > 0" class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
+        <h3 class="text-xl font-bold text-gray-800">No attractions match your filters</h3>
+        <p class="text-gray-600">Try adjusting your search keywords or filter selections.</p>
+        <button
+          @click="resetFilters"
+          class="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
+        >
+          Reset filters
+        </button>
       </div>
 
       <!-- Empty State -->
@@ -183,8 +251,8 @@
   </div>
 </template>
   
-<script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+<script setup lang="ts">
+import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 
 const { startTracking, trackPageView } = useActivityTracker()
@@ -196,6 +264,10 @@ const error = ref(null)
 // Store scroll position when navigating away
 let savedScrollPosition = 0
 
+const sortOption = ref('latest')
+const selectedCategory = ref('all')
+const searchTerm = ref('')
+
 const loadTickets = async () => {
   try {
     loading.value = true
@@ -206,7 +278,9 @@ const loadTickets = async () => {
       method: 'POST',
       body: {
         page: 1,
-        limit: 50
+        limit: 50,
+        sortBy: sortOption.value === 'priceAsc' || sortOption.value === 'priceDesc' ? 'price' : sortOption.value === 'alpha' ? 'title' : 'date',
+        sortOrder: sortOption.value === 'priceAsc' || sortOption.value === 'alpha' ? 'asc' : 'desc'
       }
     })
 
@@ -253,6 +327,80 @@ const handleCardClick = (ticket) => {
 
 const handleImageError = (event) => {
   event.target.style.display = 'none'
+}
+
+const availableCategories = computed(() => {
+  const categories = new Set<string>()
+  tickets.value.forEach(ticket => {
+    if (ticket.category) {
+      categories.add(ticket.category)
+    }
+  })
+  return Array.from(categories).sort()
+})
+
+const normalizedTickets = computed(() => {
+  return tickets.value.map(ticket => {
+    const priceAmount = typeof ticket.priceAmount === 'number'
+      ? ticket.priceAmount
+      : parseFloat(String(ticket.price || '').replace(/[^0-9.]/g, '')) || null
+    const lastUpdated = ticket.lastUpdated ? new Date(ticket.lastUpdated) : null
+    return {
+      ...ticket,
+      priceAmount,
+      lastUpdated
+    }
+  })
+})
+
+const sortedTickets = computed(() => {
+  const items = [...normalizedTickets.value]
+  switch (sortOption.value) {
+    case 'priceAsc':
+      return items.sort((a, b) => (a.priceAmount ?? Infinity) - (b.priceAmount ?? Infinity))
+    case 'priceDesc':
+      return items.sort((a, b) => (b.priceAmount ?? -Infinity) - (a.priceAmount ?? -Infinity))
+    case 'alpha':
+      return items.sort((a, b) => a.title.localeCompare(b.title))
+    case 'latest':
+    default:
+      return items.sort((a, b) => {
+        const aTime = a.lastUpdated ? a.lastUpdated.getTime() : 0
+        const bTime = b.lastUpdated ? b.lastUpdated.getTime() : 0
+        return bTime - aTime
+      })
+  }
+})
+
+const filteredTickets = computed(() => {
+  return sortedTickets.value.filter(ticket => {
+    const matchCategory = selectedCategory.value === 'all' || (ticket.category && ticket.category === selectedCategory.value)
+    const matchSearch = !searchTerm.value ||
+      ticket.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
+      (ticket.location && ticket.location.toLowerCase().includes(searchTerm.value.toLowerCase()))
+    return matchCategory && matchSearch
+  })
+})
+
+const formatRelativeTime = (date: Date | null) => {
+  if (!date) return ''
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+  const minutes = Math.floor(diff / (1000 * 60))
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} min ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours} hr${hours > 1 ? 's' : ''} ago`
+  const days = Math.floor(hours / 24)
+  if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`
+  return date.toLocaleDateString()
+}
+
+const resetFilters = () => {
+  selectedCategory.value = 'all'
+  searchTerm.value = ''
+  sortOption.value = 'latest'
+  loadTickets()
 }
 
 const triggerCrawl = async () => {
