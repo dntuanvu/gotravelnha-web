@@ -198,7 +198,7 @@
             <NuxtLink
               :to="`/attractionsg/${ticket.slug || ticket.id}`"
               class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 font-semibold shadow-md mt-auto"
-              @click.stop
+              @click.stop="rememberScrollPosition"
             >
               View Details
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -241,7 +241,7 @@
 </template>
   
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from 'vue'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 
 const { startTracking, trackPageView } = useActivityTracker()
@@ -271,8 +271,18 @@ const tickets = ref<AttractionEvent[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 
-// Store scroll position when navigating away
-let savedScrollPosition = 0
+interface ScrollState {
+  position: number
+  shouldRestore: boolean
+}
+
+const scrollState = useState<ScrollState>('attractionsg-scroll', () => ({
+  position: 0,
+  shouldRestore: false
+}))
+
+const pendingScrollRestore = ref(false)
+const targetScrollPosition = ref(0)
 
 const sortOption = ref('alpha')
 const searchTerm = ref('')
@@ -336,6 +346,7 @@ const handleCardClick = (ticket: AttractionEvent | null) => {
   if (!ticket) return
   const slug = ticket.slug || ticket.id
   if (!slug) return
+  rememberScrollPosition()
   navigateTo(`/attractionsg/${slug}`)
 }
 
@@ -413,6 +424,12 @@ const resetFilters = () => {
   loadTickets()
 }
 
+const rememberScrollPosition = () => {
+  if (typeof window === 'undefined') return
+  scrollState.value.position = window.scrollY
+  scrollState.value.shouldRestore = true
+}
+
 const triggerCrawl = async () => {
   try {
     loading.value = true
@@ -475,34 +492,37 @@ const triggerCrawl = async () => {
 onMounted(() => {
   startTracking()
   trackPageView('/attractionsg', { platform: 'attractionsg' })
-  
-  // Restore scroll position if available
-  if (savedScrollPosition > 0) {
-    nextTick(() => {
-      window.scrollTo({ top: savedScrollPosition, behavior: 'instant' })
-    })
+
+  if (scrollState.value.shouldRestore && scrollState.value.position > 0) {
+    pendingScrollRestore.value = true
+    targetScrollPosition.value = scrollState.value.position
   }
-  
+
   // Auto-load tickets on mount
   loadTickets()
 })
 
 onBeforeUnmount(() => {
-  // Save scroll position when navigating away
-  savedScrollPosition = window.scrollY
+  rememberScrollPosition()
 })
 
-// Also save on page visibility change or before unload
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
-    sessionStorage.setItem('attractionsg_scroll', window.scrollY.toString())
-  })
-  
-  // Try to restore from sessionStorage on mount
-  const saved = sessionStorage.getItem('attractionsg_scroll')
-  if (saved) {
-    savedScrollPosition = parseInt(saved, 10)
-    sessionStorage.removeItem('attractionsg_scroll')
-  }
-}
+watch(
+  filteredTickets,
+  (items) => {
+    if (!pendingScrollRestore.value) return
+    if (!items || items.length === 0) return
+
+    nextTick(() => {
+      window.scrollTo({
+        top: Math.max(0, targetScrollPosition.value),
+        behavior: 'auto'
+      })
+      pendingScrollRestore.value = false
+      targetScrollPosition.value = 0
+      scrollState.value.position = 0
+      scrollState.value.shouldRestore = false
+    })
+  },
+  { immediate: false }
+)
 </script>

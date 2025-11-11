@@ -9,10 +9,12 @@ import { join } from 'path'
 import prisma from '~/server/utils/prisma'
 
 const db = prisma as any
+const BASE_URL = 'https://mobile.attractionsg.com'
 
 interface CrawlRequest {
   fullCrawl?: boolean
   maxPages?: number
+  detailLimit?: number
 }
 
 interface EventData {
@@ -58,6 +60,11 @@ const PUBLIC_DATA_DIR = join(process.cwd(), 'public', 'data')
 const EVENTS_FILE = join(DATA_DIR, 'attractionsg-events.json')
 const PUBLIC_EVENTS_FILE = join(PUBLIC_DATA_DIR, 'attractionsg-events.json')
 
+const DEFAULT_DETAIL_LIMIT_PARTIAL = 60
+const DEFAULT_DETAIL_LIMIT_FULL = 150
+const MAX_DETAIL_LIMIT = 250
+const MIN_DESCRIPTION_LENGTH = 160
+
 function getRuntimeConfig(event?: H3Event) {
   try {
     // @ts-ignore - useRuntimeConfig is auto provided by Nitro at runtime
@@ -84,12 +91,85 @@ export async function runAttractionsgCrawl(body: CrawlRequest = {}, event?: H3Ev
   return executeCrawl(body, event)
 }
 
+async function crawlPaginatedListing(
+  page: any,
+  baseUrl: string,
+  label: string,
+  maxPages: number,
+  waitMs = 2000
+): Promise<EventData[]> {
+  const collected: EventData[] = []
+  const seenIds = new Set<string>()
+  const absoluteBase = normalizeUrl(baseUrl) || `${BASE_URL}/`
+  const totalPages = Math.max(1, maxPages)
+
+  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+    const pagedUrl = buildPagedUrl(absoluteBase, pageNumber)
+    console.log(`📄 Crawling [${label}] page ${pageNumber} → ${pagedUrl}`)
+
+    await page.goto(pagedUrl, {
+      waitUntil: 'networkidle',
+      timeout: 30000
+    })
+    await page.waitForTimeout(waitMs)
+
+    const content = await page.content()
+    const extracted = extractEvents(content)
+    const newEvents = extracted.filter((event) => {
+      if (seenIds.has(event.id)) return false
+      seenIds.add(event.id)
+      return true
+    })
+
+    collected.push(...newEvents)
+    console.log(`✅ [${label}] page ${pageNumber}: ${newEvents.length} new events (total ${collected.length})`)
+
+    if (newEvents.length === 0) {
+      console.log(`ℹ️ No new events found for [${label}] page ${pageNumber}. Stopping pagination.`)
+      break
+    }
+  }
+
+  return collected
+}
+
+function buildPagedUrl(baseUrl: string, pageNumber: number): string {
+  try {
+    const url = new URL(baseUrl, BASE_URL)
+    if (pageNumber <= 1) {
+      url.searchParams.delete('page')
+      return url.toString()
+    }
+    url.searchParams.set('page', String(pageNumber))
+    return url.toString()
+  } catch {
+    if (pageNumber <= 1) return baseUrl
+    return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}page=${pageNumber}`
+  }
+}
+
 async function executeCrawl(body: CrawlRequest, event?: H3Event) {
   const config = getRuntimeConfig(event)
   const crawlEnabled =
     (process.env.ATTRACTIONSG_CRAWL_ENABLED ?? config.ATTRACTIONSG_CRAWL_ENABLED ?? 'true') !== 'false'
 
-  if (!crawlEnabled) {
+  const listingPageLimit = Math.max(1, Math.min(body.maxPages ?? 5, 10))
+  const requestedDetailLimit = body.detailLimit ?? parseInt(process.env.CRAWL_DETAIL_LIMIT || '', 10)
+  const detailLimit = Math.max(
+    1,
+    Math.min(
+      Number.isFinite(requestedDetailLimit)
+        ? requestedDetailLimit
+        : body.fullCrawl
+          ? DEFAULT_DETAIL_LIMIT_FULL
+          : DEFAULT_DETAIL_LIMIT_PARTIAL,
+      MAX_DETAIL_LIMIT
+    )
+  )
+
+  const forceFresh = body.fullCrawl || process.env.CRAWL_FORCE === 'true'
+
+  if (!crawlEnabled && !forceFresh) {
     console.log('⏸️ AttractionsSG crawl disabled via ATTRACTIONSG_CRAWL_ENABLED flag.')
     return {
       success: true,
@@ -101,14 +181,14 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
   }
 
   // Load cache from disk or database if needed
-  if (eventsCache.length === 0 || (Date.now() - cacheTimestamp) > CACHE_DURATION) {
+  if (eventsCache.length === 0 || forceFresh || (Date.now() - cacheTimestamp) > CACHE_DURATION) {
     if (eventsCache.length === 0) {
       await loadCacheFromDatabase()
     }
   }
 
   // If cache is still valid and not full crawl requested, return cached data
-  if (!body.fullCrawl && eventsCache.length > 0 && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
+  if (!body.fullCrawl && !forceFresh && eventsCache.length > 0 && (Date.now() - cacheTimestamp) < CACHE_DURATION) {
     return {
       success: true,
       cached: true,
@@ -122,7 +202,7 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
   if (isServerless) {
     const webhook = config.ATTRACTIONSG_CRAWLER_WEBHOOK || process.env.ATTRACTIONSG_CRAWLER_WEBHOOK
 
-    if (webhook) {
+    if (webhook && !forceFresh) {
       console.log('🌐 Serverless environment detected - delegating crawl to webhook')
       try {
         const fetch = await import('ofetch')
@@ -137,7 +217,7 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
           method: 'POST',
           body: {
             fullCrawl: body.fullCrawl ?? false,
-            maxPages: body.maxPages || 20
+            maxPages: listingPageLimit
           },
           headers
         })
@@ -169,7 +249,7 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
 
   const email = config.ATTRACTIONSG_EMAIL || 'enjoytravelticket@gmail.com'
   const password = config.ATTRACTIONSG_PASSWORD || 'Truc1@3456101112'
-  const maxPages = body.maxPages || 20
+  const waitAfterNavigation = body.fullCrawl ? 3000 : 2000
 
   const browser = await chromium.launch({
     headless: true,
@@ -203,29 +283,17 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
     console.log('✅ Successfully logged in')
 
     const allEvents: EventData[] = []
-
-    console.log('📄 Crawling main page...')
-    const mainContent = await page.content()
-    const mainEvents = extractEvents(mainContent)
+    console.log(`📄 Crawling home listing (up to ${listingPageLimit} pages)...`)
+    const mainEvents = await crawlPaginatedListing(page, `${BASE_URL}/`, 'home', listingPageLimit, waitAfterNavigation)
     allEvents.push(...mainEvents)
-    console.log(`✅ Found ${mainEvents.length} events on main page`)
 
     const categories = ['attractions', 'tours', 'theater', 'museums', 'parks']
 
     for (const category of categories) {
       try {
-        console.log(`📄 Crawling category: ${category}...`)
-        const categoryUrl = `https://mobile.attractionsg.com/category/${category}`
-        await page.goto(categoryUrl, {
-          waitUntil: 'networkidle',
-          timeout: 30000
-        })
-        await page.waitForTimeout(2000)
-
-        const content = await page.content()
-        const categoryEvents = extractEvents(content)
+        const categoryUrl = `${BASE_URL}/category/${category}`
+        const categoryEvents = await crawlPaginatedListing(page, categoryUrl, `category:${category}`, listingPageLimit, waitAfterNavigation)
         allEvents.push(...categoryEvents)
-        console.log(`✅ Found ${categoryEvents.length} events in ${category}`)
       } catch (err) {
         console.error(`⚠️ Error crawling category ${category}:`, err)
       }
@@ -233,21 +301,13 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
 
     if (body.fullCrawl) {
       const searchTerms = ['singapore', 'zoo', 'aquarium', 'museum', 'garden', 'sentosa', 'universal', 'flyer']
+      const searchPageLimit = Math.max(1, Math.min(listingPageLimit, 4))
 
       for (const term of searchTerms) {
         try {
-          console.log(`🔍 Searching for: ${term}...`)
-          const searchUrl = `https://mobile.attractionsg.com/search?q=${encodeURIComponent(term)}`
-          await page.goto(searchUrl, {
-            waitUntil: 'networkidle',
-            timeout: 30000
-          })
-          await page.waitForTimeout(2000)
-
-          const content = await page.content()
-          const searchEvents = extractEvents(content)
+          const searchUrl = `${BASE_URL}/search?q=${encodeURIComponent(term)}`
+          const searchEvents = await crawlPaginatedListing(page, searchUrl, `search:${term}`, searchPageLimit, waitAfterNavigation)
           allEvents.push(...searchEvents)
-          console.log(`✅ Found ${searchEvents.length} events for "${term}"`)
         } catch (err) {
           console.error(`⚠️ Error searching for ${term}:`, err)
         }
@@ -257,12 +317,11 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
     const uniqueEvents = deduplicateEvents(allEvents)
 
     console.log(`✅ Total unique events found: ${uniqueEvents.length}`)
+    console.log(`ℹ️ Detail enrichment limit: ${detailLimit} (fullCrawl=${body.fullCrawl === true})`)
 
-    const maxDetailEvents = body.maxPages || 30
-    const detailEnrichmentLimit = body.fullCrawl ? maxDetailEvents : Math.min(maxDetailEvents, 40)
     const enrichmentTargets = body.fullCrawl
-      ? uniqueEvents.slice(0, detailEnrichmentLimit)
-      : uniqueEvents.filter(shouldFetchDetails).slice(0, detailEnrichmentLimit)
+      ? uniqueEvents.slice(0, detailLimit)
+      : uniqueEvents.filter(shouldFetchDetails).slice(0, detailLimit)
 
     if (enrichmentTargets.length > 0) {
       console.log(`📋 Enriching ${enrichmentTargets.length} events with detailed data...`)
@@ -417,13 +476,19 @@ function extractEvents(html: string): EventData[] {
         
         // Extract and fix image URL - try multiple attributes and sources
         const imgTag = $item.find('img').first()
-        const rawImage = imgTag.attr('src') || 
+        let image = normalizeUrl(imgTag.attr('src') || 
                         imgTag.attr('data-src') ||
                         imgTag.attr('data-lazy-src') ||
                         imgTag.attr('data-original') ||
-                        imgTag.attr('srcset')?.split(',')[0]?.trim().split(' ')[0]
-        const image = normalizeUrl(rawImage)
-        
+                        imgTag.attr('srcset')?.split(',')[0]?.trim().split(' ')[0])
+
+        if (!image) {
+          const bgImage = extractBackgroundImage($item)
+          if (bgImage) {
+            image = normalizeUrl(bgImage)
+          }
+        }
+ 
         if (image && !image.includes('undefined')) {
           console.log(`🖼️ Found image for "${title}": ${image}`)
         }
@@ -457,6 +522,41 @@ function extractEvents(html: string): EventData[] {
   }
 
   return events
+}
+
+function extractBackgroundImage($item: cheerio.Cheerio<any>): string | undefined {
+  const sources: string[] = []
+
+  const collectFromStyle = (style?: string) => {
+    if (!style) return
+    const match = style.match(/url\(([^)]+)\)/i)
+    if (match?.[1]) {
+      const cleaned = match[1].replace(/['"]/g, '').trim()
+      if (cleaned) sources.push(cleaned)
+    }
+  }
+
+  collectFromStyle($item.attr('style'))
+  const backgroundElements = $item.find('[style*="background"]')
+  backgroundElements.each((index) => {
+    const elementWrapper = backgroundElements.eq(index)
+    collectFromStyle(elementWrapper.attr('style'))
+  })
+
+  const dataAttrs = ['data-bg', 'data-background', 'data-image', 'data-src', 'data-lazy-src']
+  for (const attr of dataAttrs) {
+    const rootValue = $item.attr(attr)
+    if (rootValue) sources.push(rootValue)
+
+    const elementsWithAttr = $item.find(`[${attr}]`)
+    elementsWithAttr.each((index) => {
+      const elementWrapper = elementsWithAttr.eq(index)
+      const value = elementWrapper.attr(attr)
+      if (value) sources.push(value)
+    })
+  }
+
+  return sources.find(Boolean)
 }
 
 function deduplicateEvents(events: EventData[]): EventData[] {
@@ -609,6 +709,11 @@ function shouldFetchDetails(event: EventData): boolean {
   if (!event.link || !event.link.startsWith('https://')) return false
   if (!event.image) return true
 
+  const descriptionLength = event.description?.replace(/\s+/g, ' ').trim().length ?? 0
+  if (descriptionLength === 0 || descriptionLength < MIN_DESCRIPTION_LENGTH) {
+    return true
+  }
+
   const priceAmount = parsePriceAmount(event.price)
   const originalAmount = parsePriceAmount(event.originalPrice)
   if (!event.originalPrice || !originalAmount || !priceAmount || priceAmount === originalAmount) {
@@ -634,7 +739,13 @@ async function enrichEventsWithDetails(page: any, events: EventData[]) {
 }
 
 function mergeEventData(target: EventData, source: EventData) {
-  target.description = source.description || target.description
+  const sourceDescription = source.description?.trim()
+  const targetDescription = target.description?.trim()
+  if (sourceDescription) {
+    if (!targetDescription || sourceDescription.length >= targetDescription.length) {
+      target.description = sourceDescription
+    }
+  }
   target.price = source.price || target.price
   target.originalPrice = source.originalPrice || target.originalPrice
   target.image = source.image || target.image
@@ -926,9 +1037,9 @@ function normalizeUrl(url?: string): string | undefined {
   
   // Add base URL for relative paths
   if (url.startsWith('/')) {
-    return `https://mobile.attractionsg.com${url}`
+    return `${BASE_URL}${url}`
   }
   
   // Add base URL for relative paths without leading slash
-  return `https://mobile.attractionsg.com/${url}`
+  return `${BASE_URL}/${url}`
 }
