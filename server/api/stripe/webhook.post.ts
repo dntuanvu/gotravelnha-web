@@ -1,14 +1,19 @@
 import Stripe from 'stripe'
 import { defineEventHandler, createError, readRawBody } from 'h3'
 import prisma from '~/server/utils/prisma'
+import type { RuntimeConfig } from 'nuxt/schema'
+import type { PrismaClient } from '@prisma/client'
 import { sendEmail } from '~/server/utils/email'
+
+const db = prisma as PrismaClient
+const bookings = (db as unknown as Record<string, any>)['attractionsgBooking']
 
 let stripeClient: Stripe | null = null
 
 function getStripeClient(secretKey: string) {
   if (!stripeClient) {
     stripeClient = new Stripe(secretKey, {
-      apiVersion: '2023-10-16'
+      apiVersion: '2024-06-20'
     })
   }
   return stripeClient
@@ -40,11 +45,7 @@ export default defineEventHandler(async (event) => {
   let stripeEvent: Stripe.Event
 
   try {
-    stripeEvent = stripe.webhooks.constructEvent(
-      rawBody,
-      signature,
-      webhookSecret
-    )
+    stripeEvent = stripe.webhooks.constructEvent(rawBody, signature, webhookSecret)
   } catch (err: any) {
     console.error('Stripe webhook signature verification failed:', err)
     throw createError({
@@ -62,7 +63,7 @@ export default defineEventHandler(async (event) => {
       }
       case 'checkout.session.expired': {
         const session = stripeEvent.data.object as Stripe.Checkout.Session
-        await prisma.attractionsgBooking.updateMany({
+        await bookings.updateMany({
           where: { stripeSessionId: session.id, status: 'PENDING' },
           data: { status: 'CANCELLED' }
         })
@@ -70,8 +71,8 @@ export default defineEventHandler(async (event) => {
       }
       case 'payment_intent.payment_failed': {
         const paymentIntent = stripeEvent.data.object as Stripe.PaymentIntent
-        if (paymentIntent.metadata?.stripeSessionId) {
-          await prisma.attractionsgBooking.updateMany({
+        if (typeof paymentIntent.metadata?.stripeSessionId === 'string') {
+          await bookings.updateMany({
             where: {
               stripeSessionId: paymentIntent.metadata.stripeSessionId,
               status: 'PENDING'
@@ -95,60 +96,74 @@ export default defineEventHandler(async (event) => {
   return { received: true }
 })
 
-async function handleCheckoutCompleted(
-  session: Stripe.Checkout.Session,
-  config: Record<string, any>
-) {
-  const booking = await prisma.attractionsgBooking.findUnique({
+async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config: RuntimeConfig) {
+  const existingBooking = await bookings.findUnique({
     where: { stripeSessionId: session.id },
     include: {
       event: true
     }
   })
 
-  if (!booking) {
-    console.warn('Checkout completed but booking not found:', session.id)
+  let targetBooking = existingBooking
+
+  if (!targetBooking && session.client_reference_id) {
+    targetBooking = await bookings.findFirst({
+      where: {
+        eventId: session.client_reference_id,
+        status: 'PENDING'
+      },
+      orderBy: {
+        createdAt: 'desc'
+      },
+      include: {
+        event: true
+      }
+    })
+  }
+
+  if (!targetBooking) {
+    console.warn('Checkout completed but booking not found:', session.id, 'ref:', session.client_reference_id)
     return
   }
 
-  if (booking.status === 'PAID') {
+  if (targetBooking.status === 'PAID') {
+    console.info('Booking already marked as PAID:', targetBooking.id)
     return
   }
 
   const customerDetails = session.customer_details
 
-  const updatedBooking = await prisma.attractionsgBooking.update({
-    where: { id: booking.id },
+  const updatedBooking = await bookings.update({
+    where: { id: targetBooking.id },
     data: {
       status: 'PAID',
       amount:
         typeof session.amount_total === 'number'
           ? session.amount_total / 100
-          : booking.amount,
+          : targetBooking.amount,
       customerEmail:
         customerDetails?.email ??
-        booking.customerEmail ??
+        targetBooking.customerEmail ??
         undefined,
       customerName:
         customerDetails?.name ??
-        booking.customerName ??
+        targetBooking.customerName ??
         undefined,
       customerPhone:
         customerDetails?.phone ??
-        booking.customerPhone ??
+        targetBooking.customerPhone ??
         undefined,
       stripePaymentIntentId:
         typeof session.payment_intent === 'string'
           ? session.payment_intent
-          : session.payment_intent?.id ?? booking.stripePaymentIntentId
+          : session.payment_intent?.id ?? targetBooking.stripePaymentIntentId
     },
     include: {
       event: true
     }
   })
 
-  const notifyEmail =
-    config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER
+  const notifyEmail = config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER
 
   if (!notifyEmail) {
     console.warn('No notification email configured for bookings.')
@@ -208,6 +223,7 @@ async function handleCheckoutCompleted(
       subject: `New Attraction Booking - ${updatedBooking.eventTitle}`,
       html
     })
+    console.info('Booking payment notification sent:', updatedBooking.id)
   } catch (err) {
     console.error('Failed to send booking notification:', err)
   }
