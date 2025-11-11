@@ -58,11 +58,13 @@ export default defineEventHandler(async (event) => {
     switch (stripeEvent.type) {
       case 'checkout.session.completed': {
         const session = stripeEvent.data.object as Stripe.Checkout.Session
+        console.info('[stripe] checkout.session.completed', session.id)
         await handleCheckoutCompleted(session, config)
         break
       }
       case 'checkout.session.expired': {
         const session = stripeEvent.data.object as Stripe.Checkout.Session
+        console.info('[stripe] checkout.session.expired', session.id)
         await bookings.updateMany({
           where: { stripeSessionId: session.id, status: 'PENDING' },
           data: { status: 'CANCELLED' }
@@ -71,6 +73,7 @@ export default defineEventHandler(async (event) => {
       }
       case 'payment_intent.payment_failed': {
         const paymentIntent = stripeEvent.data.object as Stripe.PaymentIntent
+        console.warn('[stripe] payment_intent.payment_failed', paymentIntent.id)
         if (typeof paymentIntent.metadata?.stripeSessionId === 'string') {
           await bookings.updateMany({
             where: {
@@ -83,6 +86,7 @@ export default defineEventHandler(async (event) => {
         break
       }
       default:
+        console.info('[stripe] ignored event', stripeEvent.type)
         break
     }
   } catch (err) {
@@ -132,6 +136,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
   }
 
   const customerDetails = session.customer_details
+
+  console.info('Updating booking as paid:', targetBooking.id)
 
   const updatedBooking = await bookings.update({
     where: { id: targetBooking.id },
