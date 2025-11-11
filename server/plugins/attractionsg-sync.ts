@@ -8,8 +8,16 @@ export default defineNitroPlugin((nitroApp) => {
     process.env.ATTRACTIONSG_BACKGROUND_SYNC === 'true' ||
     config.ATTRACTIONSG_BACKGROUND_SYNC === 'true'
 
+  const crawlEnabled =
+    (process.env.ATTRACTIONSG_CRAWL_ENABLED ?? config.ATTRACTIONSG_CRAWL_ENABLED ?? 'true') !== 'false'
+
   if (!enabled) {
     console.log('⏸️ AttractionsSG background sync disabled')
+    return
+  }
+
+  if (!crawlEnabled) {
+    console.log('⏸️ AttractionsSG crawl disabled via feature flag; background sync not started.')
     return
   }
 

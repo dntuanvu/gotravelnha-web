@@ -75,7 +75,8 @@ function getRuntimeConfig(event?: H3Event) {
     ATTRACTIONSG_BACKGROUND_SYNC: process.env.ATTRACTIONSG_BACKGROUND_SYNC,
     ATTRACTIONSG_SYNC_INTERVAL: process.env.ATTRACTIONSG_SYNC_INTERVAL,
     ATTRACTIONSG_CRAWLER_WEBHOOK: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK,
-    ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET
+    ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET,
+    ATTRACTIONSG_CRAWL_ENABLED: process.env.ATTRACTIONSG_CRAWL_ENABLED
   }
 }
 
@@ -84,10 +85,23 @@ export async function runAttractionsgCrawl(body: CrawlRequest = {}, event?: H3Ev
 }
 
 async function executeCrawl(body: CrawlRequest, event?: H3Event) {
+  const config = getRuntimeConfig(event)
+  const crawlEnabled =
+    (process.env.ATTRACTIONSG_CRAWL_ENABLED ?? config.ATTRACTIONSG_CRAWL_ENABLED ?? 'true') !== 'false'
+
+  if (!crawlEnabled) {
+    console.log('⏸️ AttractionsSG crawl disabled via ATTRACTIONSG_CRAWL_ENABLED flag.')
+    return {
+      success: true,
+      cached: true,
+      message: 'Crawl disabled via feature flag. Enable by setting ATTRACTIONSG_CRAWL_ENABLED=true.',
+      total: eventsCache.length,
+      timestamp: cacheTimestamp ? new Date(cacheTimestamp).toISOString() : new Date().toISOString()
+    }
+  }
+
   // Load cache from disk or database if needed
   if (eventsCache.length === 0 || (Date.now() - cacheTimestamp) > CACHE_DURATION) {
-    await loadCacheFromDisk()
-
     if (eventsCache.length === 0) {
       await loadCacheFromDatabase()
     }
@@ -103,7 +117,6 @@ async function executeCrawl(body: CrawlRequest, event?: H3Event) {
     }
   }
 
-  const config = getRuntimeConfig(event)
   const isServerless = process.env.VERCEL || process.env.NETLIFY
 
   if (isServerless) {
@@ -865,31 +878,6 @@ function parsePriceAmount(price?: string): number | undefined {
   if (!numericMatch) return undefined
   const parsed = parseFloat(numericMatch)
   return isNaN(parsed) ? undefined : parsed
-}
-
-async function loadCacheFromDisk() {
-  try {
-    // Try public/data first (for deployment), then data/ (for local)
-    const filesToTry = [
-      { path: PUBLIC_EVENTS_FILE, name: 'public/data/attractionsg-events.json' },
-      { path: EVENTS_FILE, name: 'data/attractionsg-events.json' }
-    ]
-    
-    for (const fileInfo of filesToTry) {
-      if (existsSync(fileInfo.path)) {
-        const data = await readFile(fileInfo.path, 'utf-8')
-        const parsed = JSON.parse(data)
-        eventsCache = parsed.events || []
-        cacheTimestamp = new Date(parsed.timestamp).getTime() || 0
-        console.log(`✅ Loaded ${eventsCache.length} events from ${fileInfo.name}`)
-        return
-      }
-    }
-    
-    console.log('⚠️ No cache file found in public/data/ or data/')
-  } catch (error) {
-    console.error('⚠️ Error loading cache from disk:', error)
-  }
 }
 
 async function saveCacheToDisk(events: EventData[]) {

@@ -24,6 +24,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
@@ -35,4 +40,5 @@ jobs:
           ATTRACTIONSG_PASSWORD: ${{ secrets.ATTRACTIONSG_PASSWORD }}
           CRAWL_FULL: ${{ secrets.CRAWL_FULL || 'true' }}
           CRAWL_MAX_PAGES: ${{ secrets.CRAWL_MAX_PAGES || '40' }}
+          ATTRACTIONSG_CRAWL_ENABLED: "true"
 

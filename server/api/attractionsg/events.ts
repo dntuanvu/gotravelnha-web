@@ -22,7 +22,8 @@ export default defineEventHandler(async (event) => {
     const sortOrder = body.sortOrder === 'desc' ? 'desc' : 'asc'
 
     const where: Prisma.AttractionsgEventWhereInput = {
-      isActive: true
+      isActive: true,
+      isPublished: true
     }
 
     if (body.search) {
@@ -61,8 +62,8 @@ export default defineEventHandler(async (event) => {
       ? maxUpdated._max.updatedAt.toISOString()
       : new Date().toISOString()
 
-    if (data.length === 0) {
-      const cache = getEventsCache()
+    if (data.length === 0 && !body.search && !body.category) {
+      const cache = getEventsCache().filter((event) => event.isPublished === true)
       if (cache.length > 0) {
         cached = true
         total = cache.length
@@ -149,6 +150,8 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
     validTo: record.validTo ?? raw?.validTo,
     gallery: raw?.gallery ?? [],
     options: raw?.options ?? [],
+    isPublished: record.isPublished,
+    publishedAt: record.publishedAt,
     raw,
     lastUpdated: record.updatedAt.toISOString()
   }

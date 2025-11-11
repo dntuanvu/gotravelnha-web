@@ -254,15 +254,24 @@
     </div>
 
     <!-- Error State -->
-    <div v-else class="bg-red-50 border border-red-200 rounded-2xl p-12 text-center">
-      <svg class="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-      </svg>
-      <h3 class="text-xl font-bold text-red-800 mb-2">Event Not Found</h3>
-      <p class="text-red-600 mb-4">The requested attraction could not be found.</p>
+    <div v-else class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
+      <div class="flex justify-center">
+        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 flex items-center justify-center">
+          <span class="text-3xl">🔍</span>
+        </div>
+      </div>
+      <h3 class="text-2xl font-bold text-gray-900">
+        {{ notFound ? 'This attraction is unavailable' : 'Event not found' }}
+      </h3>
+      <p class="text-gray-600 max-w-lg mx-auto">
+        {{ notFound
+          ? 'This experience has been unpublished or is temporarily unavailable. Please browse our other Singapore attractions.'
+          : 'The requested attraction could not be found. It may have expired or the link is incorrect.'
+        }}
+      </p>
       <NuxtLink 
         to="/attractionsg" 
-        class="inline-flex items-center gap-2 px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-semibold"
+        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-colors font-semibold"
       >
         Browse All Attractions
       </NuxtLink>
@@ -277,6 +286,7 @@ import BookingRequestForm from '~/components/BookingRequestForm.vue'
 const route = useRoute()
 const loading = ref(true)
 const event = ref(null)
+const notFound = ref(false)
 const selectedOption = ref(null)
 const bookingFormRef = ref(null)
 const copyMessage = ref('')
@@ -324,6 +334,10 @@ const formatCurrency = (amount) => {
     style: 'currency',
     currency: 'SGD'
   }).format(amount)
+}
+
+const filterPublished = (items) => {
+  return (items || []).filter((item) => item && item.isPublished === true)
 }
 
 const handleRequestOption = (option) => {
@@ -380,6 +394,7 @@ const canonicalUrl = computed(() =>
 
 onMounted(async () => {
   console.log(`🔍 Looking for event with slug/ID: ${currentSlug.value}`)
+  notFound.value = false
   
   try {
     // Fetch all events (slug already contains the ID)
@@ -394,33 +409,10 @@ onMounted(async () => {
         }
       })
       console.log('📊 Detail page API response:', res)
-      allEvents = res.data || []
+      allEvents = filterPublished(res.data || [])
       console.log(`✅ API returned ${allEvents.length} events`)
     } catch (apiErr) {
       console.error('❌ API error, trying direct fetch:', apiErr)
-      
-      // Fallback: fetch directly from public URL
-      try {
-        console.log('📡 Trying direct fetch from /data/...')
-        const publicData = await $fetch('/data/attractionsg-events.json')
-        allEvents = publicData.events || []
-        console.log(`✅ Direct fetch loaded ${allEvents.length} events`)
-      } catch (fallbackErr) {
-        console.error('❌ Error loading from public URL:', fallbackErr)
-      }
-    }
-    
-    // Additional fallback: if API returns 0 but no error, try direct fetch
-    if (allEvents.length === 0) {
-      console.log('⚠️ API returned 0 events, trying direct fetch as backup...')
-      try {
-        const publicData = await $fetch('/data/attractionsg-events.json')
-        console.log('📊 Detail page backup fetch response:', publicData)
-        allEvents = publicData.events || []
-        console.log(`✅ Backup fetch loaded ${allEvents.length} events`)
-      } catch (fallbackErr) {
-        console.error('❌ Error in backup fetch:', fallbackErr)
-      }
     }
     
     console.log(`📊 Total events loaded: ${allEvents.length}`)
@@ -432,13 +424,15 @@ onMounted(async () => {
     if (foundEvent) {
       console.log(`✅ Found event: ${foundEvent.title}`)
       event.value = foundEvent
+      notFound.value = false
       currentSlug.value = foundEvent.slug || foundEvent.id || currentSlug.value
       if (foundEvent.slug && foundEvent.slug !== initialSlugParam) {
         console.log(`🔄 Updating slug in URL to canonical slug: ${foundEvent.slug}`)
         navigateTo(`/attractionsg/${foundEvent.slug}`, { replace: true })
       }
     } else {
-      console.error(`❌ Event not found with slug/ID: ${currentSlug.value}`)
+      console.error(`❌ Event not found or unpublished with slug/ID: ${currentSlug.value}`)
+      notFound.value = true
     }
   } catch (err) {
     console.error('❌ Error loading event:', err)

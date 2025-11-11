@@ -185,8 +185,8 @@
               <span v-if="ticket.originalPrice" class="text-sm text-gray-500 line-through">{{ ticket.originalPrice }}</span>
             </div>
             
-            <div v-if="ticket.lastUpdated" class="text-xs text-gray-500 mb-3">
-              Updated {{ formatRelativeTime(ticket.lastUpdated) }}
+            <div v-if="ticket.lastUpdatedDate" class="text-xs text-gray-500 mb-3">
+              Updated {{ formatRelativeTime(ticket.lastUpdatedDate) }}
             </div>
             
             <NuxtLink
@@ -240,9 +240,30 @@ import { useActivityTracker } from '~/composables/useActivityTracker'
 
 const { startTracking, trackPageView } = useActivityTracker()
 
-const tickets = ref([])
+interface AttractionEvent {
+  id?: string
+  slug?: string
+  title: string
+  description?: string
+  location?: string
+  price?: string
+  originalPrice?: string
+  image?: string
+  lastUpdated?: string
+  priceAmount?: number | null
+  originalPriceAmount?: number | null
+  isPublished?: boolean
+  [key: string]: any
+}
+
+type NormalizedAttraction = AttractionEvent & {
+  priceAmount: number | null
+  lastUpdatedDate: Date | null
+}
+
+const tickets = ref<AttractionEvent[]>([])
 const loading = ref(false)
-const error = ref(null)
+const error = ref<string | null>(null)
 
 // Store scroll position when navigating away
 let savedScrollPosition = 0
@@ -282,7 +303,7 @@ const loadTickets = async () => {
     error.value = null
     
     console.log('📡 loadTickets: Trying API endpoint...')
-    const res = await $fetch('/api/attractionsg/events', {
+    const res = await $fetch<{ data: AttractionEvent[] }>('/api/attractionsg/events', {
       method: 'POST',
       body: {
         page: 1,
@@ -293,67 +314,52 @@ const loadTickets = async () => {
     })
 
     console.log('📊 loadTickets: API response:', res)
-    tickets.value = res.data || []
+    tickets.value = filterPublished(res.data || [])
     console.log(`📊 loadTickets: API returned ${tickets.value.length} tickets`)
     
-    // Fallback: If no data, try direct fetch from public URL
-    if (tickets.value.length === 0) {
-      console.log('⚠️ loadTickets: API returned no data, trying direct fetch...')
-      try {
-        const publicData = await $fetch('/data/attractionsg-events.json')
-        console.log('📊 loadTickets: Direct fetch response:', publicData)
-        tickets.value = publicData.events || []
-        console.log(`✅ loadTickets: Loaded ${tickets.value.length} events from public URL`)
-      } catch (fallbackErr) {
-        console.error('❌ loadTickets: Error loading from public URL:', fallbackErr)
-      }
-    }
   } catch (err) {
     console.error('❌ loadTickets: API error:', err)
     error.value = 'Unable to fetch tickets. Please try again later.'
     
-    // Last resort: try direct fetch
-    try {
-      console.log('⚠️ loadTickets: API failed, trying direct fetch as last resort...')
-      const publicData = await $fetch('/data/attractionsg-events.json')
-      console.log('📊 loadTickets: Last resort response:', publicData)
-      tickets.value = publicData.events || []
-      console.log(`✅ loadTickets: Loaded ${tickets.value.length} events from public URL`)
-      error.value = null // Clear error if successful
-    } catch (fallbackErr) {
-      console.error('❌ loadTickets: Error loading from public URL:', fallbackErr)
-    }
   } finally {
     loading.value = false
   }
 }
 
-const handleCardClick = (ticket: any) => {
+const handleCardClick = (ticket: AttractionEvent | null) => {
   if (!ticket) return
   const slug = ticket.slug || ticket.id
   if (!slug) return
   navigateTo(`/attractionsg/${slug}`)
 }
 
-const handleImageError = (event) => {
-  event.target.style.display = 'none'
+const handleImageError = (evt: Event) => {
+  const target = evt.target as HTMLImageElement | null
+  if (target) {
+    target.style.display = 'none'
+  }
 }
 
-const normalizedTickets = computed(() => {
-  return tickets.value.map(ticket => {
-    const priceAmount = typeof ticket.priceAmount === 'number'
-      ? ticket.priceAmount
-      : parseFloat(String(ticket.price || '').replace(/[^0-9.]/g, '')) || null
-    const lastUpdated = ticket.lastUpdated ? new Date(ticket.lastUpdated) : null
+const filterPublished = (items: AttractionEvent[]) => {
+  return (items || []).filter((item) => item && item.isPublished === true)
+}
+
+const normalizedTickets = computed<NormalizedAttraction[]>(() => {
+  return tickets.value.map((ticket) => {
+    const priceAmount =
+      typeof ticket.priceAmount === 'number'
+        ? ticket.priceAmount
+        : parseFloat(String(ticket.price ?? '').replace(/[^0-9.]/g, '')) || null
+    const lastUpdatedDate = ticket.lastUpdated ? new Date(ticket.lastUpdated) : null
     return {
       ...ticket,
       priceAmount,
-      lastUpdated
+      lastUpdatedDate
     }
   })
 })
 
-const sortedTickets = computed(() => {
+const sortedTickets = computed<NormalizedAttraction[]>(() => {
   const items = [...normalizedTickets.value]
   switch (sortOption.value) {
     case 'priceAsc':
@@ -362,8 +368,8 @@ const sortedTickets = computed(() => {
       return items.sort((a, b) => (b.priceAmount ?? -Infinity) - (a.priceAmount ?? -Infinity))
     case 'latest':
       return items.sort((a, b) => {
-        const aTime = a.lastUpdated ? a.lastUpdated.getTime() : 0
-        const bTime = b.lastUpdated ? b.lastUpdated.getTime() : 0
+        const aTime = a.lastUpdatedDate ? a.lastUpdatedDate.getTime() : 0
+        const bTime = b.lastUpdatedDate ? b.lastUpdatedDate.getTime() : 0
         return bTime - aTime
       })
     case 'alpha':
@@ -372,8 +378,8 @@ const sortedTickets = computed(() => {
   }
 })
 
-const filteredTickets = computed(() => {
-  return sortedTickets.value.filter(ticket => {
+const filteredTickets = computed<NormalizedAttraction[]>(() => {
+  return sortedTickets.value.filter((ticket) => {
     const matchSearch = !searchTerm.value ||
       ticket.title.toLowerCase().includes(searchTerm.value.toLowerCase()) ||
       (ticket.location && ticket.location.toLowerCase().includes(searchTerm.value.toLowerCase()))
@@ -429,7 +435,7 @@ const triggerCrawl = async () => {
       attempts++
       
       try {
-        const res = await $fetch('/api/attractionsg/events', {
+        const res = await $fetch<{ data: AttractionEvent[] }>('/api/attractionsg/events', {
           method: 'POST',
           body: {
             limit: 1

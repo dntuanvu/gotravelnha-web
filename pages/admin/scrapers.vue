@@ -1,6 +1,9 @@
 <template>
   <div class="min-h-screen bg-gray-50 pb-12">
     <div class="max-w-7xl mx-auto px-4 pt-8">
+      <NuxtLink to="/admin" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2 mb-4">
+        <span>← Back to Admin Dashboard</span>
+      </NuxtLink>
       <!-- Page Header -->
       <div class="mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">

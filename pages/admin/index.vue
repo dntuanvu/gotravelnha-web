@@ -62,7 +62,7 @@
               </NuxtLink>
 
               <NuxtLink
-                to="/analytics"
+                to="/admin/analytics"
                 class="flex items-center gap-3 p-4 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors group"
               >
                 <span class="text-2xl">📊</span>
@@ -196,7 +196,7 @@
             <h2 class="text-xl font-bold text-gray-900 mb-4">🔗 Quick Links</h2>
             <div class="space-y-2">
               <a href="/admin/users" class="block text-blue-600 hover:text-blue-800 font-medium">User Management</a>
-              <a href="/analytics" class="block text-blue-600 hover:text-blue-800 font-medium">Analytics Dashboard</a>
+              <a href="/admin/analytics" class="block text-blue-600 hover:text-blue-800 font-medium">Analytics Dashboard</a>
               <a href="/trip" class="block text-blue-600 hover:text-blue-800 font-medium">Trip.com Page</a>
               <a href="/klook" class="block text-blue-600 hover:text-blue-800 font-medium">Klook Page</a>
               <a href="/attractionsg" class="block text-blue-600 hover:text-blue-800 font-medium">AttractionsSG Page</a>
@@ -252,7 +252,7 @@ const recentActivity = ref([
 ])
 
 const viewEvents = () => {
-  router.push('/attractionsg')
+  router.push('/admin/attractionsg')
 }
 
 

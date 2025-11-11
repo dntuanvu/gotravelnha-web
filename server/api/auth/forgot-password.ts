@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
 import * as crypto from 'crypto'
-import * as nodemailer from 'nodemailer'
+import nodemailer from 'nodemailer'
 import prisma from '~/server/utils/prisma'
 
 export default defineEventHandler(async (event) => {
@@ -55,10 +55,15 @@ export default defineEventHandler(async (event) => {
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: false, // true for 465, false for other ports
+      secure: (process.env.SMTP_SECURE === 'true') || parseInt(process.env.SMTP_PORT || '587') === 465,
+      requireTLS: process.env.SMTP_REQUIRE_STARTTLS !== 'false',
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
+      },
+      tls: {
+        rejectUnauthorized: process.env.SMTP_TLS_REJECT_UNAUTHORIZED === 'false' ? false : true,
+        ciphers: process.env.SMTP_TLS_CIPHERS || undefined
       }
     })
 

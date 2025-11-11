@@ -144,6 +144,7 @@ model AttractionsgEvent {
   priceAmount          Float?
   originalPriceText    String?
   originalPriceAmount  Float?
+  publicPrice          Float?
   image                String?
   category             String?
   location             String?
@@ -156,6 +157,9 @@ model AttractionsgEvent {
   validTo              String?
   lastSeenAt           DateTime @default(now())
   isActive             Boolean  @default(true)
+  isPublished          Boolean  @default(false)
+  publishedAt          DateTime?
+  notes                String?
   raw                  Json?
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
@@ -164,6 +168,25 @@ model AttractionsgEvent {
   @@index([category])
   @@index([isActive])
   @@index([title])
+}
+
+model UserActivity {
+  id             String   @id @default(cuid())
+  sessionId      String
+  timestamp      DateTime
+  page           String
+  action         String
+  data           Json?
+  userAgent      String?
+  viewportWidth  Int?
+  viewportHeight Int?
+  createdAt      DateTime @default(now())
+
+  @@map("user_activities")
+  @@index([timestamp])
+  @@index([page])
+  @@index([action])
+  @@index([sessionId])
 }
 
 model PriceAlert {
