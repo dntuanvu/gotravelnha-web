@@ -7,7 +7,7 @@ let stripeClient: Stripe | null = null
 function getStripeClient(secretKey: string) {
   if (!stripeClient) {
     stripeClient = new Stripe(secretKey, {
-      apiVersion: '2023-10-16'
+      apiVersion: '2024-06-20'
     })
   }
   return stripeClient
@@ -116,6 +116,9 @@ export default defineEventHandler(async (event) => {
       customer_email: customerEmail,
       client_reference_id: attraction.id,
       metadata,
+      payment_intent_data: {
+        metadata
+      },
       allow_promotion_codes: true,
       automatic_tax: { enabled: false }
     })
@@ -127,7 +130,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  await prisma.attractionsgBooking.create({
+  const booking = await prisma.attractionsgBooking.create({
     data: {
       eventId: attraction.id,
       eventTitle: attraction.title,
@@ -150,6 +153,26 @@ export default defineEventHandler(async (event) => {
       notes: attraction.checkoutNotes ?? null
     }
   })
+
+  const enrichedMetadata = {
+    ...metadata,
+    bookingId: booking.id,
+    stripeSessionId: session.id
+  }
+
+  try {
+    await stripe.checkout.sessions.update(session.id, {
+      metadata: enrichedMetadata
+    })
+
+    if (typeof session.payment_intent === 'string') {
+      await stripe.paymentIntents.update(session.payment_intent, {
+        metadata: enrichedMetadata
+      })
+    }
+  } catch (err) {
+    console.error('Failed to update Stripe metadata:', err)
+  }
 
   return {
     success: true,

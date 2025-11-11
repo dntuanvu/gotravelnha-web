@@ -244,45 +244,58 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
 }
 
 async function handlePaymentIntentSuccess(paymentIntent: Stripe.PaymentIntent, config: RuntimeConfig) {
+  const secretKey = config.STRIPE_SECRET_KEY
+  if (!secretKey) {
+    console.warn('Stripe secret missing in payment intent handler')
+    return
+  }
+
+  let session: Stripe.Checkout.Session | null = null
+
   if (typeof paymentIntent.metadata?.stripeSessionId === 'string') {
-    const sessionId = paymentIntent.metadata.stripeSessionId
-    const sessionLookup = await bookings.findUnique({
-      where: { stripeSessionId: sessionId }
-    })
-
-    if (sessionLookup) {
-      const fakeSession = {
-        id: sessionId,
-        customer_details: {
-          email: paymentIntent.receipt_email ?? undefined,
-          name: paymentIntent.shipping?.name ?? paymentIntent.metadata?.customerName,
-          phone: paymentIntent.shipping?.phone ?? paymentIntent.metadata?.customerPhone
-        },
-        amount_total: paymentIntent.amount_received,
-        payment_intent: paymentIntent.id,
-        client_reference_id: sessionLookup.eventId
-      } as unknown as Stripe.Checkout.Session
-
-      await handleCheckoutCompleted(fakeSession, config)
-      return
+    try {
+      const stripe = getStripeClient(secretKey)
+      session = await stripe.checkout.sessions.retrieve(paymentIntent.metadata.stripeSessionId)
+    } catch (err) {
+      console.error('Failed to retrieve checkout session by id:', err)
     }
   }
 
+  if (!session) {
+    try {
+      const stripe = getStripeClient(secretKey)
+      const sessions = await stripe.checkout.sessions.list({
+        payment_intent: paymentIntent.id,
+        limit: 1
+      })
+      session = sessions.data[0] ?? null
+    } catch (err) {
+      console.error('Failed to list checkout sessions for payment intent:', err)
+    }
+  }
+
+  if (session) {
+    await handleCheckoutCompleted(session, config)
+    return
+  }
+
   if (typeof paymentIntent.metadata?.bookingId === 'string') {
-    const booking = await bookings.findUnique({
+    const bookingRecord = await bookings.findUnique({
       where: { id: paymentIntent.metadata.bookingId }
     })
 
-    if (booking && booking.status !== 'PAID') {
-      console.info('Marking booking paid via payment_intent.succeeded:', booking.id)
+    if (bookingRecord && bookingRecord.status !== 'PAID') {
+      console.info('Marking booking paid via payment_intent.succeeded fallback:', bookingRecord.id)
       await bookings.update({
-        where: { id: booking.id },
+        where: { id: bookingRecord.id },
         data: {
           status: 'PAID',
           stripePaymentIntentId: paymentIntent.id
         }
       })
     }
+  } else {
+    console.warn('payment_intent.succeeded received with no metadata. PaymentIntent ID:', paymentIntent.id)
   }
 }
 
