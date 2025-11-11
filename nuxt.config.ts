@@ -81,6 +81,9 @@ export default defineNuxtConfig({
       ATTRACTIONSG_CRAWLER_WEBHOOK: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK,
       ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET,
       ATTRACTIONSG_CRAWL_ENABLED: process.env.ATTRACTIONSG_CRAWL_ENABLED,
+      STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
+      STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
+      SELF_BOOKING_NOTIFY_EMAIL: process.env.SELF_BOOKING_NOTIFY_EMAIL || process.env.SMTP_USER,
       public: {
         exchangeApiKey: process.env.EXCHANGE_API_KEY,
         apiBase: process.env.NUXT_PUBLIC_API_BASE,
@@ -89,7 +92,9 @@ export default defineNuxtConfig({
         auth0RedirectUri: process.env.AUTH0_REDIRECT_URI,
         TRIP_ALLIANCE_ID: process.env.TRIP_ALLIANCE_ID || '3883416',
         TRIP_SID: process.env.TRIP_SID || '22874365',
-        TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com'
+        TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com',
+        STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
+        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com'
       }
     }  
 })

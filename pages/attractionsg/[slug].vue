@@ -59,9 +59,28 @@
 
       <!-- Content -->
       <div class="p-8 md:p-12">
-        <div class="flex flex-col lg:flex-row gap-8">
+          <div class="flex flex-col lg:flex-row gap-8">
           <!-- Main Content -->
           <div class="flex-1 space-y-6">
+              <div v-if="checkoutStatus === 'success'" class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <div>
+                  <p class="font-semibold">Payment received!</p>
+                  <p>Our team will confirm your booking shortly and email the voucher details.</p>
+                </div>
+              </div>
+              <div v-else-if="checkoutStatus === 'cancel'" class="flex items-start gap-3 rounded-xl border border-yellow-200 bg-yellow-50 px-4 py-3 text-sm text-yellow-800">
+                <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <div>
+                  <p class="font-semibold">Checkout cancelled.</p>
+                  <p>No charges were made. You can restart the booking whenever you’re ready.</p>
+                </div>
+              </div>
+
             <div>
               <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ event.title }}</h1>
               
@@ -241,12 +260,46 @@
               ref="bookingFormRef"
             >
               <h2 class="text-2xl font-bold text-gray-900 mb-6">Book Your Ticket</h2>
-              
-              <BookingRequestForm 
-                :event-title="event.title" 
-                :event-price="event.price || ''"
-                :selected-option="selectedOption"
-              />
+
+              <div v-if="canSelfBook" class="space-y-3 mb-6">
+                <p class="text-sm text-gray-600">
+                  Instant checkout with secure payment powered by Stripe. You’ll receive a confirmation email after payment.
+                </p>
+                <button
+                  @click="startCheckout"
+                  :disabled="checkoutLoading"
+                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <span v-if="checkoutLoading" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                  <span>{{ checkoutLoading ? 'Redirecting…' : 'Book Now (Stripe Checkout)' }}</span>
+                </button>
+                <p v-if="checkoutError" class="text-sm text-red-600">{{ checkoutError }}</p>
+                <p class="text-xs text-gray-500">
+                  After payment, our team will place the order using our reseller credentials and email you the e-ticket.
+                </p>
+              </div>
+
+              <div class="space-y-4">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                    ✉️
+                  </div>
+                  <div>
+                    <p class="font-semibold text-gray-800">Need assistance?</p>
+                    <p class="text-xs text-gray-500">
+                      Prefer concierge booking or have special requests? Submit the form below and our team will follow up.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4">
+                <BookingRequestForm 
+                  :event-title="event.title" 
+                  :event-price="event.price || ''"
+                  :selected-option="selectedOption"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -281,9 +334,11 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import BookingRequestForm from '~/components/BookingRequestForm.vue'
 
 const route = useRoute()
+const router = useRouter()
 const loading = ref(true)
 const event = ref(null)
 const notFound = ref(false)
@@ -291,6 +346,9 @@ const selectedOption = ref(null)
 const bookingFormRef = ref(null)
 const copyMessage = ref('')
 let copyTimeout = null
+const checkoutLoading = ref(false)
+const checkoutError = ref('')
+const checkoutStatus = ref('')
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
@@ -320,6 +378,7 @@ const setActiveImage = (index) => {
 }
 
 const hasOptions = computed(() => ticketOptions.value.length > 0)
+const canSelfBook = computed(() => !!event.value?.isSelfBookable)
 
 const savingsText = (option) => {
   if (!option?.originalPriceAmount || !option?.priceAmount) return ''
@@ -381,6 +440,59 @@ const resolveImageUrl = (image?: string | null) => {
   return `${baseUrl.value}${image.startsWith('/') ? image : `/${image}`}`
 }
 
+const handleCheckoutQuery = () => {
+  const statusParam = Array.isArray(route.query.checkout)
+    ? route.query.checkout[0]
+    : route.query.checkout
+  if (!statusParam) {
+    checkoutStatus.value = ''
+    checkoutError.value = ''
+    return
+  }
+  checkoutError.value = ''
+  checkoutStatus.value = String(statusParam)
+  router.replace({
+    query: {
+      ...route.query,
+      checkout: undefined
+    }
+  })
+}
+
+const startCheckout = async () => {
+  if (!event.value) return
+  checkoutError.value = ''
+  checkoutLoading.value = true
+  try {
+    const payload: Record<string, any> = {
+      eventId: event.value.id,
+      quantity: 1
+    }
+
+    if (selectedOption.value) {
+      payload.selectedOption = {
+        code: selectedOption.value.code ?? null,
+        name: selectedOption.value.name ?? null,
+        priceText: selectedOption.value.priceText ?? null
+      }
+    }
+
+    const response = await $fetch<{ success: boolean; url?: string; message?: string }>('/api/checkout/create', {
+      method: 'POST',
+      body: payload
+    })
+    if (response?.url) {
+      window.location.href = response.url
+    } else {
+      checkoutError.value = response?.message || 'Unable to start checkout. Please try again.'
+    }
+  } catch (err: any) {
+    checkoutError.value = err?.data?.message || err?.message || 'Unable to start checkout. Please try again.'
+  } finally {
+    checkoutLoading.value = false
+  }
+}
+
 const shareImage = computed(() => resolveImageUrl(activeImage.value || event.value?.image))
 const pageTitle = computed(() =>
   event.value ? `${event.value.title} | Singapore Attractions Deals | GoVietHub` : 'Attraction Details | GoVietHub'
@@ -430,6 +542,7 @@ onMounted(async () => {
         console.log(`🔄 Updating slug in URL to canonical slug: ${foundEvent.slug}`)
         navigateTo(`/attractionsg/${foundEvent.slug}`, { replace: true })
       }
+      handleCheckoutQuery()
     } else {
       console.error(`❌ Event not found or unpublished with slug/ID: ${currentSlug.value}`)
       notFound.value = true
@@ -447,6 +560,8 @@ watch(
     if (!value) {
       selectedOption.value = null
       activeImageIndex.value = 0
+      checkoutStatus.value = ''
+      checkoutError.value = ''
     } else {
       activeImageIndex.value = 0
     }
@@ -465,6 +580,15 @@ watch(
   }
   },
   { immediate: true }
+)
+
+watch(
+  () => route.query.checkout,
+  () => {
+    if (event.value) {
+      handleCheckoutQuery()
+    }
+  }
 )
 
 // SEO

@@ -7,6 +7,9 @@ interface UpdateEventPayload {
   isPublished?: boolean
   notes?: string | null
   publishedAt?: string | Date | null
+  isSelfBookable?: boolean
+  stripePriceId?: string | null
+  checkoutNotes?: string | null
 }
 
 export default defineEventHandler(async (event) => {
@@ -55,6 +58,20 @@ export default defineEventHandler(async (event) => {
 
       if (item.notes !== undefined) {
         data.notes = item.notes?.trim() ? item.notes : null
+      }
+
+      if (typeof item.isSelfBookable === 'boolean') {
+        data.isSelfBookable = item.isSelfBookable
+      }
+
+      if (item.stripePriceId !== undefined) {
+        const trimmed = item.stripePriceId?.trim()
+        data.stripePriceId = trimmed ? trimmed : null
+      }
+
+      if (item.checkoutNotes !== undefined) {
+        const trimmed = item.checkoutNotes?.trim()
+        data.checkoutNotes = trimmed && trimmed.length > 0 ? trimmed : null
       }
 
       return prisma.attractionsgEvent.update({

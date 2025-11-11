@@ -184,6 +184,12 @@
               <span v-if="ticket.price" class="text-2xl font-bold text-green-600">{{ ticket.price }}</span>
               <span v-if="ticket.originalPrice" class="text-sm text-gray-500 line-through">{{ ticket.originalPrice }}</span>
             </div>
+            <div v-if="ticket.isSelfBookable" class="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              Instant checkout available
+            </div>
             
             <div v-if="ticket.lastUpdatedDate" class="text-xs text-gray-500 mb-3">
               Updated {{ formatRelativeTime(ticket.lastUpdatedDate) }}

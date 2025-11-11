@@ -27,6 +27,7 @@
         "papaparse": "^5.5.3",
         "playwright": "^1.48.0",
         "puppeteer": "^23.11.1",
+        "stripe": "^16.6.0",
         "vue": "^3.5.13",
         "vue-router": "^4.5.1",
         "vue-toastification": "^2.0.0-rc.5"

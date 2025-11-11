@@ -152,6 +152,9 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
     options: raw?.options ?? [],
     isPublished: record.isPublished,
     publishedAt: record.publishedAt,
+    isSelfBookable: record.isSelfBookable,
+    stripePriceId: record.stripePriceId ?? undefined,
+    checkoutNotes: record.checkoutNotes ?? undefined,
     raw,
     lastUpdated: record.updatedAt.toISOString()
   }

@@ -25,7 +25,9 @@ export default defineEventHandler(async (event) => {
         { slug: { contains: search, mode: 'insensitive' } },
         { location: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
-        { notes: { contains: search, mode: 'insensitive' } }
+        { notes: { contains: search, mode: 'insensitive' } },
+        { stripePriceId: { contains: search, mode: 'insensitive' } },
+        { checkoutNotes: { contains: search, mode: 'insensitive' } }
       ]
     }
 

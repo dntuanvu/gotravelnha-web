@@ -234,6 +234,37 @@
                   <input type="checkbox" v-model="event.isPublished" @change="togglePublishFlag(event)" />
                   Publish to SG Attractions page
                 </label>
+                <div class="space-y-2 rounded-lg border border-gray-200 bg-white p-3">
+                  <label class="flex items-center gap-2 text-sm text-gray-700">
+                    <input type="checkbox" v-model="event.isSelfBookable" @change="toggleSelfBookable(event)" />
+                    Enable self-checkout (Stripe)
+                  </label>
+                  <div v-if="event.isSelfBookable" class="space-y-3 text-sm">
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Stripe Price ID (optional)</label>
+                      <input
+                        v-model="event.stripePriceId"
+                        @input="markDirty(event.id)"
+                        type="text"
+                        placeholder="price_123..."
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                      />
+                      <p class="mt-1 text-[11px] text-gray-500">
+                        Leave blank to use public price & create ad-hoc Checkout line item.
+                      </p>
+                    </div>
+                    <div>
+                      <label class="block text-xs font-semibold text-gray-600 mb-1">Checkout notes (optional)</label>
+                      <textarea
+                        v-model="event.checkoutNotes"
+                        @input="markDirty(event.id)"
+                        rows="2"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                        placeholder="Fulfillment instructions shown in ops email..."
+                      ></textarea>
+                    </div>
+                  </div>
+                </div>
                 <button
                   @click="openPublicPage(event)"
                   class="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50 transition text-sm"
@@ -379,7 +410,10 @@ const loadEvents = async () => {
         originalPriceAmount,
         publicPrice: basePrice,
         notes: event.notes || '',
-        publishedAt: event.publishedAt || null
+        publishedAt: event.publishedAt || null,
+        isSelfBookable: !!event.isSelfBookable,
+        stripePriceId: event.stripePriceId || '',
+        checkoutNotes: event.checkoutNotes || ''
       }
     })
     originalMap.value = new Map(
@@ -389,7 +423,10 @@ const loadEvents = async () => {
           publicPrice: event.publicPrice,
           isPublished: event.isPublished,
           notes: event.notes,
-          publishedAt: event.publishedAt
+          publishedAt: event.publishedAt,
+          isSelfBookable: event.isSelfBookable,
+          stripePriceId: event.stripePriceId,
+          checkoutNotes: event.checkoutNotes
         }
       ])
     )
@@ -414,7 +451,10 @@ const saveChanges = async () => {
         publicPrice: event.publicPrice,
         isPublished: event.isPublished,
         notes: event.notes,
-        publishedAt: event.isPublished ? (event.publishedAt || new Date()) : null
+        publishedAt: event.isPublished ? (event.publishedAt || new Date()) : null,
+        isSelfBookable: event.isSelfBookable,
+        stripePriceId: event.isSelfBookable ? event.stripePriceId : null,
+        checkoutNotes: event.isSelfBookable ? event.checkoutNotes : null
       }))
 
     await $fetch('/api/admin/attractionsg', {
@@ -467,6 +507,16 @@ const togglePublishFlag = (event: any) => {
   if (!event) return
   event.isPublished = !!event.isPublished
   event.publishedAt = event.isPublished ? event.publishedAt || new Date().toISOString() : null
+  markDirty(event.id)
+}
+
+const toggleSelfBookable = (event: any) => {
+  if (!event) return
+  event.isSelfBookable = !!event.isSelfBookable
+  if (!event.isSelfBookable) {
+    event.stripePriceId = ''
+    event.checkoutNotes = ''
+  }
   markDirty(event.id)
 }
 
