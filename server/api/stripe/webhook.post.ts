@@ -241,6 +241,8 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
   } catch (err) {
     console.error('Failed to send booking notification:', err)
   }
+
+  await notifyCustomer(updatedBooking, config)
 }
 
 async function handlePaymentIntentSuccess(paymentIntent: Stripe.PaymentIntent, config: RuntimeConfig) {
@@ -296,6 +298,44 @@ async function handlePaymentIntentSuccess(paymentIntent: Stripe.PaymentIntent, c
     }
   } else {
     console.warn('payment_intent.succeeded received with no metadata. PaymentIntent ID:', paymentIntent.id)
+  }
+}
+
+async function notifyCustomer(updatedBooking: Awaited<ReturnType<typeof bookings.update>>, config: RuntimeConfig) {
+  if (!updatedBooking.customerEmail) {
+    return
+  }
+
+  const formattedAmount = `SGD ${updatedBooking.amount.toFixed(2)}`
+  const formattedDate = new Intl.DateTimeFormat('en-SG', {
+    dateStyle: 'long',
+    timeStyle: 'short'
+  }).format(new Date())
+
+  const html = `
+    <h2>Thanks for booking with GoVietHub!</h2>
+    <p>We have received your payment for <strong>${updatedBooking.eventTitle}</strong>.</p>
+    <p>
+      <strong>Booking details</strong><br/>
+      Quantity: ${updatedBooking.quantity}<br/>
+      Amount Paid: ${formattedAmount}<br/>
+      Payment ID: ${updatedBooking.stripePaymentIntentId || 'N/A'}<br/>
+      Date: ${formattedDate}
+    </p>
+    <p>Our team is now processing your ticket with our supplier. You will receive your e-ticket via email once the order is confirmed.</p>
+    <p>If you have any urgent requests, reach us at <a href="mailto:${config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER}">${config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER}</a>.</p>
+    <p>Safe travels!<br/>The GoVietHub Team</p>
+  `
+
+  try {
+    await sendEmail({
+      to: updatedBooking.customerEmail,
+      subject: `Your booking for ${updatedBooking.eventTitle} is confirmed`,
+      html
+    })
+    console.info('Customer confirmation email sent:', updatedBooking.id)
+  } catch (err) {
+    console.error('Failed to send customer confirmation:', err)
   }
 }
 
