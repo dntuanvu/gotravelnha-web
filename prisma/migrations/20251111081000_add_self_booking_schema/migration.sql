@@ -1,20 +1,21 @@
-/* =====================================================================================
-   add_self_booking_and_orders (id: 20251111075531)
-   This file intentionally contains **no operations**.
+-- Ensure attractionsg_events has self booking columns
+ALTER TABLE "attractionsg_events"
+ADD COLUMN IF NOT EXISTS "isSelfBookable" BOOLEAN NOT NULL DEFAULT false,
+ADD COLUMN IF NOT EXISTS "stripePriceId" TEXT,
+ADD COLUMN IF NOT EXISTS "checkoutNotes" TEXT;
 
-   The original version failed on production (table creation order issue), leaving the
-   migration marked as failed (P3009). New migrations cannot run until Prisma sees this
-   migration succeed. Re-running ALTER/CREATE commands would keep erroring because the
-   partially-created objects already exist.
+-- Create BookingStatus enum if missing
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_type WHERE typname = 'BookingStatus'
+  ) THEN
+    CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'PAID', 'FAILED', 'CANCELLED');
+  END IF;
+END
+$$;
 
-   Resolution: deploy an empty migration so Prisma marks it as successful. The subsequent
-   migration adds the required columns/table idempotently with IF NOT EXISTS guards.
-   See: https://pris.ly/d/migrate-resolve
-   ===================================================================================== */
-
--- no-op
-
--- Create bookings table if it doesn't already exist
+-- Create bookings table if missing
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -28,7 +29,7 @@ BEGIN
       "quantity" INTEGER NOT NULL DEFAULT 1,
       "amount" DOUBLE PRECISION NOT NULL,
       "currency" TEXT NOT NULL DEFAULT 'SGD',
-      "status" TEXT NOT NULL DEFAULT 'PENDING',
+      "status" "BookingStatus" NOT NULL DEFAULT 'PENDING',
       "stripeSessionId" TEXT NOT NULL,
       "stripePaymentIntentId" TEXT,
       "customerEmail" TEXT,
@@ -46,6 +47,41 @@ BEGIN
 END
 $$;
 
+-- Ensure status column uses enum type
+DO $$
+DECLARE
+  status_udt TEXT;
+BEGIN
+  SELECT udt_name INTO status_udt
+  FROM information_schema.columns
+  WHERE table_schema = 'public'
+    AND table_name = 'attractionsg_bookings'
+    AND column_name = 'status';
+
+  IF status_udt = 'text' THEN
+    ALTER TABLE "attractionsg_bookings"
+    ALTER COLUMN "status" DROP DEFAULT;
+
+    ALTER TABLE "attractionsg_bookings"
+    ALTER COLUMN "status" TYPE "BookingStatus"
+    USING (
+      CASE
+        WHEN "status" IN ('PENDING','PAID','FAILED','CANCELLED')
+          THEN "status"::"BookingStatus"
+        ELSE 'PENDING'::"BookingStatus"
+      END
+    );
+
+    ALTER TABLE "attractionsg_bookings"
+    ALTER COLUMN "status" SET DEFAULT 'PENDING'::"BookingStatus";
+  END IF;
+END
+$$;
+
+-- Ensure default is set correctly if column already exists
+ALTER TABLE "attractionsg_bookings"
+ALTER COLUMN "status" SET DEFAULT 'PENDING'::"BookingStatus";
+
 -- Ensure indexes exist
 CREATE UNIQUE INDEX IF NOT EXISTS "attractionsg_bookings_stripeSessionId_key"
   ON "attractionsg_bookings"("stripeSessionId");
@@ -56,7 +92,7 @@ CREATE INDEX IF NOT EXISTS "attractionsg_bookings_eventId_idx"
 CREATE INDEX IF NOT EXISTS "attractionsg_bookings_status_idx"
   ON "attractionsg_bookings"("status");
 
--- Add foreign key constraint if missing
+-- Ensure foreign key exists
 DO $$
 BEGIN
   IF NOT EXISTS (
@@ -71,19 +107,4 @@ BEGIN
   END IF;
 END
 $$;
-/*
-  Warnings:
 
-  - The `status` column on the `attractionsg_bookings` table would be dropped and recreated. This will lead to data loss if there is data in the column.
-
-*/
--- CreateEnum
-CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'PAID', 'FAILED', 'CANCELLED');
-
--- AlterTable
-ALTER TABLE "attractionsg_bookings" DROP COLUMN "status",
-ADD COLUMN     "status" "BookingStatus" NOT NULL DEFAULT 'PENDING',
-ALTER COLUMN "updatedAt" DROP DEFAULT;
-
--- CreateIndex
-CREATE INDEX "attractionsg_bookings_status_idx" ON "attractionsg_bookings"("status");
