@@ -55,25 +55,33 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
+    const clientRef = (stripeEvent.data.object as { client_reference_id?: string }).client_reference_id
+
     switch (stripeEvent.type) {
       case 'checkout.session.completed': {
         const session = stripeEvent.data.object as Stripe.Checkout.Session
-        console.info('[stripe] checkout.session.completed', session.id)
+        console.info('[stripe] checkout.session.completed', session.id, 'ref:', clientRef)
         await handleCheckoutCompleted(session, config)
         break
       }
       case 'checkout.session.expired': {
         const session = stripeEvent.data.object as Stripe.Checkout.Session
-        console.info('[stripe] checkout.session.expired', session.id)
+        console.info('[stripe] checkout.session.expired', session.id, 'ref:', clientRef)
         await bookings.updateMany({
           where: { stripeSessionId: session.id, status: 'PENDING' },
           data: { status: 'CANCELLED' }
         })
         break
       }
+      case 'payment_intent.succeeded': {
+        const paymentIntent = stripeEvent.data.object as Stripe.PaymentIntent
+        console.info('[stripe] payment_intent.succeeded', paymentIntent.id, 'ref:', clientRef)
+        await handlePaymentIntentSuccess(paymentIntent, config)
+        break
+      }
       case 'payment_intent.payment_failed': {
         const paymentIntent = stripeEvent.data.object as Stripe.PaymentIntent
-        console.warn('[stripe] payment_intent.payment_failed', paymentIntent.id)
+        console.warn('[stripe] payment_intent.payment_failed', paymentIntent.id, 'ref:', clientRef)
         if (typeof paymentIntent.metadata?.stripeSessionId === 'string') {
           await bookings.updateMany({
             where: {
@@ -86,7 +94,7 @@ export default defineEventHandler(async (event) => {
         break
       }
       default:
-        console.info('[stripe] ignored event', stripeEvent.type)
+        console.info('[stripe] ignored event', stripeEvent.type, 'ref:', clientRef)
         break
     }
   } catch (err) {
@@ -232,6 +240,49 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
     console.info('Booking payment notification sent:', updatedBooking.id)
   } catch (err) {
     console.error('Failed to send booking notification:', err)
+  }
+}
+
+async function handlePaymentIntentSuccess(paymentIntent: Stripe.PaymentIntent, config: RuntimeConfig) {
+  if (typeof paymentIntent.metadata?.stripeSessionId === 'string') {
+    const sessionId = paymentIntent.metadata.stripeSessionId
+    const sessionLookup = await bookings.findUnique({
+      where: { stripeSessionId: sessionId }
+    })
+
+    if (sessionLookup) {
+      const fakeSession = {
+        id: sessionId,
+        customer_details: {
+          email: paymentIntent.receipt_email ?? undefined,
+          name: paymentIntent.shipping?.name ?? paymentIntent.metadata?.customerName,
+          phone: paymentIntent.shipping?.phone ?? paymentIntent.metadata?.customerPhone
+        },
+        amount_total: paymentIntent.amount_received,
+        payment_intent: paymentIntent.id,
+        client_reference_id: sessionLookup.eventId
+      } as unknown as Stripe.Checkout.Session
+
+      await handleCheckoutCompleted(fakeSession, config)
+      return
+    }
+  }
+
+  if (typeof paymentIntent.metadata?.bookingId === 'string') {
+    const booking = await bookings.findUnique({
+      where: { id: paymentIntent.metadata.bookingId }
+    })
+
+    if (booking && booking.status !== 'PAID') {
+      console.info('Marking booking paid via payment_intent.succeeded:', booking.id)
+      await bookings.update({
+        where: { id: booking.id },
+        data: {
+          status: 'PAID',
+          stripePaymentIntentId: paymentIntent.id
+        }
+      })
+    }
   }
 }
 
