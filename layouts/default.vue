@@ -12,6 +12,21 @@ const router = useRouter();
 // Auth state
 const { user, setUser, clearUser, isAuthenticated, isAdmin } = useAuthState();
 
+const runtimeConfig = useRuntimeConfig();
+
+const isFeatureEnabled = (value) => {
+  if (value === undefined || value === null) return true;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return !['false', '0', 'off', 'no'].includes(normalized);
+  }
+  return Boolean(value);
+};
+
+const showBestDealsNav = computed(() => isFeatureEnabled(runtimeConfig.public?.enableBestDealsNav));
+const showCompareNav = computed(() => isFeatureEnabled(runtimeConfig.public?.enableCompareNav));
+
 const isActive = (path) => {
   return route.path === path ? 'active-link' : '';
 };
@@ -118,7 +133,7 @@ onBeforeUnmount(() => {
               SG Attractions
             </NuxtLink>
           </li>
-          <li>
+          <li v-if="showBestDealsNav">
             <NuxtLink 
               to="/deals" 
               @click="navigate('/deals')" 
@@ -131,7 +146,7 @@ onBeforeUnmount(() => {
                 </div>
             </NuxtLink>
           </li>
-          <li>
+          <li v-if="showCompareNav">
             <NuxtLink 
               to="/compare" 
               @click="navigate('/compare')" 
@@ -279,7 +294,7 @@ onBeforeUnmount(() => {
             SG Attractions
           </NuxtLink>
         </li>
-        <li>
+        <li v-if="showBestDealsNav">
           <NuxtLink 
             to="/deals" 
             @click="navigate('/deals')" 
@@ -293,7 +308,7 @@ onBeforeUnmount(() => {
             </div>
           </NuxtLink>
         </li>
-        <li>
+        <li v-if="showCompareNav">
           <NuxtLink 
             to="/compare" 
             @click="navigate('/compare')" 

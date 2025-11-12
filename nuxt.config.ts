@@ -94,7 +94,9 @@ export default defineNuxtConfig({
         TRIP_SID: process.env.TRIP_SID || '22874365',
         TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com',
         STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
-        siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com'
+             siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com',
+             enableBestDealsNav: process.env.NUXT_PUBLIC_ENABLE_BEST_DEALS_NAV ?? 'true',
+             enableCompareNav: process.env.NUXT_PUBLIC_ENABLE_COMPARE_NAV ?? 'true'
       }
     }  
 })
