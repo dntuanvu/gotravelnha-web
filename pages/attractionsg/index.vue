@@ -132,7 +132,7 @@
       <!-- Tickets Grid -->
       <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
-          v-for="ticket in filteredTickets" 
+          v-for="ticket in displayedTickets" 
           :key="ticket.id || ticket.title" 
           class="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
           role="button"
@@ -209,8 +209,16 @@
         </div>
       </div>
 
+      <div
+        v-if="hasMoreTickets"
+        ref="loadMoreTrigger"
+        class="flex items-center justify-center py-8 text-sm text-gray-500"
+      >
+        Loading more attractions…
+      </div>
+
       <!-- No Matches -->
-      <div v-else-if="tickets.length > 0" class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
+      <div v-if="tickets.length > 0 && filteredTickets.length === 0 && searchTerm" class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
         <h3 class="text-xl font-bold text-gray-800">No attractions match your filters</h3>
         <p class="text-gray-600">Try adjusting your search keywords or filter selections.</p>
         <button
@@ -222,7 +230,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-else class="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-dashed border-yellow-300 rounded-2xl p-12 text-center">
+      <div v-if="tickets.length === 0 && !loading" class="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-dashed border-yellow-300 rounded-2xl p-12 text-center">
         <svg class="w-16 h-16 mx-auto text-yellow-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
         </svg>
@@ -241,7 +249,7 @@
 </template>
   
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, nextTick, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, onUnmounted, nextTick, computed, watch, watchEffect } from 'vue'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 
 const { startTracking, trackPageView } = useActivityTracker()
@@ -274,15 +282,22 @@ const error = ref<string | null>(null)
 interface ScrollState {
   position: number
   shouldRestore: boolean
+  visibleCount: number
 }
 
 const scrollState = useState<ScrollState>('attractionsg-scroll', () => ({
   position: 0,
-  shouldRestore: false
+  shouldRestore: false,
+  visibleCount: 0
 }))
 
 const pendingScrollRestore = ref(false)
 const targetScrollPosition = ref(0)
+const observer = ref<IntersectionObserver | null>(null)
+const loadMoreTrigger = ref<HTMLElement | null>(null)
+
+const ITEMS_PER_BATCH = 24
+const visibleCount = ref(ITEMS_PER_BATCH)
 
 const sortOption = ref('alpha')
 const searchTerm = ref('')
@@ -404,6 +419,12 @@ const filteredTickets = computed<NormalizedAttraction[]>(() => {
   })
 })
 
+const displayedTickets = computed<NormalizedAttraction[]>(() => {
+  return filteredTickets.value.slice(0, visibleCount.value)
+})
+
+const hasMoreTickets = computed(() => visibleCount.value < filteredTickets.value.length)
+
 const formatRelativeTime = (date: Date | null) => {
   if (!date) return ''
   const now = new Date()
@@ -428,6 +449,12 @@ const rememberScrollPosition = () => {
   if (typeof window === 'undefined') return
   scrollState.value.position = window.scrollY
   scrollState.value.shouldRestore = true
+  scrollState.value.visibleCount = visibleCount.value
+}
+
+const loadMoreTickets = () => {
+  if (!hasMoreTickets.value) return
+  visibleCount.value = Math.min(visibleCount.value + ITEMS_PER_BATCH, filteredTickets.value.length)
 }
 
 const triggerCrawl = async () => {
@@ -496,21 +523,57 @@ onMounted(() => {
   if (scrollState.value.shouldRestore && scrollState.value.position > 0) {
     pendingScrollRestore.value = true
     targetScrollPosition.value = scrollState.value.position
+    visibleCount.value = Math.max(
+      Math.min(scrollState.value.visibleCount || ITEMS_PER_BATCH, filteredTickets.value.length || ITEMS_PER_BATCH),
+      ITEMS_PER_BATCH
+    )
+  } else {
+    visibleCount.value = ITEMS_PER_BATCH
   }
 
   // Auto-load tickets on mount
   loadTickets()
+
+  if (typeof window !== 'undefined' && 'IntersectionObserver' in window) {
+    observer.value = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            loadMoreTickets()
+          }
+        }
+      },
+      {
+        rootMargin: '0px 0px 320px 0px',
+        threshold: 0
+      }
+    )
+  }
 })
 
 onBeforeUnmount(() => {
   rememberScrollPosition()
 })
 
+onUnmounted(() => {
+  observer.value?.disconnect()
+  observer.value = null
+})
+
 watch(
   filteredTickets,
   (items) => {
+    if (!items) return
+    if (!pendingScrollRestore.value) {
+      visibleCount.value = Math.min(ITEMS_PER_BATCH, items.length)
+    } else if (scrollState.value.visibleCount) {
+      visibleCount.value = Math.min(
+        Math.max(scrollState.value.visibleCount, visibleCount.value, ITEMS_PER_BATCH),
+        items.length
+      )
+    }
     if (!pendingScrollRestore.value) return
-    if (!items || items.length === 0) return
+    if (items.length === 0) return
 
     nextTick(() => {
       window.scrollTo({
@@ -521,8 +584,17 @@ watch(
       targetScrollPosition.value = 0
       scrollState.value.position = 0
       scrollState.value.shouldRestore = false
+      scrollState.value.visibleCount = 0
     })
   },
-  { immediate: false }
+  { immediate: true }
 )
+
+watchEffect(() => {
+  if (!observer.value) return
+  observer.value.disconnect()
+  if (loadMoreTrigger.value && hasMoreTickets.value) {
+    observer.value.observe(loadMoreTrigger.value)
+  }
+})
 </script>
