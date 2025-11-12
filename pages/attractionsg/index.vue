@@ -261,6 +261,8 @@ interface AttractionEvent {
   description?: string
   location?: string
   price?: string
+  priceAmount?: number | null
+  resellerPriceAmount?: number | null
   originalPrice?: string
   image?: string
   lastUpdated?: string

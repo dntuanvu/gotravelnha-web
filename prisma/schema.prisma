@@ -142,6 +142,7 @@ model AttractionsgEvent {
   description          String?
   priceText            String?
   priceAmount          Float?
+  resellerPriceAmount  Float?
   originalPriceText    String?
   originalPriceAmount  Float?
   publicPrice          Float?
@@ -200,6 +201,9 @@ model AttractionsgBooking {
   eventSlug            String?
   quantity             Int            @default(1)
   amount               Float
+  resellerCost         Float?
+  stripeFeeAmount      Float?
+  netRevenue           Float?
   currency             String         @default("SGD")
   status               BookingStatus  @default(PENDING)
   stripeSessionId      String         @unique
@@ -211,6 +215,9 @@ model AttractionsgBooking {
   optionName           String?
   metadata             Json?
   notes                String?
+  supplierOrderId      String?
+  supplierStatus       String?
+  supplierPayload      Json?
   createdAt            DateTime       @default(now())
   updatedAt            DateTime       @updatedAt
 

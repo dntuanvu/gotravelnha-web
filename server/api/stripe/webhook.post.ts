@@ -4,6 +4,8 @@ import prisma from '~/server/utils/prisma'
 import type { RuntimeConfig } from 'nuxt/schema'
 import type { PrismaClient } from '@prisma/client'
 import { sendEmail } from '~/server/utils/email'
+import { placeSupplierOrder } from '~/server/services/attractionsg-supplier'
+import { ensureUserFromCheckout } from '~/server/services/checkout-onboarding'
 
 const db = prisma as PrismaClient
 const bookings = (db as unknown as Record<string, any>)['attractionsgBooking']
@@ -147,7 +149,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
 
   console.info('Updating booking as paid:', targetBooking.id)
 
-  const updatedBooking = await bookings.update({
+  let updatedBooking = await bookings.update({
     where: { id: targetBooking.id },
     data: {
       status: 'PAID',
@@ -176,6 +178,93 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
       event: true
     }
   })
+
+  const supplierWebhook = config.ATTRACTIONSG_SUPPLIER_WEBHOOK || process.env.ATTRACTIONSG_SUPPLIER_WEBHOOK
+  const supplierSecret =
+    config.ATTRACTIONSG_SUPPLIER_WEBHOOK_SECRET || process.env.ATTRACTIONSG_SUPPLIER_WEBHOOK_SECRET
+  const supplierAutomationEnabled =
+    (config.ATTRACTIONSG_SUPPLIER_AUTOMATION_ENABLED ??
+      process.env.ATTRACTIONSG_SUPPLIER_AUTOMATION_ENABLED ??
+      'false')
+      .toString()
+      .trim()
+      .toLowerCase() === 'true'
+
+  if (updatedBooking.customerEmail) {
+    try {
+      await ensureUserFromCheckout({
+        email: updatedBooking.customerEmail,
+        name: updatedBooking.customerName,
+        bookingId: updatedBooking.id
+      })
+    } catch (accountError) {
+      console.error('[checkout-onboarding] Failed to ensure user account:', accountError)
+    }
+  }
+
+  if (updatedBooking.event?.isSelfBookable && supplierAutomationEnabled) {
+    try {
+      const supplierResult = await placeSupplierOrder(
+        {
+          bookingId: updatedBooking.id,
+          eventId: updatedBooking.eventId,
+          eventTitle: updatedBooking.eventTitle,
+          optionCode: updatedBooking.optionCode,
+          optionName: updatedBooking.optionName,
+          quantity: updatedBooking.quantity,
+          customerName: updatedBooking.customerName,
+          customerEmail: updatedBooking.customerEmail,
+          customerPhone: updatedBooking.customerPhone,
+          notes: updatedBooking.notes
+        },
+        {
+          webhookUrl: supplierWebhook,
+          webhookSecret: supplierSecret
+        }
+      )
+
+      updatedBooking = await bookings.update({
+        where: { id: updatedBooking.id },
+        data: {
+          supplierOrderId: supplierResult.orderId ?? updatedBooking.supplierOrderId,
+          supplierStatus: supplierResult.status,
+          supplierPayload: supplierResult.rawResponse ?? supplierResult.message ?? null
+        },
+        include: {
+          event: true
+        }
+      })
+    } catch (supplierError) {
+      console.error('[supplier] Unexpected error while placing order:', supplierError)
+      updatedBooking = await bookings.update({
+        where: { id: updatedBooking.id },
+        data: {
+          supplierStatus: 'FAILED',
+          supplierPayload: {
+            error: supplierError instanceof Error ? supplierError.message : supplierError
+          }
+        },
+        include: {
+          event: true
+        }
+      })
+    }
+  } else if (!updatedBooking.supplierStatus) {
+    updatedBooking = await bookings.update({
+      where: { id: updatedBooking.id },
+      data: {
+        supplierStatus: 'QUEUED',
+        supplierPayload: supplierAutomationEnabled
+          ? updatedBooking.supplierPayload
+          : {
+              message: 'Supplier automation disabled. Manual processing required.'
+            }
+      },
+      include: {
+        event: true
+      }
+    })
+  }
 
   const notifyEmail = config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER
 
@@ -206,6 +295,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
         2
       )}</pre>`
     : ''
+  const supplierBlock = `
+    <p><strong>Supplier Status:</strong> ${updatedBooking.supplierStatus || 'N/A'}</p>
+    ${
+      updatedBooking.supplierOrderId
+        ? `<p><strong>Supplier Order ID:</strong> ${updatedBooking.supplierOrderId}</p>`
+        : ''
+    }
+  `
 
   const html = `
     <h2>✅ New Paid Booking via GoVietHub</h2>
@@ -223,6 +320,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
       updatedBooking.customerPhone || 'N/A'
     }</p>
     ${checkoutNotes}
+    ${supplierBlock}
     <p><strong>Stripe Session:</strong> ${updatedBooking.stripeSessionId}</p>
     <p><strong>Stripe Payment Intent:</strong> ${
       updatedBooking.stripePaymentIntentId || 'N/A'

@@ -81,6 +81,9 @@ export default defineNuxtConfig({
       ATTRACTIONSG_CRAWLER_WEBHOOK: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK,
       ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_CRAWLER_WEBHOOK_SECRET,
       ATTRACTIONSG_CRAWL_ENABLED: process.env.ATTRACTIONSG_CRAWL_ENABLED,
+             ATTRACTIONSG_SUPPLIER_WEBHOOK: process.env.ATTRACTIONSG_SUPPLIER_WEBHOOK,
+             ATTRACTIONSG_SUPPLIER_WEBHOOK_SECRET: process.env.ATTRACTIONSG_SUPPLIER_WEBHOOK_SECRET,
+             ATTRACTIONSG_SUPPLIER_AUTOMATION_ENABLED: process.env.ATTRACTIONSG_SUPPLIER_AUTOMATION_ENABLED,
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
       SELF_BOOKING_NOTIFY_EMAIL: process.env.SELF_BOOKING_NOTIFY_EMAIL || process.env.SMTP_USER,
@@ -96,7 +99,9 @@ export default defineNuxtConfig({
         STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
              siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com',
              enableBestDealsNav: process.env.NUXT_PUBLIC_ENABLE_BEST_DEALS_NAV ?? 'true',
-             enableCompareNav: process.env.NUXT_PUBLIC_ENABLE_COMPARE_NAV ?? 'true'
+             enableCompareNav: process.env.NUXT_PUBLIC_ENABLE_COMPARE_NAV ?? 'true',
+             stripeFeePercent: process.env.NUXT_PUBLIC_STRIPE_FEE_PERCENT || '0.034',
+             stripeFeeFixed: process.env.NUXT_PUBLIC_STRIPE_FEE_FIXED || '0.5'
       }
     }  
 })

@@ -195,6 +195,31 @@
                   <div class="text-xs text-gray-500">
                     Margin vs crawler: <span :class="marginClass(event)">{{ formatMargin(event) }}</span>
                   </div>
+                  <div class="text-xs text-gray-500 space-y-1">
+                    <div>
+                      Reseller cost: <span class="font-semibold text-gray-700">{{ formatCurrency(getResellerCost(event)) }}</span>
+                    </div>
+                    <div v-if="pricingSummary(event)">
+                      <div>Stripe fee (est.): {{ formatCurrency(pricingSummary(event)?.stripeFee ?? null) }}</div>
+                      <div>
+                        Net after fees:
+                        <span :class="(pricingSummary(event)?.netRevenue ?? 0) >= 0 ? 'text-emerald-600 font-semibold' : 'text-red-500 font-semibold'">
+                          {{ formatCurrency(pricingSummary(event)?.netRevenue ?? null) }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    v-if="recommendedPrice(event)"
+                    @click="applyRecommendedPrice(event)"
+                    type="button"
+                    class="inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-900 transition-colors"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Use break-even price ({{ formatCurrency(recommendedPrice(event)) }})
+                  </button>
                 </div>
               </div>
 
@@ -306,11 +331,17 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRuntimeConfig } from '#app'
+import { computeEndUserPrice, estimateStripeFee } from '~/utils/pricing'
 
 definePageMeta({
   layout: 'default',
   middleware: 'admin'
 })
+
+const runtimeConfig = useRuntimeConfig()
+const stripePercent = Number(runtimeConfig.public?.stripeFeePercent ?? 0.034)
+const stripeFixed = Number(runtimeConfig.public?.stripeFeeFixed ?? 0.5)
 
 const loading = ref(false)
 const saving = ref(false)
@@ -341,6 +372,56 @@ const toNumber = (value: any): number | null => {
   if (value === null || value === undefined) return null
   const num = Number(value)
   return Number.isFinite(num) ? num : null
+}
+
+const formatCurrency = (value: number | null | undefined) => {
+  if (value === null || value === undefined || Number.isNaN(Number(value))) return 'N/A'
+  return new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency: 'SGD'
+  }).format(Number(value))
+}
+
+const getResellerCost = (event: any): number | null => {
+  const sources = [event.resellerPriceAmount, event.priceAmount, event.originalPriceAmount]
+  for (const source of sources) {
+    const value = toNumber(source)
+    if (value !== null) return value
+  }
+  return null
+}
+
+const pricingSummary = (event: any) => {
+  const reseller = getResellerCost(event)
+  const publicPrice = toNumber(event.publicPrice)
+  if (reseller === null || publicPrice === null) return null
+  const stripeFee = estimateStripeFee(publicPrice, stripePercent, stripeFixed)
+  const netRevenue = publicPrice - stripeFee - reseller
+  return {
+    reseller,
+    publicPrice,
+    stripeFee,
+    netRevenue
+  }
+}
+
+const recommendedPrice = (event: any) => {
+  const reseller = getResellerCost(event)
+  if (reseller === null) return null
+  const breakdown = computeEndUserPrice({
+    resellerPrice: reseller,
+    margin: 0,
+    stripePercent,
+    stripeFixed
+  })
+  return breakdown.endUserPrice
+}
+
+const applyRecommendedPrice = (event: any) => {
+  const suggestion = recommendedPrice(event)
+  if (suggestion === null) return
+  event.publicPrice = Number(suggestion.toFixed(2))
+  markDirty(event.id)
 }
 
 const formatRelative = (date?: Date | string | null) => {
@@ -375,9 +456,10 @@ const formatMargin = (event: any) => {
 }
 
 const computeMargin = (event: any) => {
-  const crawler = event.priceAmount ?? event.originalPriceAmount
-  if (!crawler || !event.publicPrice) return NaN
-  return event.publicPrice - crawler
+  const reseller = getResellerCost(event)
+  const publicPrice = toNumber(event.publicPrice)
+  if (reseller === null || publicPrice === null) return NaN
+  return publicPrice - reseller
 }
 
 const loadEvents = async () => {
@@ -398,6 +480,7 @@ const loadEvents = async () => {
     events.value = rawEvents.map((event: any) => {
       const priceAmount = toNumber(event.priceAmount)
       const originalPriceAmount = toNumber(event.originalPriceAmount)
+      const resellerPriceAmount = toNumber(event.resellerPriceAmount ?? event.priceAmount ?? event.originalPriceAmount)
       const publicPrice =
         event.publicPrice !== undefined && event.publicPrice !== null
           ? toNumber(event.publicPrice)
@@ -407,6 +490,7 @@ const loadEvents = async () => {
       return {
         ...event,
         priceAmount,
+        resellerPriceAmount,
         originalPriceAmount,
         publicPrice: basePrice,
         notes: event.notes || '',
@@ -421,6 +505,7 @@ const loadEvents = async () => {
         event.id,
         {
           publicPrice: event.publicPrice,
+          resellerPriceAmount: event.resellerPriceAmount,
           isPublished: event.isPublished,
           notes: event.notes,
           publishedAt: event.publishedAt,

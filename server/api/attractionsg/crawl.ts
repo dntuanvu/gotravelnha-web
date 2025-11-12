@@ -23,7 +23,10 @@ interface EventData {
   title: string
   description?: string
   price?: string
+  priceAmount?: number
   originalPrice?: string
+  originalPriceAmount?: number
+  resellerPriceAmount?: number
   image?: string
   category?: string
   location?: string
@@ -418,7 +421,10 @@ async function crawlEventDetails(page: any, event: EventData): Promise<EventData
       description: description,
       image: detailImage,
       price: detailPriceText || event.price,
+      priceAmount: detailPrices.priceAmount ?? event.priceAmount,
       originalPrice: detailOriginalText || event.originalPrice,
+      originalPriceAmount: detailPrices.originalPriceAmount ?? event.originalPriceAmount,
+      resellerPriceAmount: detailPrices.priceAmount ?? event.resellerPriceAmount ?? event.priceAmount,
       rating: extractRating($('body')) || event.rating,
       location: extractLocation($('body')) || event.location,
       duration: $('.duration, [class*="duration"]').first().text().trim(),
@@ -498,14 +504,17 @@ function extractEvents(html: string): EventData[] {
 
         const priceInfo = extractPriceInfo($, $item)
         const priceText = priceInfo.priceText || extractPrice($item)
-        const originalText = priceInfo.originalPriceText || $item.find('.original-price, .old-price, [class*="original"]').first().text().trim()
+        const originalText = priceInfo.originalPriceText || $item.find('.original-price, .old-price, [class*=\"original\"]').first().text().trim()
         const event: EventData = {
           id,
           slug: generateTitleSlug(title),
           title,
           description: $item.find('.description, p, [class*="desc"]').first().text().trim(),
           price: priceText || undefined,
+          priceAmount: priceInfo.priceAmount,
           originalPrice: originalText || undefined,
+          originalPriceAmount: priceInfo.originalPriceAmount,
+          resellerPriceAmount: priceInfo.priceAmount,
           image,
           category: extractCategory($item),
           location: extractLocation($item),
@@ -747,7 +756,10 @@ function mergeEventData(target: EventData, source: EventData) {
     }
   }
   target.price = source.price || target.price
+  target.priceAmount = source.priceAmount ?? target.priceAmount
   target.originalPrice = source.originalPrice || target.originalPrice
+  target.originalPriceAmount = source.originalPriceAmount ?? target.originalPriceAmount
+  target.resellerPriceAmount = source.resellerPriceAmount ?? target.resellerPriceAmount ?? target.priceAmount
   target.image = source.image || target.image
   target.category = source.category || target.category
   target.location = source.location || target.location
@@ -877,8 +889,8 @@ async function persistEventsToDatabase(events: EventData[]) {
 
     for (const event of events) {
       try {
-        const priceAmount = parsePriceAmount(event.price)
-        const originalPriceAmount = parsePriceAmount(event.originalPrice)
+             const priceAmount = parsePriceAmount(event.price) ?? event.priceAmount ?? event.resellerPriceAmount ?? null
+             const originalPriceAmount = parsePriceAmount(event.originalPrice) ?? event.originalPriceAmount ?? null
 
         await db.attractionsgEvent.upsert({
           where: { id: event.id },
@@ -887,9 +899,10 @@ async function persistEventsToDatabase(events: EventData[]) {
             slug: event.slug || generateTitleSlug(event.title),
             description: event.description,
             priceText: event.price,
-            priceAmount: priceAmount ?? null,
+               priceAmount: priceAmount ?? null,
+               resellerPriceAmount: event.resellerPriceAmount ?? priceAmount ?? null,
             originalPriceText: event.originalPrice,
-            originalPriceAmount: originalPriceAmount ?? null,
+               originalPriceAmount: originalPriceAmount ?? null,
             image: event.image,
             category: event.category,
             location: event.location,
@@ -910,9 +923,10 @@ async function persistEventsToDatabase(events: EventData[]) {
             slug: event.slug || generateTitleSlug(event.title),
             description: event.description,
             priceText: event.price,
-            priceAmount: priceAmount ?? null,
+               priceAmount: priceAmount ?? null,
+               resellerPriceAmount: event.resellerPriceAmount ?? priceAmount ?? null,
             originalPriceText: event.originalPrice,
-            originalPriceAmount: originalPriceAmount ?? null,
+               originalPriceAmount: originalPriceAmount ?? null,
             image: event.image,
             category: event.category,
             location: event.location,
@@ -966,7 +980,10 @@ function mapDbEventToEventData(record: any): EventData {
     title: record.title,
     description: record.description ?? raw?.description,
     price: record.priceText ?? raw?.price,
+    priceAmount: record.priceAmount ?? raw?.priceAmount,
     originalPrice: record.originalPriceText ?? raw?.originalPrice,
+    originalPriceAmount: record.originalPriceAmount ?? raw?.originalPriceAmount,
+    resellerPriceAmount: record.resellerPriceAmount ?? raw?.resellerPriceAmount ?? record.priceAmount ?? raw?.priceAmount,
     image: record.image ?? raw?.image,
     category: record.category ?? raw?.category,
     location: record.location ?? raw?.location,

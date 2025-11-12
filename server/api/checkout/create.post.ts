@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import Stripe from 'stripe'
 import prisma from '~/server/utils/prisma'
+import { estimateStripeFee } from '~/utils/pricing'
 
 let stripeClient: Stripe | null = null
 
@@ -54,7 +55,9 @@ export default defineEventHandler(async (event) => {
     attraction.priceAmount ??
     attraction.originalPriceAmount
 
-  if (!basePrice || Number(basePrice) <= 0) {
+  const baseUnitPrice = Number(basePrice)
+
+  if (!basePrice || Number.isNaN(baseUnitPrice) || baseUnitPrice <= 0) {
     throw createError({
       statusCode: 400,
       message: 'This attraction does not have a valid public price.'
@@ -62,15 +65,30 @@ export default defineEventHandler(async (event) => {
   }
 
   const currency = 'sgd'
-  const unitAmount = Math.round(Number(basePrice) * 100)
+  const unitAmount = Math.round(baseUnitPrice * 100)
 
   const stripe = getStripeClient(secretKey)
+  const stripePercent = Number(config.public?.stripeFeePercent ?? 0.034)
+  const stripeFixed = Number(config.public?.stripeFeeFixed ?? 0.5)
+  const resellerUnitCost =
+    attraction.resellerPriceAmount ??
+    attraction.priceAmount ??
+    attraction.originalPriceAmount ??
+    null
+  const estimatedStripeFeePerUnit = estimateStripeFee(baseUnitPrice, stripePercent, stripeFixed)
+  const totalStripeFeeEstimate = Number((estimatedStripeFeePerUnit * quantity).toFixed(2))
+  const totalResellerCost = resellerUnitCost !== null ? Number((resellerUnitCost * quantity).toFixed(2)) : null
+  const totalAmount = Number(((unitAmount / 100) * quantity).toFixed(2))
+  const totalNetAfterFees = Number((totalAmount - totalStripeFeeEstimate).toFixed(2))
 
   const metadata: Record<string, string> = {
     eventId: attraction.id,
     eventTitle: attraction.title,
     eventSlug: attraction.slug || '',
-    quantity: String(quantity)
+    quantity: String(quantity),
+    estimatedStripeFee: String(totalStripeFeeEstimate),
+    resellerUnitCost: resellerUnitCost !== null ? String(resellerUnitCost) : '',
+    totalResellerCost: totalResellerCost !== null ? String(totalResellerCost) : ''
   }
 
   if (selectedOption?.code) metadata.optionCode = String(selectedOption.code)
@@ -150,7 +168,10 @@ export default defineEventHandler(async (event) => {
       optionCode: selectedOption?.code ?? null,
       optionName: selectedOption?.name ?? null,
       metadata: selectedOption ?? null,
-      notes: attraction.checkoutNotes ?? null
+      notes: attraction.checkoutNotes ?? null,
+      resellerCost: totalResellerCost,
+      stripeFeeAmount: totalStripeFeeEstimate,
+      netRevenue: totalNetAfterFees
     }
   })
 
