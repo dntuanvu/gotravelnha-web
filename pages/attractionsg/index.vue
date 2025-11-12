@@ -328,26 +328,49 @@ useHead(() => ({
   ]
 }))
 
+const API_PAGE_LIMIT = 100
+
 const loadTickets = async () => {
   try {
     loading.value = true
     error.value = null
-    
-    console.log('📡 loadTickets: Trying API endpoint...')
-    const res = await $fetch<{ data: AttractionEvent[] }>('/api/attractionsg/events', {
-      method: 'POST',
-      body: {
-        page: 1,
-        limit: 50,
-        sortBy: sortOption.value === 'priceAsc' || sortOption.value === 'priceDesc' ? 'price' : sortOption.value === 'alpha' ? 'title' : 'date',
-        sortOrder: sortOption.value === 'priceAsc' || sortOption.value === 'alpha' ? 'asc' : 'desc'
-      }
-    })
 
-    console.log('📊 loadTickets: API response:', res)
-    tickets.value = filterPublished(res.data || [])
-    console.log(`📊 loadTickets: API returned ${tickets.value.length} tickets`)
-    
+    console.log('📡 loadTickets: Fetching AttractionsSG events...')
+    const aggregated: AttractionEvent[] = []
+    let page = 1
+    let totalPages = 1
+
+    do {
+      const res = await $fetch<{
+        data?: AttractionEvent[]
+        pagination?: { page: number; limit: number; totalPages: number; total: number }
+      }>('/api/attractionsg/events', {
+        method: 'POST',
+        body: {
+          page,
+          limit: API_PAGE_LIMIT,
+          sortBy:
+            sortOption.value === 'priceAsc' || sortOption.value === 'priceDesc'
+              ? 'price'
+              : sortOption.value === 'alpha'
+                ? 'title'
+                : 'date',
+          sortOrder: sortOption.value === 'priceAsc' || sortOption.value === 'alpha' ? 'asc' : 'desc'
+        }
+      })
+
+      const batch = filterPublished(res.data || [])
+      aggregated.push(...batch)
+
+      totalPages = res.pagination?.totalPages ?? totalPages
+      console.log(`📄 loadTickets: page ${page}/${totalPages} -> ${batch.length} records`)
+
+      page += 1
+    } while (page <= totalPages)
+
+    tickets.value = aggregated
+    console.log(`📊 loadTickets: Loaded ${tickets.value.length} published tickets`)
+
   } catch (err) {
     console.error('❌ loadTickets: API error:', err)
     error.value = 'Unable to fetch tickets. Please try again later.'
