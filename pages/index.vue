@@ -134,7 +134,7 @@
     </section>
 
     <!-- Best Deals Section -->
-    <section class="max-w-6xl mx-auto px-4">
+    <section v-if="showPromoSection" class="max-w-6xl mx-auto px-4">
       <div class="mb-8 text-center">
         <h2 class="text-3xl font-bold text-gray-800 mb-3">🔥 Best Travel Deals</h2>
         <p class="text-gray-600 text-lg">
@@ -144,7 +144,11 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Top Deals Cards - Load dynamic data -->
-        <NuxtLink to="/deals?tab=promo" class="group bg-gradient-to-br from-orange-500 to-pink-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+        <NuxtLink
+          v-if="showBestDealsNav"
+          to="/deals?tab=promo"
+          class="group bg-gradient-to-br from-orange-500 to-pink-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2"
+        >
           <div class="aspect-video bg-gradient-to-br from-orange-400 to-pink-500 relative overflow-hidden">
             <div class="absolute inset-0 flex items-center justify-center">
               <KlookIcon :size="64" />
@@ -163,7 +167,11 @@
           </div>
         </NuxtLink>
 
-        <NuxtLink to="/deals?tab=hotel" class="group bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+        <NuxtLink
+          v-if="showBestDealsNav"
+          to="/deals?tab=hotel"
+          class="group bg-gradient-to-br from-blue-500 to-cyan-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2"
+        >
           <div class="aspect-video bg-gradient-to-br from-blue-400 to-cyan-500 relative overflow-hidden">
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-6xl">🏨</span>
@@ -182,7 +190,11 @@
           </div>
         </NuxtLink>
 
-        <NuxtLink to="/compare" class="group bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2">
+        <NuxtLink
+          v-if="showCompareNav"
+          to="/compare"
+          class="group bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2"
+        >
           <div class="aspect-video bg-gradient-to-br from-purple-400 to-indigo-500 relative overflow-hidden">
             <div class="absolute inset-0 flex items-center justify-center">
               <span class="text-6xl">💎</span>
@@ -249,6 +261,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import AffiliateCard from '~/components/AffiliateCard.vue'
 import NewsletterSignup from '~/components/NewsletterSignup.vue'
 import { useTripDeeplink } from '~/composables/useTripDeeplink'
@@ -258,6 +271,21 @@ import { useSEO } from '~/composables/useSEO'
 const { generateDeeplink } = useTripDeeplink()
 const { trackClick } = useActivityTracker()
 const { setPageSEO } = useSEO()
+const runtimeConfig = useRuntimeConfig()
+
+const isFeatureEnabled = (value) => {
+  if (value === undefined || value === null) return true
+  if (typeof value === 'boolean') return value
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase()
+    return !['false', '0', 'off', 'no'].includes(normalized)
+  }
+  return Boolean(value)
+}
+
+const showBestDealsNav = computed(() => isFeatureEnabled(runtimeConfig.public?.enableBestDealsNav))
+const showCompareNav = computed(() => isFeatureEnabled(runtimeConfig.public?.enableCompareNav))
+const showPromoSection = computed(() => showBestDealsNav.value || showCompareNav.value)
 
 // Set SEO for homepage
 setPageSEO({
