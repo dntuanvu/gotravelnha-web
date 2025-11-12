@@ -14,12 +14,18 @@
     <div v-else-if="event" class="bg-white rounded-2xl shadow-soft overflow-hidden">
       <!-- Hero Image -->
       <div class="relative h-96 overflow-hidden bg-gradient-to-br from-yellow-50 to-yellow-100">
-        <img 
-          v-if="activeImage" 
-          :src="activeImage" 
-          :alt="event.title"
-          class="w-full h-full object-cover"
-        />
+        <button
+          v-if="activeImage"
+          type="button"
+          @click="openLightbox(activeImageIndex)"
+          class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60 cursor-zoom-in"
+        >
+          <img 
+            :src="activeImage" 
+            :alt="event.title"
+            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        </button>
         <div v-else class="w-full h-full flex items-center justify-center relative">
           <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-500 opacity-20"></div>
           <div class="bg-yellow-400 rounded-full px-12 py-6 shadow-2xl relative z-10">
@@ -48,7 +54,7 @@
           <button
             v-for="(image, index) in galleryImages"
             :key="image"
-            @click="setActiveImage(index)"
+            @click="openLightbox(index)"
             class="relative w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 border-2"
             :class="index === activeImageIndex ? 'border-green-500' : 'border-transparent hover:border-green-300'"
           >
@@ -303,7 +309,53 @@
             </div>
           </div>
         </div>
+      <div
+        v-if="lightboxOpen"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+        @click.self="closeLightbox"
+      >
+        <button
+          type="button"
+          class="absolute top-6 right-6 text-white/80 hover:text-white transition"
+          @click="closeLightbox"
+        >
+          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div class="max-w-4xl w-full px-4">
+          <div class="relative">
+            <img
+              :src="galleryImages[lightboxIndex]"
+              :alt="`${event?.title} enlarged photo ${lightboxIndex + 1}`"
+              class="w-full h-auto rounded-2xl shadow-2xl object-contain bg-black/20"
+            />
+            <div
+              v-if="galleryImages.length > 1"
+              class="absolute inset-x-0 bottom-3 flex justify-between px-4 text-white/80 text-sm"
+            >
+              <button
+                type="button"
+                class="hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed"
+                @click.stop="prevLightboxImage"
+                :disabled="galleryImages.length <= 1"
+              >
+                ‹ Prev
+              </button>
+              <span>{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</span>
+              <button
+                type="button"
+                class="hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed"
+                @click.stop="nextLightboxImage"
+                :disabled="galleryImages.length <= 1"
+              >
+                Next ›
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
     </div>
 
     <!-- Error State -->
@@ -356,6 +408,15 @@ const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
 const initialSlugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
 const currentSlug = ref(initialSlugParam)
 
+const { data: initialEventData } = await useAsyncData(`attractionsg-event-${initialSlugParam}`, () =>
+  $fetch(`/api/attractionsg/event/${initialSlugParam}`)
+)
+
+if (initialEventData.value?.event) {
+  event.value = initialEventData.value.event
+  loading.value = false
+}
+
 const ticketOptions = computed(() => {
   const options = event.value?.options || event.value?.raw?.options || []
   return Array.isArray(options) ? options : []
@@ -370,11 +431,58 @@ const galleryImages = computed(() => {
 })
 
 const activeImageIndex = ref(0)
-
 const activeImage = computed(() => galleryImages.value[activeImageIndex.value] || null)
 
-const setActiveImage = (index) => {
-  activeImageIndex.value = index
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
+
+const openLightbox = (index = activeImageIndex.value) => {
+  const images = galleryImages.value
+  if (!images.length) return
+  const clamped = Math.max(0, Math.min(index, images.length - 1))
+  activeImageIndex.value = clamped
+  lightboxIndex.value = clamped
+  lightboxOpen.value = true
+  if (typeof document !== 'undefined') {
+    document.body.classList.add('overflow-hidden')
+  }
+}
+
+const closeLightbox = () => {
+  lightboxOpen.value = false
+  if (typeof document !== 'undefined') {
+    document.body.classList.remove('overflow-hidden')
+  }
+}
+
+const nextLightboxImage = () => {
+  const images = galleryImages.value
+  if (images.length <= 1) return
+  const next = (lightboxIndex.value + 1) % images.length
+  lightboxIndex.value = next
+  activeImageIndex.value = next
+}
+
+const prevLightboxImage = () => {
+  const images = galleryImages.value
+  if (images.length <= 1) return
+  const prev = (lightboxIndex.value - 1 + images.length) % images.length
+  lightboxIndex.value = prev
+  activeImageIndex.value = prev
+}
+
+const handleKeydown = (event) => {
+  if (!lightboxOpen.value) return
+  if (event.key === 'Escape') {
+    event.preventDefault()
+    closeLightbox()
+  } else if (event.key === 'ArrowRight') {
+    event.preventDefault()
+    nextLightboxImage()
+  } else if (event.key === 'ArrowLeft') {
+    event.preventDefault()
+    prevLightboxImage()
+  }
 }
 
 const hasOptions = computed(() => ticketOptions.value.length > 0)
@@ -505,6 +613,14 @@ const canonicalUrl = computed(() =>
 )
 
 onMounted(async () => {
+  if (event.value) {
+    handleCheckoutQuery()
+    return
+  }
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeydown)
+  }
+
   console.log(`🔍 Looking for event with slug/ID: ${currentSlug.value}`)
   notFound.value = false
   
@@ -562,8 +678,11 @@ watch(
       activeImageIndex.value = 0
       checkoutStatus.value = ''
       checkoutError.value = ''
+      lightboxIndex.value = 0
+      lightboxOpen.value = false
     } else {
       activeImageIndex.value = 0
+      lightboxIndex.value = 0
     }
   }
 )
@@ -573,10 +692,15 @@ watch(
   (images) => {
   if (!Array.isArray(images) || images.length === 0) {
     activeImageIndex.value = 0
+    lightboxIndex.value = 0
+    lightboxOpen.value = false
     return
   }
   if (activeImageIndex.value >= images.length) {
     activeImageIndex.value = 0
+  }
+  if (lightboxIndex.value >= images.length) {
+    lightboxIndex.value = activeImageIndex.value
   }
   },
   { immediate: true }
@@ -591,6 +715,15 @@ watch(
   }
 )
 
+watch(
+  lightboxOpen,
+  (isOpen) => {
+    if (!isOpen && typeof document !== 'undefined') {
+      document.body.classList.remove('overflow-hidden')
+    }
+  }
+)
+
 // SEO
 useHead(() => ({
   title: pageTitle.value,
@@ -599,13 +732,20 @@ useHead(() => ({
     { property: 'og:title', content: pageTitle.value },
     { property: 'og:description', content: pageDescription.value },
     { property: 'og:image', content: shareImage.value },
+    { property: 'og:image:secure_url', content: shareImage.value },
+    { property: 'og:image:alt', content: event.value?.title || 'GoVietHub Attraction' },
     { property: 'og:url', content: canonicalUrl.value },
     { property: 'og:type', content: 'article' },
     { property: 'og:site_name', content: 'GoVietHub' },
+    ...(event.value?.publishedAt
+      ? [{ property: 'article:published_time', content: new Date(event.value.publishedAt).toISOString() }]
+      : []),
+    ...(event.value?.category ? [{ property: 'article:section', content: event.value.category }] : []),
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: pageTitle.value },
     { name: 'twitter:description', content: pageDescription.value },
-    { name: 'twitter:image', content: shareImage.value }
+    { name: 'twitter:image', content: shareImage.value },
+    { name: 'twitter:image:alt', content: event.value?.title || 'GoVietHub Attraction' }
   ],
   link: [
     { rel: 'canonical', href: canonicalUrl.value }
@@ -614,5 +754,11 @@ useHead(() => ({
 
 onUnmounted(() => {
   if (copyTimeout) clearTimeout(copyTimeout)
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('keydown', handleKeydown)
+  }
+  if (typeof document !== 'undefined') {
+    document.body.classList.remove('overflow-hidden')
+  }
 })
 </script>
