@@ -1,9 +1,68 @@
 <template>
-  <div class="space-y-8 pb-16">
+  <div class="space-y-6 sm:space-y-8 pb-12 sm:pb-16 bg-gradient-to-b from-white to-slate-50 min-h-screen">
+    <!-- Mobile Native Header (Mobile Only) -->
+    <section class="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+      <div class="mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+          Klook
+        </h1>
+        <p class="text-lg sm:text-xl font-semibold text-slate-700">
+          Activities, Tours & Experiences
+        </p>
+      </div>
+    </section>
+
+    <!-- Desktop Hero Section (Hidden on Mobile) -->
+    <section class="hidden lg:block max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 lg:pt-1 mb-6">
+      <div class="bg-gradient-to-br from-orange-500 via-orange-600 to-pink-600 text-white p-10 md:p-16 rounded-[40px] shadow-2xl overflow-hidden relative">
+        <!-- Decorative background elements -->
+        <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
+        
+        <div class="relative z-10 text-center">
+          <div class="flex items-center justify-center gap-3 mb-4">
+            <KlookIcon :size="48" />
+            <h2 class="text-5xl md:text-6xl font-black text-white drop-shadow-2xl">
+              Klook
+            </h2>
+          </div>
+          
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-4 drop-shadow-2xl">
+            Activities, Tours & Experiences
+          </h1>
+          <p class="text-lg md:text-xl text-orange-100 max-w-2xl mx-auto mb-8 font-medium">
+            Discover 100,000+ amazing experiences worldwide with exclusive deals
+          </p>
+          
+          <!-- Feature highlights -->
+          <div class="flex flex-wrap justify-center gap-3">
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-sm font-semibold">Verified Reviews</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-sm font-semibold">Instant Confirmation</span>
+            </div>
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span class="text-sm font-semibold">Best Prices</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Klook Search Box Hero Section -->
-    <section class="max-w-6xl mx-auto px-4">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <ClientOnly>
-        <div class="bg-white rounded-2xl shadow-soft overflow-hidden animate-slide-up">
+        <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl overflow-hidden border border-slate-200/80">
           <!-- Klook Search Vertical Widget -->
           <div class="klook-search-widget-container">
             <ins 
@@ -20,10 +79,10 @@
           </div>
         </div>
         <template #fallback>
-          <div class="bg-white rounded-2xl shadow-soft p-12 text-center">
+          <div class="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-8 sm:p-12 text-center border border-slate-200/80">
             <div class="animate-pulse">
-              <div class="h-16 bg-gray-200 rounded-lg mb-4"></div>
-              <div class="h-12 bg-gray-100 rounded-lg"></div>
+              <div class="h-16 bg-slate-200 rounded-lg mb-4 max-w-md mx-auto"></div>
+              <div class="h-12 bg-slate-100 rounded-lg max-w-xs mx-auto"></div>
             </div>
           </div>
         </template>
@@ -31,31 +90,31 @@
     </section>
 
     <!-- Klook Dynamic Widgets with Tabs -->
-    <section id="klook-widget" class="max-w-6xl mx-auto px-4 space-y-8">
+    <section id="klook-widget" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
       <!-- Tab Navigation -->
-      <div class="flex gap-4 border-b-2 border-gray-200">
+      <div class="flex gap-2 sm:gap-4 border-b-2 border-slate-200 overflow-x-auto scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
         <button
           @click="selectedTab = 'things_to_do'"
           :class="[
-            'px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5',
+            'px-4 sm:px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5 whitespace-nowrap touch-manipulation',
             selectedTab === 'things_to_do'
               ? 'border-orange-500 text-orange-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+              : 'border-transparent text-slate-500 hover:text-slate-700 active:text-slate-700'
           ]"
         >
-          <KlookIcon :size="20" class="mr-2" />
+          <KlookIcon :size="18" class="sm:w-5 sm:h-5 inline-block mr-2" />
           Things to Do
         </button>
         <button
           @click="selectedTab = 'hotels'"
           :class="[
-            'px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5',
+            'px-4 sm:px-6 py-3 font-semibold transition-all border-b-2 -mb-0.5 whitespace-nowrap touch-manipulation',
             selectedTab === 'hotels'
               ? 'border-orange-500 text-orange-600'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
+              : 'border-transparent text-slate-500 hover:text-slate-700 active:text-slate-700'
           ]"
         >
-          <span class="mr-2">🏨</span>
+          <span class="mr-2 text-lg sm:text-base">🏨</span>
           Hotels
         </button>
       </div>
@@ -64,17 +123,17 @@
       <template v-if="selectedTab === 'things_to_do'">
         <ClientOnly>
           <div class="mb-6">
-            <h3 class="text-lg font-semibold text-gray-700 mb-3">Browse by Category</h3>
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-3 sm:mb-4">Browse by Category</h3>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
               <button
                 v-for="category in categories"
                 :key="category.name"
                 @click="scrollToWidget(category)"
-                class="group px-3 py-2 bg-white border border-gray-200 rounded-lg hover:border-primary-500 hover:bg-primary-50 transition-all text-left"
+                class="group px-3 sm:px-4 py-2.5 sm:py-3 bg-white border border-slate-200 rounded-xl hover:border-orange-500 hover:bg-orange-50 active:bg-orange-100 transition-all text-left touch-manipulation shadow-sm hover:shadow-md"
               >
-                <div class="flex items-center gap-2">
-                  <span class="text-lg">{{ category.icon }}</span>
-                  <span class="text-sm font-medium text-gray-700 group-hover:text-primary-700">{{ category.name }}</span>
+                <div class="flex items-center gap-2 sm:gap-2.5">
+                  <span class="text-lg sm:text-xl">{{ category.icon }}</span>
+                  <span class="text-xs sm:text-sm font-semibold text-slate-700 group-hover:text-orange-700">{{ category.name }}</span>
                 </div>
               </button>
             </div>
@@ -100,17 +159,17 @@
           v-for="widget in filteredWidgets"
           :key="widget.id"
           :id="`widget-${widget.id}`"
-          class="bg-white rounded-2xl shadow-soft p-6 border border-gray-100 animate-fade-in scroll-mt-8"
+          class="bg-white rounded-2xl sm:rounded-3xl shadow-xl p-4 sm:p-6 border border-slate-200/80 animate-fade-in scroll-mt-8"
         >
-          <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-2 flex items-center justify-center gap-2">
-              <span>{{ widget.icon }}</span>
+          <div class="text-center mb-4 sm:mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-2 flex items-center justify-center gap-2">
+              <span class="text-2xl sm:text-3xl">{{ widget.icon }}</span>
               {{ widget.name }}
             </h2>
-            <p class="text-gray-600">{{ widget.description }}</p>
+            <p class="text-sm sm:text-base text-slate-600">{{ widget.description }}</p>
           </div>
           <div 
-            class="bg-gray-50 p-6 rounded-xl klook-widget-container"
+            class="bg-slate-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl klook-widget-container"
           >
             <!-- Klook Dynamic Widget - Product type depends on widget type -->
             <ins 
@@ -131,17 +190,17 @@
       </ClientOnly>
 
       <!-- Info message when no widgets configured -->
-      <div v-if="!filteredWidgets.length" class="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-8 text-center">
-        <div class="text-5xl mb-4">⚙️</div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">No {{ selectedTab === 'hotels' ? 'Hotels' : 'Things to Do' }} Widgets Configured</h3>
-        <p class="text-gray-600 mb-4">
+      <div v-if="!filteredWidgets.length" class="bg-orange-50 border-2 border-orange-200 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center">
+        <div class="text-4xl sm:text-5xl mb-3 sm:mb-4">⚙️</div>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-2">No {{ selectedTab === 'hotels' ? 'Hotels' : 'Things to Do' }} Widgets Configured</h3>
+        <p class="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6">
           Visit Klook affiliate portal to get widget codes and add them to the configuration.
         </p>
         <a
           href="https://affiliate.klook.com/my_ads/"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+          class="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-orange-600 text-white rounded-xl hover:bg-orange-700 active:bg-orange-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl"
         >
           <span>🚀</span>
           <span>Go to Klook Affiliate Portal</span>

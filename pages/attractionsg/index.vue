@@ -1,101 +1,105 @@
 <template>
-  <div class="space-y-8 pb-16">
-    <!-- Hero Section for AttractionsSG -->
-    <section class="max-w-6xl mx-auto px-4">
-      <div class="bg-gradient-to-br from-green-600 via-emerald-600 to-teal-700 text-white p-12 md:p-16 rounded-2xl shadow-soft overflow-hidden animate-slide-up relative">
+  <div class="space-y-6 sm:space-y-8 pb-12 sm:pb-16 bg-gradient-to-b from-white to-slate-50 min-h-screen">
+    <!-- Mobile Native Header (Mobile Only) -->
+    <section class="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+      <div class="mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+          SG Attractions
+        </h1>
+        <p class="text-lg sm:text-xl font-semibold text-slate-700">
+          Exclusive Tickets & Experiences
+        </p>
+      </div>
+    </section>
+
+    <!-- Desktop Hero Section (Hidden on Mobile) -->
+    <section class="hidden lg:block max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 lg:pt-1">
+      <div class="bg-gradient-to-br from-emerald-600 via-teal-600 to-sky-700 text-white p-10 md:p-16 rounded-[40px] shadow-2xl overflow-hidden relative">
         <!-- Decorative background elements -->
-        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
-        <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+        <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full -mr-48 -mt-48 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full -ml-48 -mb-48 blur-3xl"></div>
         
         <div class="relative z-10">
           <div class="flex items-center justify-center mb-6">
-            <div class="bg-yellow-400 rounded-full px-8 py-4 shadow-2xl">
+            <div class="bg-yellow-400 rounded-full px-10 py-5 shadow-2xl">
               <div class="flex items-center justify-center gap-1">
-                <span class="text-[#166534] font-black text-3xl md:text-4xl tracking-tight">SG</span>
-                <span class="text-[#1e3a8a] font-black text-3xl md:text-4xl tracking-tight">ATTRACTIONS</span>
+                <span class="text-[#166534] font-black text-4xl md:text-5xl tracking-tight">SG</span>
+                <span class="text-[#1e3a8a] font-black text-4xl md:text-5xl tracking-tight">ATTRACTIONS</span>
               </div>
             </div>
           </div>
           
-          <h1 class="text-4xl md:text-5xl font-bold mb-4 text-center drop-shadow-lg">
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-black mb-4 text-center drop-shadow-2xl">
             Singapore Attractions & Tickets
           </h1>
-          <p class="text-lg md:text-xl text-center text-green-100 max-w-2xl mx-auto mb-8">
+          <p class="text-lg md:text-xl text-center text-emerald-100 max-w-2xl mx-auto mb-8 font-medium">
             Exclusive tickets to Singapore's top attractions and experiences
           </p>
           
           <!-- Feature highlights -->
           <div class="flex flex-wrap justify-center gap-3 mb-8">
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-sm font-medium">Best Prices</span>
+              <span class="text-sm font-semibold">Best Prices</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-sm font-medium">Instant E-tickets</span>
+              <span class="text-sm font-semibold">Instant E-tickets</span>
             </div>
-            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full">
+            <div class="flex items-center gap-2 bg-white/20 backdrop-blur-md px-5 py-2.5 rounded-full border border-white/30">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
-              <span class="text-sm font-medium">24/7 Support</span>
+              <span class="text-sm font-semibold">24/7 Support</span>
             </div>
-          </div>
-
-          <!-- CTA Button -->
-          <div class="flex flex-wrap justify-center gap-4">
-            <a
-              href="#categories"
-              class="group px-8 py-4 bg-white text-green-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-xl flex items-center gap-2"
-            >
-              <span>🎫</span>
-              Browse All Attractions
-            </a>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Tickets Grid -->
-    <section id="categories" class="max-w-6xl mx-auto px-4">
-      <div class="mb-6">
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">🎫 All Attractions & Tickets</h2>
-        <p class="text-gray-600">Browse all available Singapore attractions and experiences</p>
+    <section id="categories" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-4 sm:mb-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+          <span class="sm:hidden">All Attractions</span>
+          <span class="hidden sm:inline">All Attractions & Tickets</span>
+        </h2>
+        <p class="text-sm sm:text-base text-slate-600">Browse all available Singapore attractions and experiences</p>
       </div>
       
       <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="n in 6" :key="n" class="bg-white rounded-2xl shadow-soft overflow-hidden animate-pulse">
-          <div class="h-48 bg-gray-300"></div>
-          <div class="p-5 space-y-3">
-            <div class="h-4 bg-gray-300 rounded w-3/4"></div>
-            <div class="h-4 bg-gray-300 rounded w-1/2"></div>
-            <div class="h-10 bg-gray-300 rounded"></div>
+      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div v-for="n in 6" :key="n" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden animate-pulse border border-slate-200/80">
+          <div class="h-48 sm:h-52 bg-slate-300"></div>
+          <div class="p-4 sm:p-5 space-y-3">
+            <div class="h-4 bg-slate-300 rounded w-3/4"></div>
+            <div class="h-4 bg-slate-300 rounded w-1/2"></div>
+            <div class="h-10 bg-slate-300 rounded-xl"></div>
           </div>
         </div>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-2xl p-8 text-center">
-        <svg class="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-else-if="error" class="bg-red-50 border-2 border-red-200 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-red-500 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
         </svg>
-        <h3 class="text-xl font-bold text-red-800 mb-2">Failed to Load Tickets</h3>
-        <p class="text-red-600 mb-4">{{ error }}</p>
+        <h3 class="text-lg sm:text-xl font-bold text-red-800 mb-2">Failed to Load Tickets</h3>
+        <p class="text-sm sm:text-base text-red-600 mb-4 sm:mb-6">{{ error }}</p>
         <button 
           @click="loadTickets"
-          class="px-6 py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors font-semibold"
+          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 active:bg-red-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl"
         >
           Try Again
         </button>
       </div>
 
       <!-- Controls -->
-      <div v-if="tickets.length > 0" class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div v-if="tickets.length > 0" class="mb-4 sm:mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 sm:gap-4">
         <div class="flex-1">
           <label class="sr-only" for="search">Search attractions</label>
           <div class="relative">
@@ -104,20 +108,20 @@
               v-model="searchTerm"
               type="search"
               placeholder="Search by attraction name or location..."
-              class="w-full px-4 py-3 pl-10 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"
+              class="w-full px-4 py-3 sm:py-3.5 pl-10 sm:pl-11 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-sm sm:text-base shadow-sm hover:shadow-md touch-manipulation"
             />
-            <svg class="w-5 h-5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 117.5-7.5 7.5 7.5 0 01-7.5 7.5z"></path>
             </svg>
           </div>
         </div>
         <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
           <div class="flex items-center gap-2">
-            <label for="sort" class="text-sm font-medium text-gray-600">Sort by</label>
+            <label for="sort" class="text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">Sort by</label>
             <select
               id="sort"
               v-model="sortOption"
-              class="px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+              class="px-3 sm:px-4 py-2 sm:py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base font-medium bg-white shadow-sm hover:shadow-md transition-all touch-manipulation"
               @change="loadTickets"
             >
               <option value="alpha">Name: A → Z</option>
@@ -130,11 +134,11 @@
       </div>
 
       <!-- Tickets Grid -->
-      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div 
           v-for="ticket in displayedTickets" 
           :key="ticket.id || ticket.title" 
-          class="bg-white rounded-2xl shadow-soft hover:shadow-medium transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500"
+          class="bg-white rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 active:scale-[0.98] flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-slate-200/80 touch-manipulation"
           role="button"
           tabindex="0"
           @click="handleCardClick(ticket)"
@@ -163,41 +167,41 @@
             </div>
           </div>
           
-          <div class="p-5 flex flex-col flex-1">
-            <h3 class="text-lg font-bold text-gray-800 mb-2 line-clamp-2 hover:text-green-600 transition-colors min-h-[3.5rem]">
+          <div class="p-4 sm:p-5 flex flex-col flex-1">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-2 line-clamp-2 hover:text-emerald-600 transition-colors min-h-[3rem] sm:min-h-[3.5rem]">
               {{ ticket.title }}
             </h3>
             
-            <p v-if="ticket.description" class="text-gray-600 text-sm mb-3 line-clamp-3 flex-grow">
+            <p v-if="ticket.description" class="text-slate-600 text-xs sm:text-sm mb-3 line-clamp-2 sm:line-clamp-3 flex-grow">
               {{ ticket.description }}
             </p>
 
-            <div v-if="ticket.location" class="flex items-center gap-1 mb-3 text-gray-600 text-sm">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="ticket.location" class="flex items-center gap-1.5 mb-3 text-slate-600 text-xs sm:text-sm">
+              <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
               </svg>
               <span class="truncate">{{ ticket.location }}</span>
             </div>
 
-            <div class="flex items-baseline gap-2 mb-4">
-              <span v-if="ticket.price" class="text-2xl font-bold text-green-600">{{ ticket.price }}</span>
-              <span v-if="ticket.originalPrice" class="text-sm text-gray-500 line-through">{{ ticket.originalPrice }}</span>
+            <div class="flex items-baseline gap-2 mb-3 sm:mb-4">
+              <span v-if="ticket.price" class="text-xl sm:text-2xl font-bold text-emerald-600">{{ ticket.price }}</span>
+              <span v-if="ticket.originalPrice" class="text-xs sm:text-sm text-slate-500 line-through">{{ ticket.originalPrice }}</span>
             </div>
-            <div v-if="ticket.isSelfBookable" class="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-700 text-xs font-semibold">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div v-if="ticket.isSelfBookable" class="mb-3 sm:mb-4 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
+              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
-              Instant checkout available
+              <span>Instant checkout</span>
             </div>
             
-            <div v-if="ticket.lastUpdatedDate" class="text-xs text-gray-500 mb-3">
+            <div v-if="ticket.lastUpdatedDate" class="text-xs text-slate-500 mb-3 sm:mb-4">
               Updated {{ formatRelativeTime(ticket.lastUpdatedDate) }}
             </div>
             
             <NuxtLink
               :to="`/attractionsg/${ticket.slug || ticket.id}`"
-              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-green-600 to-emerald-700 text-white px-4 py-3 rounded-xl hover:from-green-700 hover:to-emerald-800 transition-all duration-300 transform hover:scale-105 font-semibold shadow-md mt-auto"
+              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2.5 sm:py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl mt-auto touch-manipulation"
               @click.stop="rememberScrollPosition"
             >
               View Details
@@ -212,36 +216,45 @@
       <div
         v-if="hasMoreTickets"
         ref="loadMoreTrigger"
-        class="flex items-center justify-center py-8 text-sm text-gray-500"
+        class="flex items-center justify-center py-6 sm:py-8 text-sm text-slate-500"
       >
-        Loading more attractions…
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 animate-spin text-emerald-600" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+          <span>Loading more attractions…</span>
+        </div>
       </div>
 
       <!-- No Matches -->
-      <div v-if="tickets.length > 0 && filteredTickets.length === 0 && searchTerm" class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
-        <h3 class="text-xl font-bold text-gray-800">No attractions match your filters</h3>
-        <p class="text-gray-600">Try adjusting your search keywords or filter selections.</p>
+      <div v-if="tickets.length > 0 && filteredTickets.length === 0 && searchTerm" class="bg-white border-2 border-slate-200 rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center space-y-3 sm:space-y-4">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900">No attractions match your filters</h3>
+        <p class="text-sm sm:text-base text-slate-600">Try adjusting your search keywords or filter selections.</p>
         <button
           @click="resetFilters"
-          class="px-6 py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition font-semibold"
+          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 active:bg-emerald-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl"
         >
           Reset filters
         </button>
       </div>
 
       <!-- Empty State -->
-      <div v-if="tickets.length === 0 && !loading" class="bg-gradient-to-br from-yellow-50 to-orange-50 border-2 border-dashed border-yellow-300 rounded-2xl p-12 text-center">
-        <svg class="w-16 h-16 mx-auto text-yellow-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-if="tickets.length === 0 && !loading" class="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-300 rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center">
+        <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-emerald-600 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
         </svg>
-        <h3 class="text-xl font-bold text-gray-700 mb-2">No Events Available Yet</h3>
-        <p class="text-gray-600 mb-4">Start by crawling AttractionsSG data to populate events</p>
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900 mb-2">No Events Available Yet</h3>
+        <p class="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6">Start by crawling AttractionsSG data to populate events</p>
         <button
           @click="triggerCrawl"
-          class="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-xl hover:from-green-700 hover:to-emerald-800 font-semibold transition-all transform hover:scale-105 shadow-md flex items-center gap-2 mx-auto"
+          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 font-semibold transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto touch-manipulation"
         >
           <span>🕷️</span>
-          Crawl AttractionsSG Data
+          <span>Crawl AttractionsSG Data</span>
         </button>
       </div>
     </section>
