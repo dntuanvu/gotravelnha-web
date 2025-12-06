@@ -1,12 +1,12 @@
 <template>
-  <div class="space-y-6 sm:space-y-8 pb-12 sm:pb-16 bg-gradient-to-b from-white to-slate-50 min-h-screen">
+  <div class="space-y-4 sm:space-y-6 lg:space-y-8 pb-8 sm:pb-12 lg:pb-16 bg-white min-h-screen">
     <!-- Mobile Native Header (Mobile Only) -->
-    <section class="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
-      <div class="mb-6">
-        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+    <section class="lg:hidden max-w-7xl mx-auto px-3 sm:px-4 pt-3 sm:pt-4">
+      <div class="mb-4">
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">
           SG Attractions
         </h1>
-        <p class="text-lg sm:text-xl font-semibold text-slate-700">
+        <p class="text-base font-semibold text-slate-700">
           Exclusive Tickets & Experiences
         </p>
       </div>
@@ -62,29 +62,29 @@
     </section>
 
     <!-- Tickets Grid -->
-    <section id="categories" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="mb-4 sm:mb-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+    <section id="categories" class="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8">
+      <div class="mb-3 sm:mb-4 lg:mb-6">
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mb-1 sm:mb-2">
           <span class="sm:hidden">All Attractions</span>
           <span class="hidden sm:inline">All Attractions & Tickets</span>
         </h2>
-        <p class="text-sm sm:text-base text-slate-600">Browse all available Singapore attractions and experiences</p>
+        <p class="text-xs sm:text-sm lg:text-base text-slate-600">Browse all available Singapore attractions and experiences</p>
       </div>
       
       <!-- Loading State -->
-      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div v-for="n in 6" :key="n" class="bg-white rounded-2xl sm:rounded-3xl shadow-lg overflow-hidden animate-pulse border border-slate-200/80">
-          <div class="h-48 sm:h-52 bg-slate-300"></div>
-          <div class="p-4 sm:p-5 space-y-3">
+      <div v-if="loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 sm:gap-4 lg:gap-6">
+        <div v-for="n in 6" :key="n" class="bg-white rounded-none sm:rounded-2xl lg:rounded-3xl border-0 sm:border border-b sm:border-slate-200 border-slate-200 shadow-none sm:shadow-lg overflow-hidden animate-pulse">
+          <div class="h-44 sm:h-48 lg:h-52 bg-slate-300"></div>
+          <div class="p-3 sm:p-4 lg:p-5 space-y-3">
             <div class="h-4 bg-slate-300 rounded w-3/4"></div>
             <div class="h-4 bg-slate-300 rounded w-1/2"></div>
-            <div class="h-10 bg-slate-300 rounded-xl"></div>
+            <div class="h-10 sm:h-12 bg-slate-300 rounded-xl"></div>
           </div>
         </div>
       </div>
 
       <!-- Error State -->
-      <div v-else-if="error" class="bg-red-50 border-2 border-red-200 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-center">
+      <div v-else-if="error" class="bg-red-50 border-0 sm:border-2 border-red-200 rounded-none sm:rounded-2xl lg:rounded-3xl p-6 sm:p-8 text-center">
         <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-red-500 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
         </svg>
@@ -92,7 +92,7 @@
         <p class="text-sm sm:text-base text-red-600 mb-4 sm:mb-6">{{ error }}</p>
         <button 
           @click="loadTickets"
-          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 active:bg-red-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl"
+          class="px-5 sm:px-6 py-3 sm:py-3 bg-red-600 text-white rounded-xl hover:bg-red-700 active:bg-red-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl min-h-[44px]"
         >
           Try Again
         </button>
@@ -108,7 +108,7 @@
               v-model="searchTerm"
               type="search"
               placeholder="Search by attraction name or location..."
-              class="w-full px-4 py-3 sm:py-3.5 pl-10 sm:pl-11 border border-slate-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all text-sm sm:text-base shadow-sm hover:shadow-md touch-manipulation"
+              class="w-full px-4 py-3 sm:py-3.5 pl-10 sm:pl-11 border-0 sm:border border-b-2 sm:border-b border-slate-200 sm:rounded-xl sm:rounded-2xl bg-transparent sm:bg-white focus:ring-0 sm:focus:ring-2 focus:border-b-emerald-500 sm:focus:border-emerald-500 sm:focus:ring-emerald-500 transition-all text-base sm:text-sm sm:text-base shadow-none sm:shadow-sm sm:hover:shadow-md touch-manipulation"
             />
             <svg class="w-5 h-5 text-slate-400 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 117.5-7.5 7.5 7.5 0 01-7.5 7.5z"></path>
@@ -117,11 +117,11 @@
         </div>
         <div class="flex flex-col sm:flex-row gap-3 flex-shrink-0">
           <div class="flex items-center gap-2">
-            <label for="sort" class="text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap">Sort by</label>
+            <label for="sort" class="text-xs sm:text-sm font-semibold text-slate-700 whitespace-nowrap hidden sm:block">Sort by</label>
             <select
               id="sort"
               v-model="sortOption"
-              class="px-3 sm:px-4 py-2 sm:py-2.5 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base font-medium bg-white shadow-sm hover:shadow-md transition-all touch-manipulation"
+              class="w-full sm:w-auto px-3 sm:px-4 py-2.5 sm:py-2.5 border-0 sm:border border-b-2 sm:border-b border-slate-200 sm:rounded-xl bg-transparent sm:bg-white focus:ring-0 sm:focus:ring-2 focus:border-b-emerald-500 sm:focus:border-emerald-500 sm:focus:ring-emerald-500 text-base sm:text-sm sm:text-base font-medium shadow-none sm:shadow-sm sm:hover:shadow-md transition-all touch-manipulation"
               @change="loadTickets"
             >
               <option value="alpha">Name: A → Z</option>
@@ -134,74 +134,79 @@
       </div>
 
       <!-- Tickets Grid -->
-      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div 
-          v-for="ticket in displayedTickets" 
-          :key="ticket.id || ticket.title" 
-          class="bg-white rounded-2xl sm:rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden group transform hover:-translate-y-1 active:scale-[0.98] flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 border border-slate-200/80 touch-manipulation"
-          role="button"
-          tabindex="0"
-          @click="handleCardClick(ticket)"
-          @keydown.enter.prevent="handleCardClick(ticket)"
-          @keydown.space.prevent="handleCardClick(ticket)"
-        >
-          <div class="relative overflow-hidden flex-shrink-0">
+      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 sm:gap-4 lg:gap-6">
+        <template v-for="(ticket, index) in displayedTickets" :key="ticket.id || ticket.title">
+          <div class="flex flex-col">
+            <div 
+              class="bg-white rounded-none sm:rounded-2xl lg:rounded-3xl border-0 sm:border sm:border-slate-200 shadow-none sm:shadow-xl lg:hover:shadow-2xl transition-all duration-300 overflow-hidden group active:bg-slate-50 sm:active:bg-white transform sm:hover:-translate-y-1 active:scale-[0.99] sm:active:scale-[0.98] flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 touch-manipulation"
+              role="button"
+              tabindex="0"
+              @click="handleCardClick(ticket)"
+              @keydown.enter.prevent="handleCardClick(ticket)"
+              @keydown.space.prevent="handleCardClick(ticket)"
+            >
+            <div class="relative overflow-hidden flex-shrink-0">
             <img 
               v-if="ticket.image"
               :src="ticket.image" 
-              alt="Ticket image" 
-              class="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110"
+              :alt="ticket.title" 
+              class="w-full h-44 sm:h-48 lg:h-52 object-cover transition-transform duration-300 group-active:scale-105 sm:group-hover:scale-110"
               @error="handleImageError"
             />
-            <div v-else class="w-full h-48 bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center relative">
+            <div v-else class="w-full h-44 sm:h-48 lg:h-52 bg-gradient-to-br from-yellow-50 to-yellow-100 flex items-center justify-center relative">
               <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-500 opacity-20"></div>
-              <div class="bg-yellow-400 rounded-full px-6 py-3 shadow-xl relative z-10">
+              <div class="bg-yellow-400 rounded-full px-4 sm:px-6 py-2 sm:py-3 shadow-xl relative z-10">
                 <div class="flex items-center justify-center gap-1">
-                  <span class="text-[#166534] font-black text-xl tracking-tight">SG</span>
-                  <span class="text-[#1e3a8a] font-black text-xl tracking-tight">ATTRACTIONS</span>
+                  <span class="text-[#166534] font-black text-lg sm:text-xl tracking-tight">SG</span>
+                  <span class="text-[#1e3a8a] font-black text-lg sm:text-xl tracking-tight">ATTRACTIONS</span>
                 </div>
               </div>
             </div>
-            <div v-if="ticket.originalPrice" class="absolute top-3 right-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-              Special Deal
+            <div v-if="ticket.originalPrice" class="absolute top-2 left-2 sm:top-3 sm:left-3">
+              <span class="px-2 sm:px-3 py-1 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg sm:rounded-full text-[10px] sm:text-xs font-bold shadow-sm">
+                Deal
+              </span>
+            </div>
+            <div v-if="ticket.isSelfBookable" class="absolute top-2 right-2 sm:top-3 sm:right-3">
+              <span class="px-2 sm:px-2.5 py-1 bg-emerald-500 text-white rounded-lg sm:rounded-full text-[10px] sm:text-xs font-bold shadow-sm">
+                Book Now
+              </span>
             </div>
           </div>
           
-          <div class="p-4 sm:p-5 flex flex-col flex-1">
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-2 line-clamp-2 hover:text-emerald-600 transition-colors min-h-[3rem] sm:min-h-[3.5rem]">
+          <div class="p-3 sm:p-4 lg:p-5 flex flex-col flex-1">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 sm:mb-2 line-clamp-2 group-active:text-emerald-600 sm:group-hover:text-emerald-600 transition-colors leading-tight">
               {{ ticket.title }}
             </h3>
             
-            <p v-if="ticket.description" class="text-slate-600 text-xs sm:text-sm mb-3 line-clamp-2 sm:line-clamp-3 flex-grow">
+            <p v-if="ticket.description" class="text-slate-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-3 flex-grow hidden sm:block">
               {{ ticket.description }}
             </p>
 
-            <div v-if="ticket.location" class="flex items-center gap-1.5 mb-3 text-slate-600 text-xs sm:text-sm">
-              <svg class="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-              </svg>
-              <span class="truncate">{{ ticket.location }}</span>
+            <div v-if="ticket.location" class="flex items-center gap-1.5 mb-2 sm:mb-3 text-[10px] sm:text-xs text-slate-500">
+              <span class="text-[10px]">📍</span>
+              <span class="truncate max-w-[200px] sm:max-w-none">{{ ticket.location }}</span>
             </div>
 
-            <div class="flex items-baseline gap-2 mb-3 sm:mb-4">
-              <span v-if="ticket.price" class="text-xl sm:text-2xl font-bold text-emerald-600">{{ ticket.price }}</span>
-              <span v-if="ticket.originalPrice" class="text-xs sm:text-sm text-slate-500 line-through">{{ ticket.originalPrice }}</span>
+            <div class="flex items-baseline gap-2 mb-2 sm:mb-3">
+              <span v-if="ticket.price" class="text-lg sm:text-xl lg:text-2xl font-bold text-emerald-600">{{ ticket.price }}</span>
+              <span v-if="ticket.originalPrice" class="text-xs sm:text-sm text-slate-400 line-through">{{ ticket.originalPrice }}</span>
             </div>
-            <div v-if="ticket.isSelfBookable" class="mb-3 sm:mb-4 inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold">
-              <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            
+            <div v-if="ticket.isSelfBookable" class="mb-2 sm:mb-3 inline-flex items-center gap-1.5 px-2 sm:px-2.5 py-1 sm:py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] sm:text-xs font-semibold w-fit">
+              <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
               </svg>
               <span>Instant checkout</span>
             </div>
             
-            <div v-if="ticket.lastUpdatedDate" class="text-xs text-slate-500 mb-3 sm:mb-4">
+            <div v-if="ticket.lastUpdatedDate" class="text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
               Updated {{ formatRelativeTime(ticket.lastUpdatedDate) }}
             </div>
             
             <NuxtLink
               :to="`/attractionsg/${ticket.slug || ticket.id}`"
-              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2.5 sm:py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 transition-all duration-300 transform hover:scale-105 active:scale-95 font-semibold shadow-lg hover:shadow-xl mt-auto touch-manipulation"
+              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2.5 sm:py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 transition-all duration-300 transform active:scale-95 sm:hover:scale-105 font-semibold shadow-md sm:shadow-lg sm:hover:shadow-xl mt-auto touch-manipulation min-h-[44px] sm:min-h-[48px]"
               @click.stop="rememberScrollPosition"
             >
               View Details
@@ -210,7 +215,11 @@
               </svg>
             </NuxtLink>
           </div>
-        </div>
+          </div>
+          <!-- Separator line - visible on mobile only -->
+          <div v-if="index < displayedTickets.length - 1" class="h-px bg-slate-300 sm:hidden mt-4 mb-4"></div>
+          </div>
+        </template>
       </div>
 
       <div
@@ -228,7 +237,7 @@
       </div>
 
       <!-- No Matches -->
-      <div v-if="tickets.length > 0 && filteredTickets.length === 0 && searchTerm" class="bg-white border-2 border-slate-200 rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center space-y-3 sm:space-y-4">
+      <div v-if="tickets.length > 0 && filteredTickets.length === 0 && searchTerm" class="bg-white border-0 sm:border-2 border-slate-200 rounded-none sm:rounded-2xl lg:rounded-3xl p-6 sm:p-12 text-center space-y-3 sm:space-y-4">
         <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
@@ -236,14 +245,14 @@
         <p class="text-sm sm:text-base text-slate-600">Try adjusting your search keywords or filter selections.</p>
         <button
           @click="resetFilters"
-          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 active:bg-emerald-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl"
+          class="px-5 sm:px-6 py-3 sm:py-3 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 active:bg-emerald-800 transition-all font-semibold touch-manipulation shadow-lg hover:shadow-xl min-h-[44px]"
         >
           Reset filters
         </button>
       </div>
 
       <!-- Empty State -->
-      <div v-if="tickets.length === 0 && !loading" class="bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-dashed border-emerald-300 rounded-2xl sm:rounded-3xl p-6 sm:p-12 text-center">
+      <div v-if="tickets.length === 0 && !loading" class="bg-gradient-to-br from-emerald-50 to-teal-50 border-0 sm:border-2 border-dashed border-emerald-300 rounded-none sm:rounded-2xl lg:rounded-3xl p-6 sm:p-12 text-center">
         <svg class="w-12 h-12 sm:w-16 sm:h-16 mx-auto text-emerald-600 mb-3 sm:mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
         </svg>
@@ -251,7 +260,7 @@
         <p class="text-sm sm:text-base text-slate-600 mb-4 sm:mb-6">Start by crawling AttractionsSG data to populate events</p>
         <button
           @click="triggerCrawl"
-          class="px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 font-semibold transition-all transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto touch-manipulation"
+          class="px-5 sm:px-6 py-3 sm:py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 font-semibold transition-all transform active:scale-95 sm:hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 mx-auto touch-manipulation min-h-[44px]"
         >
           <span>🕷️</span>
           <span>Crawl AttractionsSG Data</span>
@@ -636,3 +645,4 @@ watchEffect(() => {
   }
 })
 </script>
+

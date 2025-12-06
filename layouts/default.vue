@@ -118,6 +118,19 @@ onBeforeUnmount(() => {
         <ul class="hidden lg:flex flex-row gap-1 items-center">
           <li>
             <NuxtLink 
+              to="/search" 
+              @click="navigate('/search')" 
+              :class="['nav-link', isActive('/search')]"
+              class="px-4 py-2.5 rounded-xl hover:bg-slate-100 transition-all flex items-center gap-2 text-sm font-semibold text-slate-700 hover:text-emerald-600"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Search
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink 
               to="/klook" 
               @click="navigate('/klook')" 
               :class="['nav-link', isActive('/klook')]"
@@ -332,6 +345,21 @@ onBeforeUnmount(() => {
                       </svg>
                     </div>
                     <span>Home</span>
+                  </NuxtLink>
+                </li>
+                <li>
+                  <NuxtLink 
+                    to="/search" 
+                    @click="navigate('/search')" 
+                    :class="['nav-link', isActive('/search')]"
+                    class="flex items-center gap-4 px-5 py-4 rounded-2xl hover:bg-slate-100 active:bg-slate-200 transition-colors text-slate-700 font-semibold text-base touch-manipulation min-h-[56px]"
+                  >
+                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-blue-50">
+                      <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                    </div>
+                    <span>Search</span>
                   </NuxtLink>
                 </li>
                 <li>

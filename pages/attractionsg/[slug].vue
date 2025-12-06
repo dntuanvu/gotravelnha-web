@@ -44,13 +44,14 @@
           <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/5 to-transparent"></div>
           <div class="absolute top-3 left-3">
             <NuxtLink
-              to="/attractionsg"
+              :to="backUrl"
               class="inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-2 text-xs font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white active:bg-white/90 touch-manipulation"
             >
               <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
               </svg>
-              <span>Back</span>
+              <span class="hidden sm:inline">{{ backLabel }}</span>
+              <span class="sm:hidden">Back</span>
             </NuxtLink>
           </div>
         </div>
@@ -88,13 +89,13 @@
           <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/5 to-transparent"></div>
           <div class="absolute top-6 left-6">
             <NuxtLink
-              to="/attractionsg"
+              :to="backUrl"
               class="inline-flex items-center gap-2 rounded-full bg-white/85 px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white active:bg-white/90 touch-manipulation"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
               </svg>
-              <span>Back to Attractions</span>
+              <span>{{ backLabel }}</span>
             </NuxtLink>
           </div>
         </div>
@@ -643,6 +644,74 @@ const router = useRouter()
 const loading = ref<boolean>(true)
 const event = ref<Record<string, any> | null>(null)
 const notFound = ref<boolean>(false)
+
+// Smart back navigation based on referrer
+const backUrl = computed(() => {
+  const from = route.query.from as string | undefined
+  
+  if (from === 'search') {
+    // Build search URL with preserved query params
+    const searchParams = new URLSearchParams()
+    if (route.query.searchQuery) searchParams.set('q', route.query.searchQuery as string)
+    if (route.query.searchLocation) searchParams.set('location', route.query.searchLocation as string)
+    if (route.query.searchCategory) searchParams.set('category', route.query.searchCategory as string)
+    if (route.query.searchPlatforms) {
+      const platforms = Array.isArray(route.query.searchPlatforms) 
+        ? route.query.searchPlatforms 
+        : [route.query.searchPlatforms]
+      platforms.forEach(p => searchParams.append('platforms', p as string))
+    }
+    
+    const queryString = searchParams.toString()
+    return `/search${queryString ? `?${queryString}` : ''}`
+  }
+  
+  // Fallback: check document.referrer if available (for browser back button cases)
+  if (process.client && typeof document !== 'undefined') {
+    const referrer = document.referrer
+    if (referrer) {
+      try {
+        const referrerUrl = new URL(referrer)
+        // If referrer is from search page
+        if (referrerUrl.pathname === '/search' || referrerUrl.pathname.includes('/search')) {
+          // Extract search params from referrer
+          const searchQuery = referrerUrl.searchParams.get('q')
+          if (searchQuery) {
+            const searchParams = new URLSearchParams()
+            searchParams.set('q', searchQuery)
+            referrerUrl.searchParams.forEach((value, key) => {
+              if (['location', 'category', 'platforms'].includes(key)) {
+                searchParams.append(key, value)
+              }
+            })
+            return `/search?${searchParams.toString()}`
+          }
+          return '/search'
+        }
+      } catch (e) {
+        // Invalid URL, ignore
+      }
+    }
+  }
+  
+  // Default: go back to attractions listing page
+  return '/attractionsg'
+})
+
+const backLabel = computed(() => {
+  const from = route.query.from as string | undefined
+  if (from === 'search') return 'Back to Search'
+  
+  // Check referrer as fallback
+  if (process.client && typeof document !== 'undefined') {
+    const referrer = document.referrer
+    if (referrer && referrer.includes('/search')) {
+      return 'Back to Search'
+    }
+  }
+  
+  return 'Back to Attractions'
+})
 const selectedOption = ref<Record<string, any> | null>(null)
 const bookingFormRef = ref<HTMLElement | null>(null)
 const copyMessage = ref<string>('')
