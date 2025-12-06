@@ -212,10 +212,20 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
           optionCode: updatedBooking.optionCode,
           optionName: updatedBooking.optionName,
           quantity: updatedBooking.quantity,
+          adultCount: updatedBooking.adultCount ?? undefined,
+          childCount: updatedBooking.childCount ?? undefined,
+          unitPrice: updatedBooking.unitPrice ?? undefined,
+          totalAmount: updatedBooking.amount ?? undefined,
+          resellerUnitCost:
+            updatedBooking.resellerCost && updatedBooking.quantity
+              ? updatedBooking.resellerCost / updatedBooking.quantity
+              : null,
+          totalResellerCost: updatedBooking.resellerCost ?? null,
           customerName: updatedBooking.customerName,
           customerEmail: updatedBooking.customerEmail,
           customerPhone: updatedBooking.customerPhone,
-          notes: updatedBooking.notes
+          notes: updatedBooking.notes,
+          cart: updatedBooking.cart ?? undefined
         },
         {
           webhookUrl: supplierWebhook,
@@ -283,6 +293,17 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
           .join(' - ')}</p>`
       : ''
 
+  const guestInfoParts: string[] = []
+  if (typeof updatedBooking.adultCount === 'number') {
+    guestInfoParts.push(`${updatedBooking.adultCount} adult${updatedBooking.adultCount === 1 ? '' : 's'}`)
+  }
+  if (typeof updatedBooking.childCount === 'number' && updatedBooking.childCount > 0) {
+    guestInfoParts.push(`${updatedBooking.childCount} child${updatedBooking.childCount === 1 ? '' : 'ren'}`)
+  }
+  const guestInfo = guestInfoParts.length
+    ? `<p><strong>Guests:</strong> ${guestInfoParts.join(' + ')}</p>`
+    : ''
+
   const checkoutNotes =
     updatedBooking.event.checkoutNotes
       ? `<p><strong>Checkout Notes:</strong> ${updatedBooking.event.checkoutNotes}</p>`
@@ -310,6 +331,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
     <p><strong>Quantity:</strong> ${updatedBooking.quantity}</p>
     <p><strong>Amount Paid:</strong> SGD ${updatedBooking.amount.toFixed(2)}</p>
     ${optionInfo}
+    ${guestInfo}
     <p><strong>Customer:</strong> ${
       updatedBooking.customerName || 'N/A'
     }</p>

@@ -131,6 +131,7 @@ function mapRecordToEvent(record: AttractionsgEventModel) {
 
   return {
     id: record.id,
+    sourceKey: (raw?.sourceKey as string | undefined) ?? record.link ?? record.slug ?? record.id,
     slug: record.slug ?? raw?.slug,
     title: record.title,
     description: record.description ?? raw?.description ?? '',

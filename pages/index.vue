@@ -1,8 +1,64 @@
 <template>
-  <div class="space-y-12 pb-16 animate-fade-in">
-    <!-- Enhanced Hero Section -->
-    <section class="max-w-7xl mx-auto px-4 pt-4">
-      <div class="relative bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 rounded-3xl shadow-2xl overflow-hidden border-2 border-indigo-500">
+  <div class="space-y-6 sm:space-y-12 pb-12 sm:pb-20 animate-fade-in bg-gradient-to-b from-white to-slate-50 min-h-screen">
+    <!-- Mobile App Style Hero Section (Mobile Only) -->
+    <section class="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
+      <!-- Mobile Native Header -->
+      <div class="mb-6 sm:mb-8">
+        <!-- Greeting -->
+        <div class="mb-3 sm:mb-4">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
+            Welcome to GoVietHub!
+          </h1>
+          <p class="text-lg sm:text-xl font-semibold text-slate-700">
+            Where do you want to go?
+          </p>
+        </div>
+
+        <!-- Category Filters (Platform Navigation) -->
+        <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
+          <NuxtLink
+            to="/klook"
+            @click="() => trackClick('klook_link', { campaign: 'homepage-category-klook', route: '/klook' })"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
+          >
+            <KlookIcon :size="20" />
+            <span>Klook</span>
+          </NuxtLink>
+          <a
+            :href="flightLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-category-flight', route: flightLink, option: 'external' })"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
+          >
+            <span class="text-lg">✈️</span>
+            <span>Flights</span>
+          </a>
+          <a
+            :href="hotelLink"
+            target="_blank"
+            rel="noopener noreferrer"
+            @click="() => trackClick('trip_link', { campaign: 'homepage-category-hotel', route: hotelLink, option: 'external' })"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
+          >
+            <span class="text-lg">🏨</span>
+            <span>Hotels</span>
+          </a>
+          <NuxtLink
+            to="/attractionsg"
+            @click="() => trackClick('attractionsg_link', { campaign: 'homepage-category-attractionsg', route: '/attractionsg' })"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
+          >
+            <span class="text-lg">🎫</span>
+            <span>SG Attractions</span>
+          </NuxtLink>
+        </div>
+      </div>
+    </section>
+
+    <!-- Desktop Hero Section (Hidden on Mobile) -->
+    <section class="hidden lg:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-0 lg:pt-1">
+      <div class="relative bg-gradient-to-br from-emerald-600 via-teal-700 to-sky-800 rounded-[40px] shadow-2xl overflow-hidden border border-emerald-500/30">
         <!-- Animated Background Elements -->
         <div class="absolute inset-0 opacity-20">
           <!-- Floating orbs with animation -->
@@ -13,70 +69,78 @@
         </div>
 
         <!-- Content -->
-        <div class="relative z-10 px-6 py-10 md:px-12 md:py-16">
+        <div class="relative z-10 px-5 py-8 sm:px-6 sm:py-10 md:px-12 md:py-16">
           <!-- Animated Badge -->
-          <div class="flex justify-center mb-4 animate-fade-in">
-            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20">
-              <span class="text-white/90 font-semibold text-xs md:text-sm">Your All-in-One Travel Platform</span>
+          <div class="flex justify-center mb-4 sm:mb-5 animate-fade-in">
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 rounded-full border border-white/20">
+              <span class="text-white/90 font-semibold text-xs sm:text-sm">Your All-in-One Travel Platform</span>
             </div>
           </div>
 
           <!-- Headline with animations -->
-          <div class="text-center mb-6 space-y-3">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-white mb-4 leading-tight animate-slide-up">
-              <span class="inline-block hover:scale-110 transition-transform duration-300">Go</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75">Viet</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150">Hub</span>
+          <div class="text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-4 sm:mb-6 leading-[1.1] animate-slide-up px-2">
+              <span class="inline-block hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Go</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Viet</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Hub</span>
             </h1>
             
             <!-- Enhanced Tagline -->
-            <p class="text-xl sm:text-2xl md:text-3xl lg:text-4xl text-white mb-4 font-bold max-w-3xl mx-auto leading-tight animate-slide-up-delayed drop-shadow-lg">
+            <p class="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-white mb-4 sm:mb-6 font-black max-w-4xl mx-auto leading-tight animate-slide-up-delayed drop-shadow-2xl px-2">
               Discover, Compare & Book
             </p>
 
             <!-- Enhanced Description -->
-            <p class="text-base sm:text-lg md:text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed mb-2 animate-fade-in-delayed">
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-emerald-50 max-w-3xl mx-auto leading-relaxed mb-2 sm:mb-3 animate-fade-in-delayed font-medium px-3">
               Compare deals across <span class="font-bold text-white">Trip.com</span>, <span class="font-bold text-white">Klook</span>, and <span class="font-bold text-white">Singapore Attractions</span>
             </p>
-            <p class="text-sm md:text-base text-blue-200 max-w-3xl mx-auto italic animate-fade-in-delayed">
+            <p class="text-xs sm:text-sm md:text-base text-emerald-100/80 max-w-3xl mx-auto italic animate-fade-in-delayed px-3">
               formerly known as GoTravelNha
             </p>
           </div>
 
           <!-- Enhanced Quick Access Pills with better animations -->
-          <div class="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up-delayed">
-            <NuxtLink to="/klook" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow">
-              <div class="flex items-center gap-2">
-                <KlookIcon :size="24" class="group-hover:scale-125 transition-transform duration-300" />
-                <span class="text-white font-bold text-base md:text-lg">Klook</span>
-                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
+          <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 animate-slide-up-delayed px-2">
+            <NuxtLink to="/klook" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <KlookIcon :size="22" class="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-300" />
+                <span class="text-slate-900 font-bold text-base sm:text-lg">Klook</span>
+                <svg class="w-5 h-5 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
               </div>
             </NuxtLink>
-            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-delayed">
-              <div class="flex items-center gap-2">
-                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">✈️</span>
-                <span class="text-white font-bold text-base md:text-lg">Flights</span>
-                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
+            <a :href="flightLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-flight', route: flightLink, option: 'external' })" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">✈️</span>
+                <span class="text-slate-900 font-bold text-base sm:text-lg">Flights</span>
+                <svg class="w-5 h-5 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
               </div>
             </a>
-            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more">
-              <div class="flex items-center gap-2">
-                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🏨</span>
-                <span class="text-white font-bold text-base md:text-lg">Hotels</span>
-                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
+            <a :href="hotelLink" target="_blank" rel="noopener noreferrer" @click="() => trackClick('trip_link', { campaign: 'homepage-hero-hotel', route: hotelLink, option: 'external' })" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🏨</span>
+                <span class="text-slate-900 font-bold text-base sm:text-lg">Hotels</span>
+                <svg class="w-5 h-5 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
               </div>
             </a>
-            <NuxtLink to="/attractionsg" class="group bg-white/10 backdrop-blur-md px-4 py-2.5 rounded-2xl hover:bg-white/20 transition-all cursor-pointer border-2 border-white/30 shadow-xl hover:shadow-2xl transform hover:-translate-y-2 hover:scale-105 animate-bounce-slow-more-delayed">
-              <div class="flex items-center gap-2">
-                <span class="text-xl md:text-2xl group-hover:scale-125 transition-transform duration-300">🎫</span>
-                <span class="text-white font-bold text-xs md:text-base">SG Attractions</span>
-                <span class="text-white/70 group-hover:translate-x-1 transition-transform duration-300 hidden sm:inline">→</span>
+            <NuxtLink to="/attractionsg" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🎫</span>
+                <span class="text-slate-900 font-bold text-sm sm:text-base">SG Attractions</span>
+                <svg class="w-5 h-5 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
               </div>
             </NuxtLink>
           </div>
 
           <!-- Enhanced Trust Badges with icons -->
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto animate-fade-in">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto animate-fade-in px-2">
             <div class="flex flex-col items-center gap-2 p-4 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:bg-white/10 transition-all group">
               <div class="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -107,15 +171,15 @@
     </section>
 
     <!-- Platform Cards -->
-    <section class="max-w-6xl mx-auto px-4">
-      <div class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-3">Choose Your Adventure</h2>
-        <p class="text-gray-600 text-lg">
-          Compare prices across top travel platforms
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-8 sm:mb-12 text-center px-2">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 mb-3 sm:mb-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent">Choose Your Adventure</h2>
+        <p class="text-slate-600 text-base sm:text-lg md:text-xl max-w-2xl mx-auto px-2">
+          Compare prices across top travel platforms and find the best deals for your next journey
         </p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 max-w-4xl mx-auto">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 max-w-4xl mx-auto">
         <AffiliateCard
           link="/trip"
           img="/trip-logo.png"
@@ -134,10 +198,14 @@
     </section>
 
     <!-- Best Deals Section -->
-    <section v-if="showPromoSection" class="max-w-6xl mx-auto px-4">
-      <div class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-gray-800 mb-3">🔥 Best Travel Deals</h2>
-        <p class="text-gray-600 text-lg">
+    <section v-if="showPromoSection" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="mb-12 text-center">
+        <div class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-100 to-red-100 px-4 py-2 rounded-full mb-4">
+          <span class="text-2xl">🔥</span>
+          <span class="text-sm font-bold text-orange-700 uppercase tracking-wide">Hot Deals</span>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-4">Best Travel Deals</h2>
+        <p class="text-slate-600 text-lg md:text-xl max-w-2xl mx-auto">
           Handpicked offers you don't want to miss
         </p>
       </div>
@@ -216,52 +284,60 @@
     </section>
 
     <!-- CTA Section -->
-    <section class="max-w-6xl mx-auto px-4">
-      <div class="bg-gradient-to-br from-primary-600 to-blue-700 rounded-2xl shadow-soft p-12 text-center text-white">
-        <h2 class="text-3xl font-bold mb-4">Ready to Start Your Journey?</h2>
-        <p class="text-xl mb-8 text-blue-100">
-          Get exclusive deals and save on your next trip
-        </p>
-        <div class="flex flex-wrap justify-center gap-4">
-          <NuxtLink
-            to="/klook"
-            @click="() => trackClick('klook_link', { campaign: 'homepage-cta-activities', route: '/klook' })"
-            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            <KlookIcon :size="20" class="inline-block mr-1.5" />
-            Find Activities
-          </NuxtLink>
-          <a
-            :href="flightLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-flight-external', route: flightLink, option: 'external' })"
-            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            ✈️ Book Flights
-          </a>
-          <a
-            :href="hotelLink"
-            target="_blank"
-            rel="noopener noreferrer"
-            @click="() => trackClick('trip_link', { campaign: 'homepage-cta-hotel-external', route: hotelLink, option: 'external' })"
-            class="px-8 py-4 bg-white text-primary-700 rounded-xl hover:bg-gray-100 font-bold transition-all transform hover:scale-105 shadow-lg"
-          >
-            🏨 Book Hotels
-          </a>
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="relative bg-gradient-to-br from-emerald-600 via-teal-600 to-sky-600 rounded-2xl sm:rounded-3xl shadow-2xl p-8 sm:p-12 md:p-16 text-center text-white overflow-hidden">
+        <!-- Decorative elements -->
+        <div class="absolute top-0 right-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/10 rounded-full -mr-32 sm:-mr-48 -mt-32 sm:-mt-48 blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-64 sm:w-96 h-64 sm:h-96 bg-white/10 rounded-full -ml-32 sm:-ml-48 -mb-32 sm:-mb-48 blur-3xl"></div>
+        
+        <div class="relative z-10">
+          <h2 class="text-3xl sm:text-4xl md:text-5xl font-black mb-3 sm:mb-4 px-2">Ready to Start Your Journey?</h2>
+          <p class="text-lg sm:text-xl md:text-2xl mb-8 sm:mb-10 text-emerald-50 max-w-2xl mx-auto px-3">
+            Get exclusive deals and save on your next trip
+          </p>
+          <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 px-2">
+            <NuxtLink
+              to="/klook"
+              @click="() => trackClick('klook_link', { campaign: 'homepage-cta-activities', route: '/klook' })"
+              class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
+            >
+              <KlookIcon :size="20" />
+              Find Activities
+            </NuxtLink>
+            <a
+              :href="flightLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click="() => trackClick('trip_link', { campaign: 'homepage-cta-flight-external', route: flightLink, option: 'external' })"
+              class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
+            >
+              <span class="text-xl">✈️</span>
+              Book Flights
+            </a>
+            <a
+              :href="hotelLink"
+              target="_blank"
+              rel="noopener noreferrer"
+              @click="() => trackClick('trip_link', { campaign: 'homepage-cta-hotel-external', route: hotelLink, option: 'external' })"
+              class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
+            >
+              <span class="text-xl">🏨</span>
+              Book Hotels
+            </a>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Newsletter Signup Section -->
-    <section class="max-w-6xl mx-auto px-4">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       <NewsletterSignup source="homepage" />
     </section>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { ref, computed } from 'vue'
 import AffiliateCard from '~/components/AffiliateCard.vue'
 import NewsletterSignup from '~/components/NewsletterSignup.vue'
 import { useTripDeeplink } from '~/composables/useTripDeeplink'
@@ -287,6 +363,21 @@ const showBestDealsNav = computed(() => isFeatureEnabled(runtimeConfig.public?.e
 const showCompareNav = computed(() => isFeatureEnabled(runtimeConfig.public?.enableCompareNav))
 const showPromoSection = computed(() => showBestDealsNav.value || showCompareNav.value)
 
+// Flight and hotel links for mobile navigation (same as desktop hero)
+const flightLink = generateDeeplink({
+  type: 'flight',
+  params: {
+    campaign: 'homepage-hero-flight'
+  }
+})
+
+const hotelLink = generateDeeplink({
+  type: 'hotel',
+  params: {
+    campaign: 'homepage-hero-hotel'
+  }
+})
+
 // Set SEO for homepage
 setPageSEO({
   title: 'GoVietHub - Discover, Compare & Book Travel Deals',
@@ -303,21 +394,6 @@ setPageSEO({
       target: 'https://gotravelnha.com/search?q={search_term_string}',
       'query-input': 'required name=search_term_string'
     }
-  }
-})
-
-// Generate deep links for homepage CTAs
-const flightLink = generateDeeplink({
-  type: 'flight',
-  params: {
-    campaign: 'homepage-hero-flight'
-  }
-})
-
-const hotelLink = generateDeeplink({
-  type: 'hotel',
-  params: {
-    campaign: 'homepage-hero-hotel'
   }
 })
 </script>

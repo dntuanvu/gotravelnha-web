@@ -7,10 +7,17 @@ export interface SupplierOrderInput {
   optionCode?: string | null
   optionName?: string | null
   quantity: number
+  adultCount?: number
+  childCount?: number
+  unitPrice?: number | null
+  totalAmount?: number | null
+  resellerUnitCost?: number | null
+  totalResellerCost?: number | null
   customerName?: string | null
   customerEmail?: string | null
   customerPhone?: string | null
   notes?: string | null
+  cart?: unknown
 }
 
 export interface SupplierOrderResult {

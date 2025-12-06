@@ -18,7 +18,8 @@ interface CrawlRequest {
 }
 
 interface EventData {
-  id: string
+  id?: string // database UUID after persistence
+  sourceKey: string
   slug?: string
   title: string
   description?: string
@@ -119,8 +120,9 @@ async function crawlPaginatedListing(
     const content = await page.content()
     const extracted = extractEvents(content)
     const newEvents = extracted.filter((event) => {
-      if (seenIds.has(event.id)) return false
-      seenIds.add(event.id)
+      const identity = eventIdentity(event)
+      if (seenIds.has(identity)) return false
+      seenIds.add(identity)
       return true
     })
 
@@ -478,7 +480,7 @@ function extractEvents(html: string): EventData[] {
         
         // Generate unique ID from title and link
         const link = $item.find('a').first().attr('href') || ''
-        const id = generateEventId(title, link)
+        const sourceKey = generateEventId(title, link)
         
         // Extract and fix image URL - try multiple attributes and sources
         const imgTag = $item.find('img').first()
@@ -506,7 +508,7 @@ function extractEvents(html: string): EventData[] {
         const priceText = priceInfo.priceText || extractPrice($item)
         const originalText = priceInfo.originalPriceText || $item.find('.original-price, .old-price, [class*=\"original\"]').first().text().trim()
         const event: EventData = {
-          id,
+          sourceKey,
           slug: generateTitleSlug(title),
           title,
           description: $item.find('.description, p, [class*="desc"]').first().text().trim(),
@@ -571,15 +573,15 @@ function extractBackgroundImage($item: cheerio.Cheerio<any>): string | undefined
 function deduplicateEvents(events: EventData[]): EventData[] {
   const seen = new Set<string>()
   const unique: EventData[] = []
-  
+
   for (const event of events) {
-    const key = `${event.title.toLowerCase()}-${event.link}`
+    const key = eventIdentity(event)
     if (!seen.has(key)) {
       seen.add(key)
       unique.push(event)
     }
   }
-  
+
   return unique
 }
 
@@ -773,6 +775,7 @@ function mergeEventData(target: EventData, source: EventData) {
   target.lastUpdated = source.lastUpdated || target.lastUpdated
   target.options = source.options || target.options
   target.slug = source.slug || target.slug
+  target.sourceKey = target.sourceKey || source.sourceKey
 }
 
 function extractGalleryImages($: cheerio.CheerioAPI): string[] {
@@ -872,78 +875,98 @@ async function persistEventsToDatabase(events: EventData[]) {
 
   try {
     const now = new Date()
-    const seenIds = Array.from(new Set(events.map(event => event.id)))
+    const seenLinks = Array.from(
+      new Set(events.map((event) => event.link).filter((link): link is string => typeof link === 'string' && link.length > 0))
+    )
+    const seenSlugs = Array.from(
+      new Set(events.map((event) => event.slug).filter((slug): slug is string => typeof slug === 'string' && slug.length > 0))
+    )
 
-    await db.attractionsgEvent.updateMany({
-      where: {
-        NOT: {
-          id: {
-            in: seenIds
+    const retentionConditions = []
+    if (seenLinks.length > 0) {
+      retentionConditions.push({ link: { in: seenLinks } })
+    }
+    if (seenSlugs.length > 0) {
+      retentionConditions.push({ slug: { in: seenSlugs } })
+    }
+
+    if (retentionConditions.length > 0) {
+      await db.attractionsgEvent.updateMany({
+        where: {
+          isActive: true,
+          NOT: {
+            OR: retentionConditions
           }
+        },
+        data: {
+          isActive: false
         }
-      },
-      data: {
-        isActive: false
-      }
-    })
+      })
+    }
 
     for (const event of events) {
       try {
-             const priceAmount = parsePriceAmount(event.price) ?? event.priceAmount ?? event.resellerPriceAmount ?? null
-             const originalPriceAmount = parsePriceAmount(event.originalPrice) ?? event.originalPriceAmount ?? null
+        const priceAmount =
+          parsePriceAmount(event.price) ?? event.priceAmount ?? event.resellerPriceAmount ?? null
+        const originalPriceAmount =
+          parsePriceAmount(event.originalPrice) ?? event.originalPriceAmount ?? null
+        const slug = event.slug || generateTitleSlug(event.title)
+        event.slug = slug
 
-        await db.attractionsgEvent.upsert({
-          where: { id: event.id },
-          update: {
-            title: event.title,
-            slug: event.slug || generateTitleSlug(event.title),
-            description: event.description,
-            priceText: event.price,
-               priceAmount: priceAmount ?? null,
-               resellerPriceAmount: event.resellerPriceAmount ?? priceAmount ?? null,
-            originalPriceText: event.originalPrice,
-               originalPriceAmount: originalPriceAmount ?? null,
-            image: event.image,
-            category: event.category,
-            location: event.location,
-            rating: typeof event.rating === 'number' ? event.rating : null,
-            link: event.link,
-            duration: event.duration,
-            ageRestriction: event.ageRestriction,
-            cancellation: event.cancellation,
-            validFrom: event.validFrom,
-            validTo: event.validTo,
-            lastSeenAt: now,
-            isActive: true,
-            raw: event
-          },
-          create: {
-            id: event.id,
-            title: event.title,
-            slug: event.slug || generateTitleSlug(event.title),
-            description: event.description,
-            priceText: event.price,
-               priceAmount: priceAmount ?? null,
-               resellerPriceAmount: event.resellerPriceAmount ?? priceAmount ?? null,
-            originalPriceText: event.originalPrice,
-               originalPriceAmount: originalPriceAmount ?? null,
-            image: event.image,
-            category: event.category,
-            location: event.location,
-            rating: typeof event.rating === 'number' ? event.rating : null,
-            link: event.link,
-            duration: event.duration,
-            ageRestriction: event.ageRestriction,
-            cancellation: event.cancellation,
-            validFrom: event.validFrom,
-            validTo: event.validTo,
-            lastSeenAt: now,
-            isActive: true,
-            raw: event
+        let existing: any = null
+        if (event.link) {
+          existing = await db.attractionsgEvent.findUnique({
+            where: { link: event.link }
+          })
+        }
+        if (!existing && slug) {
+          existing = await db.attractionsgEvent.findFirst({
+            where: { slug }
+          })
+        }
+
+        const payload = {
+          title: event.title,
+          slug,
+          description: event.description,
+          priceText: event.price,
+          priceAmount: priceAmount ?? null,
+          resellerPriceAmount: event.resellerPriceAmount ?? priceAmount ?? null,
+          originalPriceText: event.originalPrice,
+          originalPriceAmount: originalPriceAmount ?? null,
+          image: event.image,
+          category: event.category,
+          location: event.location,
+          rating: typeof event.rating === 'number' ? event.rating : null,
+          link: event.link,
+          duration: event.duration,
+          ageRestriction: event.ageRestriction,
+          cancellation: event.cancellation,
+          validFrom: event.validFrom,
+          validTo: event.validTo,
+          lastSeenAt: now,
+          isActive: true,
+          raw: {
+            ...event,
+            id: undefined // avoid storing transient id values
           }
-        })
+        }
+
+        if (existing) {
+          const updated = await db.attractionsgEvent.update({
+            where: { id: existing.id },
+            data: payload
+          })
+          event.id = updated.id
+        } else {
+          const created = await db.attractionsgEvent.create({
+            data: payload
+          })
+          event.id = created.id
+        }
       } catch (error) {
-        console.error(`⚠️ Failed to upsert AttractionsSG event ${event.id}:`, error)
+        const ref = event.link || event.slug || event.sourceKey
+        console.error(`⚠️ Failed to persist AttractionsSG event ${ref}:`, error)
       }
     }
 
@@ -976,6 +999,7 @@ function mapDbEventToEventData(record: any): EventData {
 
   return {
     id: record.id,
+    sourceKey: raw?.sourceKey ?? record.link ?? record.slug ?? record.id,
     slug: record.slug ?? raw?.slug,
     title: record.title,
     description: record.description ?? raw?.description,
@@ -1059,4 +1083,12 @@ function normalizeUrl(url?: string): string | undefined {
   
   // Add base URL for relative paths without leading slash
   return `${BASE_URL}/${url}`
+}
+
+function eventIdentity(event: EventData): string {
+  const linkKey = event.link ? event.link.trim().toLowerCase() : ''
+  if (linkKey) return linkKey
+  const slugKey = event.slug ? event.slug.trim().toLowerCase() : ''
+  if (slugKey) return slugKey
+  return event.sourceKey.trim().toLowerCase()
 }

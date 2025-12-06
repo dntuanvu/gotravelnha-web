@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-12">
+  <div class="min-h-screen bg-white-50 pb-12">
     <div class="max-w-7xl mx-auto px-4 pt-8 space-y-8">
       <div class="flex flex-col gap-2">
         <NuxtLink to="/admin" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2">
@@ -166,7 +166,7 @@
               </div>
 
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
+                <div class="bg-white-50 border border-gray-200 rounded-lg p-4 space-y-2">
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-gray-600">Crawler Price</span>
                     <span class="text-sm text-gray-500 uppercase">RP price</span>
@@ -182,7 +182,7 @@
                     <span class="text-xs text-gray-500">Displayed to customers</span>
                   </div>
                   <div class="flex items-center gap-3">
-                    <div class="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-sm text-gray-500">SGD</div>
+                    <div class="px-3 py-2 border border-gray-300 rounded-lg bg-white-50 text-sm text-gray-500">SGD</div>
                     <input
                       type="number"
                       min="0"
@@ -234,7 +234,7 @@
                 ></textarea>
               </div>
             </div>
-            <div class="lg:col-span-1 border-t lg:border-t-0 lg:border-l border-gray-200 bg-gray-50 p-6 space-y-3">
+            <div class="lg:col-span-1 border-t lg:border-t-0 lg:border-l border-gray-200 bg-white-50 p-6 space-y-3">
               <div class="font-semibold text-gray-700">Ticket Options</div>
               <div v-if="event.options && event.options.length" class="space-y-3 text-sm">
                 <div

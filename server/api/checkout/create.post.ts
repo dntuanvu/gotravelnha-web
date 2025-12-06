@@ -25,9 +25,37 @@ export default defineEventHandler(async (event) => {
   }
 
   const body = await readBody(event)
-  const eventId = body?.eventId as string | undefined
-  const quantity = Math.max(1, parseInt(String(body?.quantity ?? '1'), 10))
-  const selectedOption = body?.selectedOption as Record<string, any> | undefined
+  const eventId = typeof body?.eventId === 'string' ? body.eventId : undefined
+  const cart = body?.cart && typeof body.cart === 'object' ? body.cart : null
+  const selectedOption = body?.selectedOption && typeof body.selectedOption === 'object'
+    ? body.selectedOption
+    : null
+  const parseCount = (value: unknown) => {
+    const num = Number.parseInt(String(value ?? ''), 10)
+    return Number.isFinite(num) && num > 0 ? num : 0
+  }
+
+  if (!cart) {
+    throw createError({
+      statusCode: 400,
+      message: 'Cart is empty. Please add tickets before checkout.'
+    })
+  }
+
+  const adultCount = parseCount(cart.adultCount ?? cart.quantityAdults)
+  const childCount = parseCount(cart.childCount ?? cart.quantityChildren)
+  let totalQuantity = parseCount(cart.quantity)
+
+  if (adultCount + childCount > 0) {
+    totalQuantity = adultCount + childCount
+  }
+
+  if (!Number.isFinite(totalQuantity) || totalQuantity <= 0) {
+    throw createError({
+      statusCode: 400,
+      message: 'Please specify at least one ticket before proceeding to checkout.'
+    })
+  }
   const customerEmail = typeof body?.customerEmail === 'string' ? body.customerEmail : undefined
   const customerName = typeof body?.customerName === 'string' ? body.customerName : undefined
   const customerPhone = typeof body?.customerPhone === 'string' ? body.customerPhone : undefined
@@ -50,45 +78,89 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const basePrice =
-    attraction.publicPrice ??
-    attraction.priceAmount ??
-    attraction.originalPriceAmount
+  const rawOptions = ((attraction as any)?.raw?.options as Record<string, any>[] | undefined) ?? []
 
-  const baseUnitPrice = Number(basePrice)
+  const normalize = (value: unknown) =>
+    typeof value === 'string' ? value.trim().toLowerCase() : undefined
 
-  if (!basePrice || Number.isNaN(baseUnitPrice) || baseUnitPrice <= 0) {
+  const requestedCode = normalize(cart.optionCode) ?? normalize(selectedOption?.code)
+  const requestedName = normalize(cart.optionName) ?? normalize(selectedOption?.name)
+
+  const matchedOption =
+    rawOptions.find((option) => normalize(option?.code) === requestedCode) ||
+    rawOptions.find((option) => normalize(option?.name) === requestedName) ||
+    (rawOptions.length === 1 ? rawOptions[0] : undefined)
+
+  const resolveNumber = (value: any) => {
+    const num = typeof value === 'number' ? value : parseFloat(String(value ?? ''))
+    return Number.isFinite(num) ? num : null
+  }
+
+  const priceCandidates = [
+    resolveNumber(matchedOption?.priceAmount),
+    resolveNumber(matchedOption?.price),
+    resolveNumber(selectedOption?.priceAmount),
+    resolveNumber(selectedOption?.price),
+    resolveNumber(cart.unitPrice),
+    resolveNumber(attraction.publicPrice),
+    resolveNumber(attraction.priceAmount),
+    resolveNumber(attraction.originalPriceAmount)
+  ]
+
+  const unitPublicPrice = priceCandidates.find((price) => price !== null && price > 0) ?? null
+
+  if (!unitPublicPrice || unitPublicPrice <= 0) {
     throw createError({
       statusCode: 400,
-      message: 'This attraction does not have a valid public price.'
+      message: 'Unable to determine a valid ticket price for checkout.'
     })
   }
 
   const currency = 'sgd'
-  const unitAmount = Math.round(baseUnitPrice * 100)
+  const unitAmount = Math.round(unitPublicPrice * 100)
 
   const stripe = getStripeClient(secretKey)
   const stripePercent = Number(config.public?.stripeFeePercent ?? 0.034)
   const stripeFixed = Number(config.public?.stripeFeeFixed ?? 0.5)
   const resellerUnitCost =
-    attraction.resellerPriceAmount ??
-    attraction.priceAmount ??
-    attraction.originalPriceAmount ??
-    null
-  const estimatedStripeFeePerUnit = estimateStripeFee(baseUnitPrice, stripePercent, stripeFixed)
-  const totalStripeFeeEstimate = Number((estimatedStripeFeePerUnit * quantity).toFixed(2))
-  const totalResellerCost = resellerUnitCost !== null ? Number((resellerUnitCost * quantity).toFixed(2)) : null
-  const totalAmount = Number(((unitAmount / 100) * quantity).toFixed(2))
+    [
+      resolveNumber(matchedOption?.priceAmount),
+      resolveNumber(attraction.resellerPriceAmount),
+      resolveNumber(attraction.priceAmount),
+      resolveNumber(attraction.originalPriceAmount)
+    ].find((price) => price !== null && price > 0) ?? null
+  const totalAmount = Number((unitPublicPrice * totalQuantity).toFixed(2))
+  const totalStripeFeeEstimate = Number(estimateStripeFee(totalAmount, stripePercent, stripeFixed).toFixed(2))
+  const totalResellerCost =
+    resellerUnitCost !== null ? Number((resellerUnitCost * totalQuantity).toFixed(2)) : null
   const totalNetAfterFees = Number((totalAmount - totalStripeFeeEstimate).toFixed(2))
+
+  const normalizedCart = {
+    optionCode: matchedOption?.code ?? cart.optionCode ?? selectedOption?.code ?? null,
+    optionName: matchedOption?.name ?? cart.optionName ?? selectedOption?.name ?? null,
+    unitPrice: unitPublicPrice,
+    unitCurrency: currency.toUpperCase(),
+    quantity: totalQuantity,
+    adultCount,
+    childCount,
+    totalPrice: totalAmount,
+    stripeFeeEstimate: totalStripeFeeEstimate,
+    resellerCost: totalResellerCost,
+    unitResellerPrice: resellerUnitCost
+  }
 
   const metadata: Record<string, string> = {
     eventId: attraction.id,
     eventTitle: attraction.title,
     eventSlug: attraction.slug || '',
-    quantity: String(quantity),
+    quantity: String(totalQuantity),
     estimatedStripeFee: String(totalStripeFeeEstimate),
     resellerUnitCost: resellerUnitCost !== null ? String(resellerUnitCost) : '',
-    totalResellerCost: totalResellerCost !== null ? String(totalResellerCost) : ''
+    totalResellerCost: totalResellerCost !== null ? String(totalResellerCost) : '',
+    unitPrice: unitPublicPrice.toFixed(2),
+    totalPrice: totalAmount.toFixed(2),
+    adultCount: String(adultCount),
+    childCount: String(childCount)
   }
 
   if (selectedOption?.code) metadata.optionCode = String(selectedOption.code)
@@ -97,26 +169,25 @@ export default defineEventHandler(async (event) => {
   if (customerName) metadata.customerName = customerName
   if (customerEmail) metadata.customerEmail = customerEmail
 
-  const lineItem = attraction.stripePriceId
-    ? {
-        price: attraction.stripePriceId,
-        quantity
+  const productDescriptorParts: string[] = []
+  if (adultCount > 0) productDescriptorParts.push(`Adults: ${adultCount}`)
+  if (childCount > 0) productDescriptorParts.push(`Children: ${childCount}`)
+
+  const productName = normalizedCart.optionName
+    ? `${attraction.title} – ${normalizedCart.optionName}`
+    : `${attraction.title} Ticket`
+
+  const lineItem = {
+    price_data: {
+      currency,
+      unit_amount: unitAmount,
+      product_data: {
+        name: productName,
+        description: productDescriptorParts.join(' | ') || attraction.location || undefined
       }
-    : {
-        price_data: {
-          currency,
-          unit_amount: unitAmount,
-          product_data: {
-            name: attraction.title,
-            description:
-              selectedOption?.name ||
-              selectedOption?.code ||
-              attraction.location ||
-              undefined
-          }
-        },
-        quantity
-      }
+    },
+    quantity: totalQuantity
+  }
 
   const successUrlBase =
     config.public?.siteUrl || 'https://gotravelnha.com'
@@ -153,8 +224,11 @@ export default defineEventHandler(async (event) => {
       eventId: attraction.id,
       eventTitle: attraction.title,
       eventSlug: attraction.slug,
-      quantity,
-      amount: (unitAmount / 100) * quantity,
+      quantity: totalQuantity,
+      adultCount,
+      childCount,
+      unitPrice: unitPublicPrice,
+      amount: totalAmount,
       currency: (session.currency || 'sgd').toUpperCase(),
       status: 'PENDING',
       stripeSessionId: session.id,
@@ -165,13 +239,14 @@ export default defineEventHandler(async (event) => {
       customerEmail: customerEmail || session.customer_details?.email || null,
       customerName: customerName || session.customer_details?.name || null,
       customerPhone: customerPhone || session.customer_details?.phone || null,
-      optionCode: selectedOption?.code ?? null,
-      optionName: selectedOption?.name ?? null,
-      metadata: selectedOption ?? null,
+      optionCode: normalizedCart.optionCode ?? null,
+      optionName: normalizedCart.optionName ?? null,
+      metadata: normalizedCart,
       notes: attraction.checkoutNotes ?? null,
       resellerCost: totalResellerCost,
       stripeFeeAmount: totalStripeFeeEstimate,
-      netRevenue: totalNetAfterFees
+      netRevenue: totalNetAfterFees,
+      cart: normalizedCart
     }
   })
 

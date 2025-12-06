@@ -1,71 +1,92 @@
 <template>
-  <div class="max-w-6xl mx-auto py-12 space-y-8">
-    <!-- Loading State -->
-    <div v-if="loading" class="bg-white rounded-2xl shadow-soft p-12">
-      <div class="animate-pulse space-y-6">
-        <div class="h-64 bg-gray-300 rounded-2xl"></div>
-        <div class="h-8 bg-gray-300 rounded w-3/4"></div>
-        <div class="h-4 bg-gray-300 rounded w-1/2"></div>
-        <div class="h-24 bg-gray-300 rounded"></div>
-      </div>
-    </div>
-
-    <!-- Event Detail -->
-    <div v-else-if="event" class="bg-white rounded-2xl shadow-soft overflow-hidden">
-      <!-- Hero Image -->
-      <div class="relative h-96 overflow-hidden bg-gradient-to-br from-yellow-50 to-yellow-100">
-        <button
-          v-if="activeImage"
-          type="button"
-          @click="openLightbox(activeImageIndex)"
-          class="absolute inset-0 w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60 cursor-zoom-in"
-        >
-          <img 
-            :src="activeImage" 
-            :alt="event.title"
-            class="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-          />
-        </button>
-        <div v-else class="w-full h-full flex items-center justify-center relative">
-          <div class="absolute inset-0 bg-gradient-to-br from-yellow-400 to-yellow-500 opacity-20"></div>
-          <div class="bg-yellow-400 rounded-full px-12 py-6 shadow-2xl relative z-10">
-            <div class="flex items-center justify-center gap-1">
-              <span class="text-[#166534] font-black text-4xl tracking-tight">SG</span>
-              <span class="text-[#1e3a8a] font-black text-4xl tracking-tight">ATTRACTIONS</span>
-            </div>
+  <div class="relative min-h-screen bg-white">
+    <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-4 pb-12 space-y-6">
+      <!-- Loading State -->
+      <template v-if="loading">
+        <div class="rounded-3xl border border-white/80 bg-white/70 p-12 shadow-2xl backdrop-blur-md">
+          <div class="animate-pulse space-y-6">
+            <div class="h-64 rounded-2xl bg-slate-200/80"></div>
+            <div class="h-4 w-3/4 rounded bg-slate-200/80"></div>
+            <div class="h-4 w-2/4 rounded bg-slate-200/70"></div>
+            <div class="h-24 rounded-2xl bg-slate-200/60"></div>
           </div>
         </div>
-        <div class="absolute top-4 left-4">
-          <NuxtLink 
-            to="/attractionsg" 
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-xl hover:bg-white transition-all font-semibold shadow-lg"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-            </svg>
-            Back to Attractions
-          </NuxtLink>
-        </div>
-      </div>
+      </template>
 
-      <!-- Gallery Thumbnails -->
-      <div v-if="galleryImages.length > 1" class="px-8 md:px-12 pt-6">
-        <div class="flex gap-4 overflow-x-auto pb-2">
+      <!-- Event Detail -->
+      <template v-else-if="event">
+        <div
+          class="relative overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_35px_120px_-35px_rgba(15,23,42,0.35)]"
+        >
+        <!-- Hero Image -->
+        <div class="relative h-[420px] overflow-hidden">
           <button
-            v-for="(image, index) in galleryImages"
-            :key="image"
-            @click="openLightbox(index)"
-            class="relative w-24 h-20 rounded-xl overflow-hidden flex-shrink-0 border-2"
-            :class="index === activeImageIndex ? 'border-green-500' : 'border-transparent hover:border-green-300'"
+            v-if="activeImage"
+            type="button"
+            @click="openLightbox(activeImageIndex)"
+            class="absolute inset-0 h-full w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60"
           >
-            <img :src="image" :alt="`${event.title} photo ${index + 1}`" class="w-full h-full object-cover" />
+            <img
+              :src="activeImage"
+              :alt="event.title"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-105"
+            />
           </button>
-        </div>
-      </div>
+          <div
+            v-else
+            class="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100"
+          >
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent"></div>
+            <div class="relative rounded-full bg-emerald-400 px-12 py-6 text-white shadow-2xl ring-8 ring-white/30">
+              <div class="flex items-center justify-center gap-1">
+                <span class="text-[#166534] font-black text-4xl tracking-tight">SG</span>
+                <span class="text-[#1e3a8a] font-black text-4xl tracking-tight">ATTRACTIONS</span>
+              </div>
+            </div>
+          </div>
 
-      <!-- Content -->
-      <div class="p-8 md:p-12">
-          <div class="flex flex-col lg:flex-row gap-8">
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/5 to-transparent"></div>
+          <div class="absolute top-6 left-6">
+            <NuxtLink
+              to="/attractionsg"
+              class="inline-flex items-center gap-2 rounded-full bg-white/85 px-5 py-2.5 font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white"
+            >
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              Back to Attractions
+            </NuxtLink>
+          </div>
+        </div>
+
+        <!-- Gallery Thumbnails -->
+        <div v-if="galleryImages.length > 1" class="px-6 md:px-10 pt-6">
+          <div class="flex gap-4 overflow-x-auto pb-2">
+            <button
+              v-for="(image, index) in galleryImages"
+              :key="image"
+              @click="openLightbox(index)"
+              class="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-transparent transition shadow-sm hover:-translate-y-1 hover:border-emerald-400/70 hover:shadow-lg"
+              :class="index === activeImageIndex ? 'border-emerald-500 shadow-lg' : ''"
+            >
+              <img
+                :src="image"
+                :alt="`${event.title} photo ${index + 1}`"
+                class="h-full w-full object-cover"
+              />
+              <span
+                v-if="index === activeImageIndex"
+                class="absolute inset-x-0 bottom-0 z-10 bg-emerald-600/80 py-1 text-center text-xs font-semibold uppercase tracking-wide text-white"
+              >
+                Active
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="p-6 md:p-10 lg:p-12">
+          <div class="flex flex-col items-start gap-10 lg:flex-row lg:gap-12">
           <!-- Main Content -->
           <div class="flex-1 space-y-6">
               <div v-if="checkoutStatus === 'success'" class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
@@ -87,19 +108,75 @@
                 </div>
               </div>
 
-            <div>
-              <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ event.title }}</h1>
-              
-              <div v-if="event.price || event.originalPrice" class="flex items-baseline gap-3 mb-4">
-                <span v-if="event.price" class="text-4xl font-bold text-green-600">{{ event.price }}</span>
-                <span v-if="event.originalPrice" class="text-2xl text-gray-500 line-through">{{ event.originalPrice }}</span>
+            <div class="space-y-6">
+              <div class="flex flex-wrap items-center gap-3 text-sm text-slate-500">
+                <span
+                  v-if="event.category"
+                  class="inline-flex items-center gap-2 rounded-full bg-emerald-100/70 px-3 py-1 font-semibold text-emerald-700"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                  </svg>
+                  {{ event.category }}
+                </span>
+                <span
+                  v-if="event.location"
+                  class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                  </svg>
+                  {{ event.location }}
+                </span>
+                <span
+                  v-if="event.duration"
+                  class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 font-medium text-slate-600"
+                >
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                  {{ event.duration }}
+                </span>
               </div>
 
-              <div v-if="event.rating" class="flex items-center gap-2 mb-4">
-                <svg class="w-5 h-5 text-yellow-400 fill-current" viewBox="0 0 20 20">
-                  <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z"/>
-                </svg>
-                <span class="text-gray-700 font-semibold">{{ event.rating }} / 5.0</span>
+              <div class="space-y-3">
+                <h1 class="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">{{ event.title }}</h1>
+                <p
+                  v-if="event.subtitle"
+                  class="text-base text-slate-500"
+                >
+                  {{ event.subtitle }}
+                </p>
+              </div>
+
+              <div
+                v-if="event.publicPrice || event.price || event.originalPrice"
+                class="flex flex-wrap items-center gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 px-6 py-5 text-slate-800 shadow-inner"
+              >
+                <div class="space-y-1">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-emerald-600">From</span>
+                  <div class="flex items-baseline gap-3">
+                    <span class="text-4xl font-bold text-emerald-600">
+                      {{ event.publicPrice ? formatCurrency(event.publicPrice) : event.price }}
+                    </span>
+                    <span
+                      v-if="event.originalPrice"
+                      class="text-lg text-slate-400 line-through"
+                    >
+                      {{ event.originalPrice }}
+                    </span>
+                  </div>
+                </div>
+                <div
+                  v-if="event.rating"
+                  class="flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm"
+                >
+                  <svg class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
+                  </svg>
+                  {{ event.rating }} / 5
+                </div>
               </div>
             </div>
 
@@ -119,33 +196,60 @@
             </div>
 
             <!-- Ticket Options -->
-            <div v-if="hasOptions" class="space-y-4 pt-8 border-t border-gray-200">
-              <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <h2 class="text-2xl font-bold text-gray-900">Available Ticket Options</h2>
-                  <p class="text-gray-600 text-sm">
-                    Compare packages, promo codes and validity before you book.
-                  </p>
-                </div>
+            <div v-if="hasOptions" ref="optionsSectionRef" class="space-y-5 pt-10 border-t border-gray-200">
+              <div>
+                <h2 class="text-2xl font-bold text-gray-900">Available Ticket Options</h2>
+                <p class="text-gray-600 text-sm">
+                  Compare packages, promo codes and validity before you book.
+                </p>
               </div>
 
-              <div class="grid grid-cols-1 gap-4">
+              <div class="grid grid-cols-1 gap-6 max-w-3xl">
                 <div
                   v-for="option in ticketOptions"
                   :key="option.code || option.name"
-                  class="border border-gray-200 rounded-2xl p-6 shadow-sm hover:border-emerald-300 transition-colors bg-white/60"
+                  class="group relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_18px_48px_-28px_rgba(15,23,42,0.4)] transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                  :class="isSelectedOption(option)
+                    ? 'border-emerald-300/80 shadow-[0_32px_70px_-40px_rgba(16,185,129,0.55)]'
+                    : 'hover:-translate-y-1.5 hover:border-emerald-200 hover:shadow-[0_28px_70px_-45px_rgba(16,185,129,0.35)]'"
+                  role="button"
+                  tabindex="0"
+                  @click="selectOption(option)"
+                  @keydown.enter.prevent="selectOption(option)"
+                  @keydown.space.prevent="selectOption(option)"
                 >
+                  <div
+                    class="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-500 transition duration-300"
+                    :class="isSelectedOption(option) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
+                  ></div>
+
                   <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                    <div class="space-y-2">
-                      <h3 class="text-xl font-semibold text-gray-900">
-                        {{ option.name || 'Ticket Option' }}
-                      </h3>
+                    <div class="space-y-2 flex-1">
+                      <div class="flex items-center gap-3">
+                        <h3 class="text-xl font-semibold text-gray-900">
+                          {{ option.name || 'Ticket Option' }}
+                        </h3>
+                        <span
+                          v-if="isSelectedOption(option)"
+                          class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700"
+                        >
+                          Selected
+                        </span>
+                      </div>
                       <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
-                        <span v-if="option.code" class="px-2 py-1 bg-emerald-100 text-emerald-700 font-mono rounded-lg">
+                        <span
+                          v-if="shouldDisplayOptionCode(option)"
+                          class="px-2 py-1 bg-emerald-100 text-emerald-700 font-mono rounded-lg"
+                        >
                           {{ option.code }}
                         </span>
-                        <span v-if="option.validity">{{ option.validity }}</span>
-                        <span v-if="option.details" class="text-gray-500">{{ option.details }}</span>
+                        <span v-if="option.validity" class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
+                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
+                          </svg>
+                          {{ option.validity }}
+                        </span>
+                        <span v-if="option.details" class="text-sm text-gray-500">{{ option.details }}</span>
                       </div>
                     </div>
                     <div class="text-right">
@@ -167,11 +271,11 @@
                     </div>
                   </div>
 
-                  <div class="flex flex-wrap gap-3 mt-4">
+                  <div class="mt-4 flex flex-wrap gap-3">
                     <button
                       v-if="option.code"
-                      @click="copyCode(option.code)"
-                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-300 text-gray-700 hover:border-gray-400 transition-colors"
+                      @click.stop="copyCode(option.code)"
+                      class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:text-emerald-600"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8a2 2 0 002-2V7a2 2 0 00-2-2h-5l-3 3v6a2 2 0 002 2z" />
@@ -181,7 +285,7 @@
                     </button>
                     <button
                       @click="handleRequestOption(option)"
-                      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm"
+                      class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600"
                     >
                       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
@@ -193,10 +297,10 @@
                 </div>
               </div>
             </div>
-            <div v-else class="mt-4">
+            <div v-else class="mt-6">
               <button
                 @click="handleRequestWithoutOption"
-                class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
@@ -207,234 +311,478 @@
             </div>
 
             <!-- Additional Info -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
-              <div v-if="event.location" class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+            <div class="grid grid-cols-1 gap-5 border-t border-slate-200/70 pt-10 md:grid-cols-2">
+              <div
+                v-if="event.location"
+                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+              >
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 mb-1">Location</h3>
-                  <p class="text-gray-600">{{ event.location }}</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Location</h3>
+                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.location }}</p>
                 </div>
               </div>
 
-              <div v-if="event.duration" class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div
+                v-if="event.duration"
+                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+              >
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 mb-1">Duration</h3>
-                  <p class="text-gray-600">{{ event.duration }}</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Duration</h3>
+                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.duration }}</p>
                 </div>
               </div>
 
-              <div v-if="event.ageRestriction" class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div
+                v-if="event.ageRestriction"
+                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+              >
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 mb-1">Age Restriction</h3>
-                  <p class="text-gray-600">{{ event.ageRestriction }}</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Age Restriction</h3>
+                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.ageRestriction }}</p>
                 </div>
               </div>
 
-              <div v-if="event.cancellation" class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div
+                v-if="event.cancellation"
+                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+              >
+                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="font-semibold text-gray-900 mb-1">Cancellation</h3>
-                  <p class="text-gray-600">{{ event.cancellation }}</p>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Cancellation</h3>
+                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.cancellation }}</p>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Booking Sidebar -->
-          <div class="lg:w-96">
+          <div class="w-full lg:w-[360px]">
             <div
-              class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-6 border-2 border-green-200 sticky top-24"
+              class="sticky top-24 rounded-3xl border border-emerald-100/80 p-6 shadow-[0_28px_80px_-40px_rgba(16,185,129,0.45)] backdrop-blur-xl"
               ref="bookingFormRef"
             >
-              <h2 class="text-2xl font-bold text-gray-900 mb-6">Book Your Ticket</h2>
+              <div class="mb-6 flex items-center justify-between">
+                <h2 class="text-2xl font-bold tracking-tight text-slate-900">
+                  {{ canSelfBook ? 'Book Your Ticket' : 'Request a Booking' }}
+                </h2>
+              </div>
 
-              <div v-if="canSelfBook" class="space-y-3 mb-6">
-                <p class="text-sm text-gray-600">
+              <template v-if="canSelfBook">
+                <p class="mb-4 text-sm text-slate-500">
                   Instant checkout with secure payment powered by Stripe. You’ll receive a confirmation email after payment.
                 </p>
-                <button
-                  @click="startCheckout"
-                  :disabled="checkoutLoading"
-                  class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold hover:from-emerald-700 hover:to-teal-700 transition-transform hover:-translate-y-0.5 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
-                >
-                  <span v-if="checkoutLoading" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                  <span>{{ checkoutLoading ? 'Redirecting…' : 'Book Now (Stripe Checkout)' }}</span>
-                </button>
-                <p v-if="checkoutError" class="text-sm text-red-600">{{ checkoutError }}</p>
-                <p class="text-xs text-gray-500">
-                  After payment, our team will place the order using our reseller credentials and email you the e-ticket.
-                </p>
-              </div>
 
-              <div class="space-y-4">
-                <div class="flex items-center gap-2">
-                  <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-                    ✉️
+                <div class="mb-6 space-y-4 rounded-2xl border border-emerald-100/80 bg-white/90 p-5">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Selected option</p>
+                      <p class="mt-1 text-base font-semibold text-slate-900">{{ selectedOptionLabel }}</p>
+                    </div>
+                    <button
+                      type="button"
+                      class="text-xs font-semibold text-emerald-600 underline-offset-4 transition hover:underline"
+                      @click="scrollToOptions"
+                    >
+                      Change
+                    </button>
                   </div>
-                  <div>
-                    <p class="font-semibold text-gray-800">Need assistance?</p>
-                    <p class="text-xs text-gray-500">
-                      Prefer concierge booking or have special requests? Submit the form below and our team will follow up.
-                    </p>
+                  <div class="grid grid-cols-2 gap-3 text-sm">
+                    <label class="flex flex-col gap-1">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Adults</span>
+                      <input
+                        v-model.number="quantityAdults"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1">
+                      <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Children</span>
+                      <input
+                        v-model.number="quantityChildren"
+                        type="number"
+                        min="0"
+                        step="1"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40"
+                      />
+                    </label>
                   </div>
                 </div>
-              </div>
 
-              <div class="mt-4">
-                <BookingRequestForm 
-                  :event-title="event.title" 
-                  :event-price="event.price || ''"
-                  :selected-option="selectedOption"
-                />
-              </div>
+                <div class="space-y-2 rounded-2xl border border-emerald-100/80 bg-white/95 p-5 text-sm shadow-inner">
+                  <div class="flex items-center justify-between text-slate-500">
+                    <span>Tickets ({{ totalQuantity }} total)</span>
+                    <span class="font-semibold text-slate-900">
+                      {{ totalQuantity > 0 && unitPublicPrice > 0 ? formatCurrency(unitPublicPrice) + ' each' : '—' }}
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between text-base font-semibold text-slate-900">
+                    <span>Total due today</span>
+                    <span>{{ totalDue > 0 ? formatCurrency(totalDue) : '—' }}</span>
+                  </div>
+                </div>
+
+                <div v-if="cartError" class="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                  {{ cartError }}
+                </div>
+                <br/>
+                <div class="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    type="button"
+                    @click="addToCart"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200/80 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                  >
+                    Add to cart
+                  </button>
+                  <button
+                    type="button"
+                    @click="startCheckout"
+                    :disabled="checkoutDisabled"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-18px_rgba(16,185,129,0.65)] transition hover:from-emerald-600 hover:to-teal-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <span v-if="checkoutLoading" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                    <span>{{ checkoutLoading ? 'Redirecting…' : 'Checkout' }}</span>
+                  </button>
+                </div>
+                
+                <div
+                  v-if="cartConfirmed && !checkoutLoading"
+                  class="mt-3 rounded-2xl border border-emerald-200/80 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-inner"
+                >
+                  <p class="font-semibold">Cart ready for checkout</p>
+                  <p>Review the summary above, then click “Checkout” to pay securely via Stripe.</p>
+                </div>
+
+                <p class="mt-4 text-xs text-slate-500">
+                  After payment, our team will place the order using our reseller credentials and email you the e-ticket.
+                </p>
+                <p v-if="checkoutError" class="text-sm font-medium text-red-600">{{ checkoutError }}</p>
+              </template>
+              <template v-else>
+                <div class="space-y-5">
+                  <div class="rounded-2xl border border-slate-200/80 bg-white/90 p-4">
+                    <div class="flex items-start gap-3">
+                      <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                        ✉️
+                      </div>
+                      <div>
+                        <p class="text-sm font-semibold text-slate-800">Ready to book?</p>
+                        <p class="text-xs text-slate-500">
+                          Leave your details and our experts will confirm availability and pricing.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="space-y-4">
+                    <BookingRequestForm
+                      :event-title="event.title"
+                      :event-price="formattedTotalDue || event.price || ''"
+                      :selected-option="selectedOptionForForm || undefined"
+                    />
+                  </div>
+                </div>
+              </template>
             </div>
           </div>
         </div>
-      <div
-        v-if="lightboxOpen"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
-        @click.self="closeLightbox"
-      >
-        <button
-          type="button"
-          class="absolute top-6 right-6 text-white/80 hover:text-white transition"
-          @click="closeLightbox"
+        </div>
+        </div>
+      </template>
+      <template v-else>
+        <div class="flex flex-col items-center justify-center gap-6 rounded-[32px] border border-slate-200 bg-white p-16 text-center shadow-[0_35px_120px_-35px_rgba(15,23,42,0.25)]">
+          <div class="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-emerald-100 via-white to-emerald-200 text-3xl">
+            🔍
+          </div>
+          <div class="space-y-3">
+            <h3 class="text-3xl font-bold text-slate-900">
+              {{ notFound ? 'This attraction is unavailable right now' : 'Event not found' }}
+            </h3>
+            <p class="max-w-xl text-base text-slate-500">
+              {{
+                notFound
+                  ? 'This experience has been unpublished or is temporarily unavailable. Please browse our other Singapore attractions.'
+                  : 'The requested attraction could not be found. It may have expired or the link is incorrect.'
+              }}
+            </p>
+          </div>
+          <NuxtLink
+            to="/attractionsg"
+            class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-18px_rgba(16,185,129,0.6)] transition hover:from-emerald-600 hover:to-teal-600"
+          >
+            Browse all attractions
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+            </svg>
+          </NuxtLink>
+        </div>
+      </template>
+      <ClientOnly>
+        <div
+          v-if="lightboxOpen"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+          @click.self="closeLightbox"
         >
-          <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-        <div class="max-w-4xl w-full px-4">
-          <div class="relative">
-            <img
-              :src="galleryImages[lightboxIndex]"
-              :alt="`${event?.title} enlarged photo ${lightboxIndex + 1}`"
-              class="w-full h-auto rounded-2xl shadow-2xl object-contain bg-black/20"
-            />
-            <div
-              v-if="galleryImages.length > 1"
-              class="absolute inset-x-0 bottom-3 flex justify-between px-4 text-white/80 text-sm"
-            >
-              <button
-                type="button"
-                class="hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed"
-                @click.stop="prevLightboxImage"
-                :disabled="galleryImages.length <= 1"
+          <button
+            type="button"
+            class="absolute top-6 right-6 text-white/80 transition hover:text-white"
+            @click="closeLightbox"
+          >
+            <svg class="h-8 w-8" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div class="w-full max-w-4xl px-4">
+            <div class="relative">
+              <img
+                :src="galleryImages[lightboxIndex]"
+                :alt="`${event?.title} enlarged photo ${lightboxIndex + 1}`"
+                class="h-auto w-full rounded-2xl bg-black/20 object-contain shadow-2xl"
+              />
+              <div
+                v-if="galleryImages.length > 1"
+                class="absolute inset-x-0 bottom-3 flex justify-between px-4 text-sm text-white/80"
               >
-                ‹ Prev
-              </button>
-              <span>{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</span>
-              <button
-                type="button"
-                class="hover:text-white transition disabled:opacity-40 disabled:cursor-not-allowed"
-                @click.stop="nextLightboxImage"
-                :disabled="galleryImages.length <= 1"
-              >
-                Next ›
-              </button>
+                <button
+                  type="button"
+                  class="transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  @click.stop="prevLightboxImage"
+                  :disabled="galleryImages.length <= 1"
+                >
+                  ‹ Prev
+                </button>
+                <span>{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</span>
+                <button
+                  type="button"
+                  class="transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  @click.stop="nextLightboxImage"
+                  :disabled="galleryImages.length <= 1"
+                >
+                  Next ›
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else class="bg-white border border-gray-200 rounded-2xl p-12 text-center space-y-4">
-      <div class="flex justify-center">
-        <div class="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-orange-100 flex items-center justify-center">
-          <span class="text-3xl">🔍</span>
-        </div>
-      </div>
-      <h3 class="text-2xl font-bold text-gray-900">
-        {{ notFound ? 'This attraction is unavailable' : 'Event not found' }}
-      </h3>
-      <p class="text-gray-600 max-w-lg mx-auto">
-        {{ notFound
-          ? 'This experience has been unpublished or is temporarily unavailable. Please browse our other Singapore attractions.'
-          : 'The requested attraction could not be found. It may have expired or the link is incorrect.'
-        }}
-      </p>
-      <NuxtLink 
-        to="/attractionsg" 
-        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-colors font-semibold"
-      >
-        Browse All Attractions
-      </NuxtLink>
+      </ClientOnly>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
+import type { Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BookingRequestForm from '~/components/BookingRequestForm.vue'
 
 const route = useRoute()
 const router = useRouter()
-const loading = ref(true)
-const event = ref(null)
-const notFound = ref(false)
-const selectedOption = ref(null)
-const bookingFormRef = ref(null)
-const copyMessage = ref('')
-let copyTimeout = null
-const checkoutLoading = ref(false)
-const checkoutError = ref('')
-const checkoutStatus = ref('')
+const loading = ref<boolean>(true)
+const event = ref<Record<string, any> | null>(null)
+const notFound = ref<boolean>(false)
+const selectedOption = ref<Record<string, any> | null>(null)
+const bookingFormRef = ref<HTMLElement | null>(null)
+const copyMessage = ref<string>('')
+let copyTimeout: ReturnType<typeof setTimeout> | null = null
+const checkoutLoading = ref<boolean>(false)
+const checkoutError = ref<string>('')
+const checkoutStatus = ref<string>('')
+const quantityAdults = ref<number>(1)
+const quantityChildren = ref<number>(0)
+const cartError = ref<string>('')
+const cartConfirmed = ref<boolean>(false)
+const runtimeConfig = useRuntimeConfig()
+const stripePercent = Number(runtimeConfig.public?.stripeFeePercent ?? 0.034)
+const stripeFixed = Number(runtimeConfig.public?.stripeFeeFixed ?? 0.5)
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
 
+const clampCount = (value: unknown) => {
+  if (typeof value !== 'number' || !Number.isFinite(value)) return 0
+  return Math.max(0, Math.floor(value))
+}
+
+const toNumber = (value: unknown) => {
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null
+  }
+  const parsed = parseFloat(String(value ?? ''))
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+const formatCurrency = (amount: number) => {
+  if (typeof amount !== 'number' || Number.isNaN(amount)) return ''
+  return new Intl.NumberFormat('en-SG', {
+    style: 'currency',
+    currency: 'SGD'
+  }).format(amount)
+}
+
+const shouldDisplayOptionCode = (option: any) => {
+  const code = typeof option?.code === 'string' ? option.code.trim() : ''
+  if (!code) return false
+  const eventIds = [event.value?.id, event.value?.slug].filter(Boolean)
+  if (eventIds.includes(code)) return false
+  if (/^[a-z0-9-]{20,}$/i.test(code) && code.includes('-')) return false
+  return true
+}
+
 const initialSlugParam = Array.isArray(route.params.slug) ? route.params.slug[0] : route.params.slug
 const currentSlug = ref(initialSlugParam)
 
-const { data: initialEventData } = await useAsyncData(`attractionsg-event-${initialSlugParam}`, () =>
-  $fetch(`/api/attractionsg/event/${initialSlugParam}`)
+const { data: initialEventData } = await useAsyncData<{ event?: Record<string, any> }>(
+  `attractionsg-event-${initialSlugParam}`,
+  () => $fetch(`/api/attractionsg/event/${initialSlugParam}`)
 )
 
 if (initialEventData.value?.event) {
-  event.value = initialEventData.value.event
+  event.value = initialEventData.value.event as Record<string, any>
   loading.value = false
 }
 
-const ticketOptions = computed(() => {
-  const options = event.value?.options || event.value?.raw?.options || []
-  return Array.isArray(options) ? options : []
+const ticketOptions = computed<Record<string, any>[]>(() => {
+  const sourceOptions =
+    (event.value?.options as Record<string, any>[] | undefined) ??
+    (event.value?.raw?.options as Record<string, any>[] | undefined) ??
+    []
+
+  if (Array.isArray(sourceOptions) && sourceOptions.length > 0) {
+    return sourceOptions.map((option) => {
+      const amount = toNumber(option?.priceAmount ?? option?.price) ?? null
+      return {
+        ...option,
+        priceAmount: amount,
+        priceText: option?.priceText || (amount ? formatCurrency(amount) : null),
+        originalPriceText: option?.originalPriceText ?? option?.originalPrice ?? null
+      }
+    })
+  }
+
+  if (!event.value) return []
+
+  const fallbackPrice =
+    toNumber(event.value.publicPrice) ??
+    toNumber(event.value.priceAmount) ??
+    toNumber(event.value.originalPriceAmount) ??
+    null
+
+  return [
+    {
+      code: event.value.id,
+      name: event.value.title || 'General Admission',
+      priceText: fallbackPrice ? formatCurrency(fallbackPrice) : event.value.priceText || null,
+      priceAmount: fallbackPrice,
+      description: event.value.description || null
+    }
+  ]
 })
 
-const galleryImages = computed(() => {
+const galleryImages = computed<string[]>(() => {
   const images = [
-    event.value?.image,
-    ...(Array.isArray(event.value?.gallery) ? event.value.gallery : [])
+    event.value?.image as string | undefined,
+    ...(Array.isArray(event.value?.gallery) ? (event.value?.gallery as string[]) : [])
   ].filter((value, index, self) => value && self.indexOf(value) === index)
-  return images
+  return images as string[]
 })
 
 const activeImageIndex = ref(0)
 const activeImage = computed(() => galleryImages.value[activeImageIndex.value] || null)
-
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
+const optionsSectionRef: Ref<HTMLElement | null> = ref(null)
+
+const estimateStripeFeeLocal = (amount: number) => {
+  if (!amount || Number.isNaN(amount) || amount <= 0) return 0
+  return amount * stripePercent + stripeFixed
+}
+
+const unitPublicPrice = computed<number>(() => {
+  const eventPublic = toNumber(event.value?.publicPrice)
+  const optionPublic = toNumber(selectedOption.value?.publicPrice)
+  const optionPrice = toNumber(selectedOption.value?.priceAmount ?? selectedOption.value?.price)
+  const eventPrice = toNumber(event.value?.priceAmount)
+  const eventOriginal = toNumber(event.value?.originalPriceAmount)
+  return optionPublic ?? optionPrice ?? eventPublic ?? eventPrice ?? eventOriginal ?? 0
+})
+
+const unitResellerPrice = computed<number>(() => {
+  const optionPrice = toNumber(selectedOption.value?.priceAmount ?? selectedOption.value?.price)
+  const eventReseller = toNumber(event.value?.resellerPriceAmount)
+  const eventPrice = toNumber(event.value?.priceAmount)
+  const eventOriginal = toNumber(event.value?.originalPriceAmount)
+  return optionPrice ?? eventReseller ?? eventPrice ?? eventOriginal ?? 0
+})
+
+const totalQuantity = computed<number>(() => {
+  const adults = clampCount(quantityAdults.value)
+  const children = clampCount(quantityChildren.value)
+  return adults + children
+})
+
+const totalDue = computed<number>(() => {
+  if (!unitPublicPrice.value || totalQuantity.value <= 0) return 0
+  return Number((unitPublicPrice.value * totalQuantity.value).toFixed(2))
+})
+
+const cartReady = computed(() => !!selectedOption.value && totalQuantity.value > 0 && unitPublicPrice.value > 0)
+
+const checkoutDisabled = computed(() => checkoutLoading.value || !cartConfirmed.value || !cartReady.value)
+
+const selectedOptionLabel = computed<string>(() => {
+  if (!selectedOption.value) return 'Select a ticket option'
+  return selectedOption.value.name || selectedOption.value.code || 'Selected option'
+})
+
+const selectedOptionForForm = computed<Record<string, any> | null>(() => {
+  if (!selectedOption.value) return null
+  const adults = clampCount(quantityAdults.value)
+  const children = clampCount(quantityChildren.value)
+  return {
+    ...selectedOption.value,
+    priceText:
+      selectedOption.value.priceText ||
+      (unitPublicPrice.value > 0 ? formatCurrency(unitPublicPrice.value) : null),
+    adultCount: adults,
+    childCount: children,
+    totalPriceText: totalDue.value > 0 ? formatCurrency(totalDue.value) : null
+  }
+})
+
+const formattedTotalDue = computed<string>(() =>
+  totalDue.value > 0 ? formatCurrency(totalDue.value) : event.value?.price || ''
+)
+
+const stripeFeeTotal = computed<number>(() => {
+  if (totalDue.value <= 0) return 0
+  return Number(estimateStripeFeeLocal(totalDue.value).toFixed(2))
+})
+
+const totalResellerCost = computed<number | null>(() => {
+  if (!unitResellerPrice.value || totalQuantity.value <= 0) return null
+  return Number((unitResellerPrice.value * totalQuantity.value).toFixed(2))
+})
 
 const openLightbox = (index = activeImageIndex.value) => {
   const images = galleryImages.value
@@ -471,7 +819,7 @@ const prevLightboxImage = () => {
   activeImageIndex.value = prev
 }
 
-const handleKeydown = (event) => {
+const handleKeydown = (event: KeyboardEvent) => {
   if (!lightboxOpen.value) return
   if (event.key === 'Escape') {
     event.preventDefault()
@@ -488,44 +836,32 @@ const handleKeydown = (event) => {
 const hasOptions = computed(() => ticketOptions.value.length > 0)
 const canSelfBook = computed(() => !!event.value?.isSelfBookable)
 
-const savingsText = (option) => {
+const savingsText = (option: Record<string, any>) => {
   if (!option?.originalPriceAmount || !option?.priceAmount) return ''
   const diff = option.originalPriceAmount - option.priceAmount
   if (diff <= 0) return ''
   return `Save ${formatCurrency(diff)}`
 }
 
-const formatCurrency = (amount) => {
-  if (typeof amount !== 'number' || Number.isNaN(amount)) return ''
-  return new Intl.NumberFormat('en-SG', {
-    style: 'currency',
-    currency: 'SGD'
-  }).format(amount)
+const filterPublished = (items: Record<string, any>[]) => {
+  return (items || []).filter((item: Record<string, any>) => item && item.isPublished === true)
 }
 
-const filterPublished = (items) => {
-  return (items || []).filter((item) => item && item.isPublished === true)
-}
-
-const handleRequestOption = (option) => {
-  selectedOption.value = option
+const handleRequestOption = (option: Record<string, any>) => {
+  selectOption(option)
   nextTick(() => {
-    if (bookingFormRef.value?.scrollIntoView) {
-      bookingFormRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    bookingFormRef.value?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   })
 }
 
 const handleRequestWithoutOption = () => {
   selectedOption.value = null
   nextTick(() => {
-    if (bookingFormRef.value?.scrollIntoView) {
-      bookingFormRef.value.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    }
+    bookingFormRef.value?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
   })
 }
 
-const copyCode = async (code) => {
+const copyCode = async (code: string) => {
   if (!code) return
   try {
     await navigator.clipboard.writeText(code)
@@ -569,19 +905,46 @@ const handleCheckoutQuery = () => {
 
 const startCheckout = async () => {
   if (!event.value) return
+  cartError.value = ''
+  if (!cartReady.value) {
+    cartError.value = 'Select a ticket option and quantity before checkout.'
+    return
+  }
+  if (!cartConfirmed.value) {
+    cartError.value = 'Please add the ticket to your cart before checkout.'
+    return
+  }
+  if (!cartConfirmed.value) {
+    cartError.value = 'Please add the ticket to your cart before checkout.'
+    return
+  }
   checkoutError.value = ''
   checkoutLoading.value = true
   try {
+    const adults = clampCount(quantityAdults.value)
+    const children = clampCount(quantityChildren.value)
+    const selected = selectedOption.value
     const payload: Record<string, any> = {
       eventId: event.value.id,
-      quantity: 1
-    }
-
-    if (selectedOption.value) {
-      payload.selectedOption = {
-        code: selectedOption.value.code ?? null,
-        name: selectedOption.value.name ?? null,
-        priceText: selectedOption.value.priceText ?? null
+      quantity: Math.max(totalQuantity.value, 1),
+      selectedOption: selected
+        ? {
+            code: selected.code ?? null,
+            name: selected.name ?? null,
+            priceText: selected.priceText ?? null
+          }
+        : null,
+      cart: {
+        optionCode: selected?.code ?? null,
+        optionName: selected?.name ?? null,
+        unitPrice: Number(unitPublicPrice.value.toFixed(2)),
+        quantity: Math.max(totalQuantity.value, 1),
+        adultCount: adults,
+        childCount: children,
+        totalPrice: Number(totalDue.value.toFixed(2)),
+        stripeFeeEstimate: stripeFeeTotal.value,
+        resellerCost: totalResellerCost.value,
+        unitResellerPrice: unitResellerPrice.value ?? null
       }
     }
 
@@ -601,6 +964,40 @@ const startCheckout = async () => {
   }
 }
 
+const selectOption = (option: Record<string, any>) => {
+  selectedOption.value = option
+  cartConfirmed.value = false
+  nextTick(() => {
+    optionsSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  })
+}
+
+const isSelectedOption = (option: Record<string, any>) => {
+  if (!selectedOption.value) return false
+  if (option?.code && selectedOption.value?.code) {
+    return option.code === selectedOption.value.code
+  }
+  if (option?.name && selectedOption.value?.name) {
+    return option.name === selectedOption.value.name
+  }
+  return false
+}
+
+const addToCart = () => {
+  cartError.value = ''
+  checkoutError.value = ''
+  if (!cartReady.value) {
+    cartError.value = 'Select a ticket option and quantity before adding to cart.'
+    return
+  }
+  cartConfirmed.value = true
+  cartError.value = ''
+}
+
+const scrollToOptions = () => {
+  optionsSectionRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
 const shareImage = computed(() => resolveImageUrl(activeImage.value || event.value?.image))
 const pageTitle = computed(() =>
   event.value ? `${event.value.title} | Singapore Attractions Deals | GoVietHub` : 'Attraction Details | GoVietHub'
@@ -612,13 +1009,57 @@ const canonicalUrl = computed(() =>
   `${baseUrl.value}/attractionsg/${event.value?.slug || event.value?.id || currentSlug.value || ''}`
 )
 
+watch(
+  ticketOptions,
+  (options: Record<string, any>[]) => {
+    if (!Array.isArray(options) || options.length === 0) {
+      selectedOption.value = null
+      return
+    }
+    const current = selectedOption.value
+    if (!current) {
+      selectedOption.value = options[0]
+      return
+    }
+
+    const matchByCode = current.code
+      ? options.find((option: Record<string, any>) => option?.code === current.code)
+      : null
+    const matchByName = !matchByCode && current.name
+      ? options.find((option: Record<string, any>) => option?.name === current.name)
+      : null
+    const matchedOption = (matchByCode || matchByName || options[0]) as Record<string, any>
+    if (matchedOption !== current) {
+      selectedOption.value = matchedOption
+    }
+  },
+  { immediate: true }
+)
+
+watch(quantityAdults, (value: number) => {
+  if (!Number.isFinite(value) || value < 0) {
+    quantityAdults.value = 0
+  }
+})
+
+watch(quantityChildren, (value: number) => {
+  if (!Number.isFinite(value) || value < 0) {
+    quantityChildren.value = 0
+  }
+})
+
+watch([selectedOption, quantityAdults, quantityChildren], () => {
+  cartError.value = ''
+})
+
 onMounted(async () => {
+  if (typeof window !== 'undefined') {
+    window.addEventListener('keydown', handleKeydown)
+  }
+
   if (event.value) {
     handleCheckoutQuery()
     return
-  }
-  if (typeof window !== 'undefined') {
-    window.addEventListener('keydown', handleKeydown)
   }
 
   console.log(`🔍 Looking for event with slug/ID: ${currentSlug.value}`)
@@ -626,7 +1067,7 @@ onMounted(async () => {
   
   try {
     // Fetch all events (slug already contains the ID)
-    let allEvents = []
+    let allEvents: Record<string, any>[] = []
     
     try {
       console.log('📡 Trying API endpoint...')
@@ -644,10 +1085,15 @@ onMounted(async () => {
     }
     
     console.log(`📊 Total events loaded: ${allEvents.length}`)
-    console.log(`🔍 First 3 event IDs:`, allEvents.slice(0, 3).map(e => e.id))
+    console.log(
+      `🔍 First 3 event IDs:`,
+      allEvents.slice(0, 3).map((e: Record<string, any>) => e.id)
+    )
     
     // Find the matching event by ID
-    const foundEvent = allEvents.find(e => e.slug === currentSlug.value || e.id === currentSlug.value)
+    const foundEvent = allEvents.find(
+      (e: Record<string, any>) => e.slug === currentSlug.value || e.id === currentSlug.value
+    )
     
     if (foundEvent) {
       console.log(`✅ Found event: ${foundEvent.title}`)
@@ -672,7 +1118,7 @@ onMounted(async () => {
 
 watch(
   () => event.value,
-  (value) => {
+  (value: Record<string, any> | null) => {
     if (!value) {
       selectedOption.value = null
       activeImageIndex.value = 0
