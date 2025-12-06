@@ -134,11 +134,11 @@
       </div>
 
       <!-- Tickets Grid -->
-      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 sm:gap-4 lg:gap-6">
+      <div v-if="filteredTickets.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 sm:gap-4 lg:gap-6" style="grid-auto-rows: 1fr;">
         <template v-for="(ticket, index) in displayedTickets" :key="ticket.id || ticket.title">
-          <div class="flex flex-col">
+          <div class="flex flex-col h-full">
             <div 
-              class="bg-white rounded-none sm:rounded-2xl lg:rounded-3xl border-0 sm:border sm:border-slate-200 shadow-none sm:shadow-xl lg:hover:shadow-2xl transition-all duration-300 overflow-hidden group active:bg-slate-50 sm:active:bg-white transform sm:hover:-translate-y-1 active:scale-[0.99] sm:active:scale-[0.98] flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 touch-manipulation"
+              class="bg-white rounded-none sm:rounded-2xl lg:rounded-3xl border-0 sm:border sm:border-slate-200 shadow-none sm:shadow-xl lg:hover:shadow-2xl transition-all duration-300 overflow-hidden group active:bg-slate-50 sm:active:bg-white transform sm:hover:-translate-y-1 active:scale-[0.99] sm:active:scale-[0.98] flex flex-col cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500 touch-manipulation h-full"
               role="button"
               tabindex="0"
               @click="handleCardClick(ticket)"
@@ -174,12 +174,12 @@
             </div>
           </div>
           
-          <div class="p-3 sm:p-4 lg:p-5 flex flex-col flex-1">
-            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 sm:mb-2 line-clamp-2 group-active:text-emerald-600 sm:group-hover:text-emerald-600 transition-colors leading-tight">
+          <div class="p-3 sm:p-4 lg:p-5 flex flex-col flex-1 min-h-0">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 mb-1.5 sm:mb-2 line-clamp-2 group-active:text-emerald-600 sm:group-hover:text-emerald-600 transition-colors leading-tight min-h-[2.5rem] sm:min-h-[3rem]">
               {{ ticket.title }}
             </h3>
             
-            <p v-if="ticket.description" class="text-slate-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-2 sm:line-clamp-3 flex-grow hidden sm:block">
+            <p v-if="ticket.description" class="text-slate-600 text-xs sm:text-sm mb-2 sm:mb-3 line-clamp-3 flex-shrink-0">
               {{ ticket.description }}
             </p>
 
@@ -200,13 +200,13 @@
               <span>Instant checkout</span>
             </div>
             
-            <div v-if="ticket.lastUpdatedDate" class="text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3">
+            <div v-if="ticket.lastUpdatedDate" class="text-[10px] sm:text-xs text-slate-500 mb-2 sm:mb-3 flex-shrink-0">
               Updated {{ formatRelativeTime(ticket.lastUpdatedDate) }}
             </div>
             
             <NuxtLink
               :to="`/attractionsg/${ticket.slug || ticket.id}`"
-              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2.5 sm:py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 transition-all duration-300 transform active:scale-95 sm:hover:scale-105 font-semibold shadow-md sm:shadow-lg sm:hover:shadow-xl mt-auto touch-manipulation min-h-[44px] sm:min-h-[48px]"
+              class="inline-flex items-center justify-center w-full gap-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white px-4 py-2.5 sm:py-3 rounded-xl hover:from-emerald-700 hover:to-teal-700 active:from-emerald-800 active:to-teal-800 transition-all duration-300 transform active:scale-95 sm:hover:scale-105 font-semibold shadow-md sm:shadow-lg sm:hover:shadow-xl mt-auto touch-manipulation min-h-[44px] sm:min-h-[48px] flex-shrink-0"
               @click.stop="rememberScrollPosition"
             >
               View Details
@@ -645,4 +645,20 @@ watchEffect(() => {
   }
 })
 </script>
+
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+</style>
 
