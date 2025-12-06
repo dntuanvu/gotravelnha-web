@@ -1,35 +1,32 @@
 <template>
   <div class="relative min-h-screen bg-white">
-    <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-4 pb-12 space-y-6">
+    <div class="relative mx-auto max-w-6xl px-0 sm:px-4 lg:px-8 pt-0 sm:pt-4 pb-8 sm:pb-12 space-y-0 sm:space-y-6">
       <!-- Loading State -->
       <template v-if="loading">
-        <div class="rounded-3xl border border-white/80 bg-white/70 p-12 shadow-2xl backdrop-blur-md">
+        <div class="rounded-none sm:rounded-3xl border-0 sm:border border-white/80 bg-white sm:bg-white/70 p-12 shadow-none sm:shadow-2xl backdrop-blur-md">
           <div class="animate-pulse space-y-6">
-            <div class="h-64 rounded-2xl bg-slate-200/80"></div>
+            <div class="h-64 rounded-none sm:rounded-2xl bg-slate-200/80"></div>
             <div class="h-4 w-3/4 rounded bg-slate-200/80"></div>
             <div class="h-4 w-2/4 rounded bg-slate-200/70"></div>
-            <div class="h-24 rounded-2xl bg-slate-200/60"></div>
+            <div class="h-24 rounded-none sm:rounded-2xl bg-slate-200/60"></div>
           </div>
         </div>
       </template>
 
       <!-- Event Detail -->
       <template v-else-if="event">
-        <div
-          class="relative overflow-hidden rounded-[32px] border border-slate-200 bg-white shadow-[0_35px_120px_-35px_rgba(15,23,42,0.35)]"
-        >
-        <!-- Hero Image -->
-        <div class="relative h-[420px] overflow-hidden">
+        <!-- Hero Image (Mobile - Full Width) -->
+        <div class="sm:hidden relative h-[280px] overflow-hidden w-screen ml-[calc(-50vw+50%)] mr-[calc(-50vw+50%)] mb-0">
           <button
             v-if="activeImage"
             type="button"
             @click="openLightbox(activeImageIndex)"
-            class="absolute inset-0 h-full w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60"
+            class="absolute inset-0 h-full w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60 touch-manipulation"
           >
             <img
               :src="activeImage"
               :alt="event.title"
-              class="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-105"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-105 active:scale-100"
             />
           </button>
           <div
@@ -37,7 +34,50 @@
             class="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100"
           >
             <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent"></div>
-            <div class="relative rounded-full bg-emerald-400 px-12 py-6 text-white shadow-2xl ring-8 ring-white/30">
+            <div class="relative rounded-full bg-emerald-400 px-8 py-4 text-white shadow-2xl ring-4 ring-white/30">
+              <div class="flex items-center justify-center gap-1">
+                <span class="text-[#166534] font-black text-2xl tracking-tight">SG</span>
+                <span class="text-[#1e3a8a] font-black text-2xl tracking-tight">ATTRACTIONS</span>
+              </div>
+            </div>
+          </div>
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-900/45 via-slate-900/5 to-transparent"></div>
+          <div class="absolute top-3 left-3">
+            <NuxtLink
+              to="/attractionsg"
+              class="inline-flex items-center gap-1.5 rounded-full bg-white/85 px-3 py-2 text-xs font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white active:bg-white/90 touch-manipulation"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+              </svg>
+              <span>Back</span>
+            </NuxtLink>
+          </div>
+        </div>
+
+        <div
+          class="relative overflow-hidden rounded-none sm:rounded-[32px] border-0 sm:border border-slate-200 bg-white shadow-none sm:shadow-[0_35px_120px_-35px_rgba(15,23,42,0.35)]"
+        >
+        <!-- Hero Image (Desktop Only) -->
+        <div class="hidden sm:block relative h-[360px] md:h-[420px] overflow-hidden">
+          <button
+            v-if="activeImage"
+            type="button"
+            @click="openLightbox(activeImageIndex)"
+            class="absolute inset-0 h-full w-full cursor-zoom-in focus:outline-none focus-visible:ring-4 focus-visible:ring-emerald-400/60 touch-manipulation"
+          >
+            <img
+              :src="activeImage"
+              :alt="event.title"
+              class="h-full w-full object-cover transition-transform duration-500 ease-out hover:scale-105 active:scale-100"
+            />
+          </button>
+          <div
+            v-else
+            class="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100"
+          >
+            <div class="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent"></div>
+            <div class="relative rounded-full bg-emerald-400 px-12 sm:px-12 sm:py-6 text-white shadow-2xl ring-8 ring-white/30">
               <div class="flex items-center justify-center gap-1">
                 <span class="text-[#166534] font-black text-4xl tracking-tight">SG</span>
                 <span class="text-[#1e3a8a] font-black text-4xl tracking-tight">ATTRACTIONS</span>
@@ -49,24 +89,24 @@
           <div class="absolute top-6 left-6">
             <NuxtLink
               to="/attractionsg"
-              class="inline-flex items-center gap-2 rounded-full bg-white/85 px-5 py-2.5 font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white"
+              class="inline-flex items-center gap-2 rounded-full bg-white/85 px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-lg shadow-emerald-500/10 backdrop-blur transition hover:bg-white active:bg-white/90 touch-manipulation"
             >
               <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
               </svg>
-              Back to Attractions
+              <span>Back to Attractions</span>
             </NuxtLink>
           </div>
         </div>
 
         <!-- Gallery Thumbnails -->
-        <div v-if="galleryImages.length > 1" class="px-6 md:px-10 pt-6">
-          <div class="flex gap-4 overflow-x-auto pb-2">
+        <div v-if="galleryImages.length > 1" class="px-4 sm:px-6 md:px-10 pt-4 sm:pt-6">
+          <div class="flex gap-3 sm:gap-4 overflow-x-auto pb-2 scrollbar-hide touch-manipulation">
             <button
               v-for="(image, index) in galleryImages"
               :key="image"
               @click="openLightbox(index)"
-              class="relative h-20 w-28 flex-shrink-0 overflow-hidden rounded-2xl border border-transparent transition shadow-sm hover:-translate-y-1 hover:border-emerald-400/70 hover:shadow-lg"
+              class="relative h-16 w-20 sm:h-20 sm:w-28 flex-shrink-0 overflow-hidden rounded-lg sm:rounded-2xl border border-transparent transition shadow-sm sm:shadow-sm active:scale-95 hover:-translate-y-1 hover:border-emerald-400/70 hover:shadow-lg touch-manipulation"
               :class="index === activeImageIndex ? 'border-emerald-500 shadow-lg' : ''"
             >
               <img
@@ -76,7 +116,7 @@
               />
               <span
                 v-if="index === activeImageIndex"
-                class="absolute inset-x-0 bottom-0 z-10 bg-emerald-600/80 py-1 text-center text-xs font-semibold uppercase tracking-wide text-white"
+                class="absolute inset-x-0 bottom-0 z-10 bg-emerald-600/80 py-0.5 sm:py-1 text-center text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-white"
               >
                 Active
               </span>
@@ -85,10 +125,10 @@
         </div>
 
         <!-- Content -->
-        <div class="p-6 md:p-10 lg:p-12">
-          <div class="flex flex-col items-start gap-10 lg:flex-row lg:gap-12">
+        <div class="p-4 sm:p-6 md:p-10 lg:p-12">
+          <div class="flex flex-col items-start gap-6 sm:gap-8 lg:flex-row lg:gap-12">
           <!-- Main Content -->
-          <div class="flex-1 space-y-6">
+          <div class="flex-1 w-full space-y-4 sm:space-y-6 px-0 sm:px-0">
               <div v-if="checkoutStatus === 'success'" class="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
                 <svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -140,11 +180,11 @@
                 </span>
               </div>
 
-              <div class="space-y-3">
-                <h1 class="text-4xl font-black tracking-tight text-slate-900 sm:text-5xl">{{ event.title }}</h1>
+              <div class="space-y-2 sm:space-y-3">
+                <h1 class="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-tight">{{ event.title }}</h1>
                 <p
                   v-if="event.subtitle"
-                  class="text-base text-slate-500"
+                  class="text-sm sm:text-base text-slate-500"
                 >
                   {{ event.subtitle }}
                 </p>
@@ -152,17 +192,17 @@
 
               <div
                 v-if="event.publicPrice || event.price || event.originalPrice"
-                class="flex flex-wrap items-center gap-4 rounded-2xl border border-emerald-100 bg-gradient-to-r from-emerald-500/15 via-teal-500/10 to-emerald-500/15 px-6 py-5 text-slate-800 shadow-inner"
+                class="flex flex-wrap items-center gap-3 sm:gap-4 rounded-none sm:rounded-2xl border-0 sm:border border-emerald-100 bg-gradient-to-r from-emerald-50/50 via-teal-50/30 to-emerald-50/50 sm:from-emerald-500/15 sm:via-teal-500/10 sm:to-emerald-500/15 px-4 sm:px-6 py-4 sm:py-5 text-slate-800 shadow-none sm:shadow-inner"
               >
                 <div class="space-y-1">
-                  <span class="text-xs font-semibold uppercase tracking-wide text-emerald-600">From</span>
-                  <div class="flex items-baseline gap-3">
-                    <span class="text-4xl font-bold text-emerald-600">
+                  <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-emerald-600">From</span>
+                  <div class="flex items-baseline gap-2 sm:gap-3">
+                    <span class="text-2xl sm:text-3xl md:text-4xl font-bold text-emerald-600">
                       {{ event.publicPrice ? formatCurrency(event.publicPrice) : event.price }}
                     </span>
                     <span
                       v-if="event.originalPrice"
-                      class="text-lg text-slate-400 line-through"
+                      class="text-sm sm:text-lg text-slate-400 line-through"
                     >
                       {{ event.originalPrice }}
                     </span>
@@ -170,9 +210,9 @@
                 </div>
                 <div
                   v-if="event.rating"
-                  class="flex items-center gap-2 rounded-full bg-white/70 px-4 py-1.5 text-sm font-semibold text-emerald-700 shadow-sm"
+                  class="flex items-center gap-1.5 sm:gap-2 rounded-full bg-white/70 px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-emerald-700 shadow-sm"
                 >
-                  <svg class="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                  <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                   </svg>
                   {{ event.rating }} / 5
@@ -181,8 +221,8 @@
             </div>
 
             <div v-if="event.description" class="prose max-w-none">
-              <h2 class="text-2xl font-bold text-gray-900 mb-4">About</h2>
-              <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">{{ event.description }}</p>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">About</h2>
+              <p class="text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap">{{ event.description }}</p>
             </div>
 
             <div
@@ -196,21 +236,21 @@
             </div>
 
             <!-- Ticket Options -->
-            <div v-if="hasOptions" ref="optionsSectionRef" class="space-y-5 pt-10 border-t border-gray-200">
-              <div>
-                <h2 class="text-2xl font-bold text-gray-900">Available Ticket Options</h2>
-                <p class="text-gray-600 text-sm">
+            <div v-if="hasOptions" ref="optionsSectionRef" class="space-y-4 sm:space-y-5 pt-6 sm:pt-10 border-t border-gray-200">
+              <div class="px-0 sm:px-0">
+                <h2 class="text-xl sm:text-2xl font-bold text-gray-900">Available Ticket Options</h2>
+                <p class="text-gray-600 text-xs sm:text-sm mt-1">
                   Compare packages, promo codes and validity before you book.
                 </p>
               </div>
 
-              <div class="grid grid-cols-1 gap-6 max-w-3xl">
+              <div class="grid grid-cols-1 gap-4 sm:gap-6 max-w-3xl">
                 <div
                   v-for="option in ticketOptions"
                   :key="option.code || option.name"
-                  class="group relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/70 p-6 shadow-[0_18px_48px_-28px_rgba(15,23,42,0.4)] transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                  class="group relative overflow-hidden rounded-none sm:rounded-3xl border-0 sm:border border-b sm:border-slate-200/70 border-slate-200 bg-transparent sm:bg-white/70 p-4 sm:p-6 shadow-none sm:shadow-[0_18px_48px_-28px_rgba(15,23,42,0.4)] transition duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 active:scale-[0.98] touch-manipulation"
                   :class="isSelectedOption(option)
-                    ? 'border-emerald-300/80 shadow-[0_32px_70px_-40px_rgba(16,185,129,0.55)]'
+                    ? 'bg-emerald-50/50 sm:border-emerald-300/80 sm:shadow-[0_32px_70px_-40px_rgba(16,185,129,0.55)]'
                     : 'hover:-translate-y-1.5 hover:border-emerald-200 hover:shadow-[0_28px_70px_-45px_rgba(16,185,129,0.35)]'"
                   role="button"
                   tabindex="0"
@@ -223,61 +263,61 @@
                     :class="isSelectedOption(option) ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"
                   ></div>
 
-                  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                  <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-3 sm:gap-4">
                     <div class="space-y-2 flex-1">
-                      <div class="flex items-center gap-3">
-                        <h3 class="text-xl font-semibold text-gray-900">
+                      <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                        <h3 class="text-lg sm:text-xl font-semibold text-gray-900">
                           {{ option.name || 'Ticket Option' }}
                         </h3>
                         <span
                           v-if="isSelectedOption(option)"
-                          class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700"
+                          class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-semibold text-emerald-700"
                         >
                           Selected
                         </span>
                       </div>
-                      <div class="flex flex-wrap items-center gap-3 text-sm text-gray-600">
+                      <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600">
                         <span
                           v-if="shouldDisplayOptionCode(option)"
-                          class="px-2 py-1 bg-emerald-100 text-emerald-700 font-mono rounded-lg"
+                          class="px-2 py-0.5 sm:py-1 bg-emerald-100 text-emerald-700 font-mono rounded-lg text-[10px] sm:text-xs"
                         >
                           {{ option.code }}
                         </span>
-                        <span v-if="option.validity" class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600">
-                          <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <span v-if="option.validity" class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-xs font-medium text-slate-600">
+                          <svg class="h-3 w-3 sm:h-3.5 sm:w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
                           </svg>
                           {{ option.validity }}
                         </span>
-                        <span v-if="option.details" class="text-sm text-gray-500">{{ option.details }}</span>
+                        <span v-if="option.details" class="text-xs sm:text-sm text-gray-500">{{ option.details }}</span>
                       </div>
                     </div>
-                    <div class="text-right">
-                      <div v-if="option.priceText" class="text-3xl font-bold text-emerald-600">
+                    <div class="text-left sm:text-right">
+                      <div v-if="option.priceText" class="text-2xl sm:text-3xl font-bold text-emerald-600">
                         {{ option.priceText }}
                       </div>
                       <div
                         v-if="option.originalPriceText && option.originalPriceText !== option.priceText"
-                        class="text-gray-400 line-through text-sm"
+                        class="text-gray-400 line-through text-xs sm:text-sm"
                       >
                         {{ option.originalPriceText }}
                       </div>
                       <div
                         v-if="savingsText(option)"
-                        class="text-sm font-semibold text-emerald-600"
+                        class="text-xs sm:text-sm font-semibold text-emerald-600"
                       >
                         {{ savingsText(option) }}
                       </div>
                     </div>
                   </div>
 
-                  <div class="mt-4 flex flex-wrap gap-3">
+                  <div class="mt-3 sm:mt-4 flex flex-wrap gap-2 sm:gap-3">
                     <button
                       v-if="option.code"
                       @click.stop="copyCode(option.code)"
-                      class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:text-emerald-600"
+                      class="inline-flex items-center gap-1.5 sm:gap-2 rounded-xl border border-slate-200 bg-white px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-slate-600 transition hover:border-emerald-200 hover:text-emerald-600 active:scale-95 touch-manipulation min-h-[44px]"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16h8a2 2 0 002-2V7a2 2 0 00-2-2h-5l-3 3v6a2 2 0 002 2z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 16v2a2 2 0 01-2 2H8a2 2 0 01-2-2V9a2 2 0 012-2h1" />
                       </svg>
@@ -285,9 +325,9 @@
                     </button>
                     <button
                       @click="handleRequestOption(option)"
-                      class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-4 py-2 text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600"
+                      class="inline-flex items-center gap-1.5 sm:gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition active:scale-95 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600 touch-manipulation min-h-[44px]"
                     >
-                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 11.5c0 7-7.5 9.5-7.5 9.5s-7.5-2.5-7.5-9.5a7.5 7.5 0 1115 0z" />
                       </svg>
@@ -297,10 +337,10 @@
                 </div>
               </div>
             </div>
-            <div v-else class="mt-6">
+            <div v-else class="mt-4 sm:mt-6">
               <button
                 @click="handleRequestWithoutOption"
-                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-5 py-3 text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600"
+                class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-500 px-4 sm:px-5 py-3 text-xs sm:text-sm font-semibold text-white shadow-[0_12px_24px_-12px_rgba(16,185,129,0.55)] transition active:scale-95 hover:-translate-y-0.5 hover:from-emerald-600 hover:to-teal-600 touch-manipulation min-h-[44px]"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
@@ -311,65 +351,65 @@
             </div>
 
             <!-- Additional Info -->
-            <div class="grid grid-cols-1 gap-5 border-t border-slate-200/70 pt-10 md:grid-cols-2">
+            <div class="grid grid-cols-1 gap-3 sm:gap-4 md:gap-5 border-t border-slate-200/70 pt-6 sm:pt-8 md:pt-10 md:grid-cols-2">
               <div
                 v-if="event.location"
-                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+                class="flex items-start gap-3 sm:gap-4 rounded-none sm:rounded-2xl border-0 sm:border border-b sm:border-slate-200/70 border-slate-200 bg-transparent sm:bg-white/70 p-4 sm:p-5 shadow-none sm:shadow-sm sm:shadow-emerald-500/5"
               >
-                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                  <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Location</h3>
-                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.location }}</p>
+                  <h3 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-500">Location</h3>
+                  <p class="mt-1 text-sm sm:text-base font-medium text-slate-800">{{ event.location }}</p>
                 </div>
               </div>
 
               <div
                 v-if="event.duration"
-                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+                class="flex items-start gap-3 sm:gap-4 rounded-none sm:rounded-2xl border-0 sm:border border-b sm:border-slate-200/70 border-slate-200 bg-transparent sm:bg-white/70 p-4 sm:p-5 shadow-none sm:shadow-sm sm:shadow-emerald-500/5"
               >
-                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-sky-100 text-sky-600">
+                  <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Duration</h3>
-                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.duration }}</p>
+                  <h3 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-500">Duration</h3>
+                  <p class="mt-1 text-sm sm:text-base font-medium text-slate-800">{{ event.duration }}</p>
                 </div>
               </div>
 
               <div
                 v-if="event.ageRestriction"
-                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+                class="flex items-start gap-3 sm:gap-4 rounded-none sm:rounded-2xl border-0 sm:border border-b sm:border-slate-200/70 border-slate-200 bg-transparent sm:bg-white/70 p-4 sm:p-5 shadow-none sm:shadow-sm sm:shadow-emerald-500/5"
               >
-                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                  <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Age Restriction</h3>
-                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.ageRestriction }}</p>
+                  <h3 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-500">Age Restriction</h3>
+                  <p class="mt-1 text-sm sm:text-base font-medium text-slate-800">{{ event.ageRestriction }}</p>
                 </div>
               </div>
 
               <div
                 v-if="event.cancellation"
-                class="flex items-start gap-4 rounded-2xl border border-slate-200/70 bg-white/70 p-5 shadow-sm shadow-emerald-500/5"
+                class="flex items-start gap-3 sm:gap-4 rounded-none sm:rounded-2xl border-0 sm:border border-b sm:border-slate-200/70 border-slate-200 bg-transparent sm:bg-white/70 p-4 sm:p-5 shadow-none sm:shadow-sm sm:shadow-emerald-500/5"
               >
-                <div class="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
-                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div class="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                  <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
                   </svg>
                 </div>
                 <div>
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Cancellation</h3>
-                  <p class="mt-1 text-base font-medium text-slate-800">{{ event.cancellation }}</p>
+                  <h3 class="text-xs sm:text-sm font-semibold uppercase tracking-wide text-slate-500">Cancellation</h3>
+                  <p class="mt-1 text-sm sm:text-base font-medium text-slate-800">{{ event.cancellation }}</p>
                 </div>
               </div>
             </div>
@@ -378,21 +418,21 @@
           <!-- Booking Sidebar -->
           <div class="w-full lg:w-[360px]">
             <div
-              class="sticky top-24 rounded-3xl border border-emerald-100/80 p-6 shadow-[0_28px_80px_-40px_rgba(16,185,129,0.45)] backdrop-blur-xl"
+              class="sticky top-20 sm:top-24 rounded-none sm:rounded-3xl border-0 sm:border border-t sm:border-emerald-100/80 border-slate-200 p-4 sm:p-6 shadow-none sm:shadow-[0_28px_80px_-40px_rgba(16,185,129,0.45)] backdrop-blur-none sm:backdrop-blur-xl bg-white sm:bg-white"
               ref="bookingFormRef"
             >
-              <div class="mb-6 flex items-center justify-between">
-                <h2 class="text-2xl font-bold tracking-tight text-slate-900">
+              <div class="mb-4 sm:mb-6 flex items-center justify-between">
+                <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900">
                   {{ canSelfBook ? 'Book Your Ticket' : 'Request a Booking' }}
                 </h2>
               </div>
 
               <template v-if="canSelfBook">
-                <p class="mb-4 text-sm text-slate-500">
-                  Instant checkout with secure payment powered by Stripe. You’ll receive a confirmation email after payment.
+                <p class="mb-4 text-xs sm:text-sm text-slate-500">
+                  Instant checkout with secure payment powered by Stripe. You'll receive a confirmation email after payment.
                 </p>
 
-                <div class="mb-6 space-y-4 rounded-2xl border border-emerald-100/80 bg-white/90 p-5">
+                <div class="mb-4 sm:mb-6 space-y-3 sm:space-y-4 rounded-none sm:rounded-2xl border-0 sm:border border-b sm:border-emerald-100/80 border-slate-200 bg-transparent sm:bg-white/90 p-0 sm:p-5">
                   <div class="flex items-start justify-between gap-3">
                     <div>
                       <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Selected option</p>
@@ -414,7 +454,7 @@
                         type="number"
                         min="0"
                         step="1"
-                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 sm:py-2 text-base sm:text-sm font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 touch-manipulation"
                       />
                     </label>
                     <label class="flex flex-col gap-1">
@@ -424,13 +464,13 @@
                         type="number"
                         min="0"
                         step="1"
-                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40"
+                        class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 sm:py-2 text-base sm:text-sm font-medium text-slate-900 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/40 touch-manipulation"
                       />
                     </label>
                   </div>
                 </div>
 
-                <div class="space-y-2 rounded-2xl border border-emerald-100/80 bg-white/95 p-5 text-sm shadow-inner">
+                <div class="space-y-2 rounded-none sm:rounded-2xl border-0 sm:border border-t sm:border-emerald-100/80 border-slate-200 bg-gray-50/50 sm:bg-white/95 p-4 sm:p-5 text-xs sm:text-sm shadow-none sm:shadow-inner">
                   <div class="flex items-center justify-between text-slate-500">
                     <span>Tickets ({{ totalQuantity }} total)</span>
                     <span class="font-semibold text-slate-900">
@@ -443,15 +483,14 @@
                   </div>
                 </div>
 
-                <div v-if="cartError" class="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+                <div v-if="cartError" class="rounded-xl sm:rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-xs sm:text-sm text-red-600">
                   {{ cartError }}
                 </div>
-                <br/>
-                <div class="flex flex-col gap-3 sm:flex-row">
+                <div class="flex flex-col gap-3 mt-4">
                   <button
                     type="button"
                     @click="addToCart"
-                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200/80 bg-white px-4 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-200/80 bg-white px-4 py-3.5 sm:py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 touch-manipulation min-h-[48px]"
                   >
                     Add to cart
                   </button>
@@ -459,7 +498,7 @@
                     type="button"
                     @click="startCheckout"
                     :disabled="checkoutDisabled"
-                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-18px_rgba(16,185,129,0.65)] transition hover:from-emerald-600 hover:to-teal-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-40"
+                    class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3.5 sm:py-3 text-sm font-semibold text-white shadow-[0_18px_38px_-18px_rgba(16,185,129,0.65)] transition active:scale-[0.98] hover:from-emerald-600 hover:to-teal-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:transform-none touch-manipulation min-h-[48px]"
                   >
                     <span v-if="checkoutLoading" class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                     <span>{{ checkoutLoading ? 'Redirecting…' : 'Checkout' }}</span>
@@ -468,16 +507,16 @@
                 
                 <div
                   v-if="cartConfirmed && !checkoutLoading"
-                  class="mt-3 rounded-2xl border border-emerald-200/80 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-inner"
+                  class="mt-3 rounded-xl sm:rounded-2xl border border-emerald-200/80 bg-emerald-50 px-3 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm text-emerald-700 shadow-none sm:shadow-inner"
                 >
                   <p class="font-semibold">Cart ready for checkout</p>
-                  <p>Review the summary above, then click “Checkout” to pay securely via Stripe.</p>
+                  <p class="mt-1">Review the summary above, then click "Checkout" to pay securely via Stripe.</p>
                 </div>
 
-                <p class="mt-4 text-xs text-slate-500">
+                <p class="mt-4 text-[10px] sm:text-xs text-slate-500">
                   After payment, our team will place the order using our reseller credentials and email you the e-ticket.
                 </p>
-                <p v-if="checkoutError" class="text-sm font-medium text-red-600">{{ checkoutError }}</p>
+                <p v-if="checkoutError" class="text-xs sm:text-sm font-medium text-red-600 mt-2">{{ checkoutError }}</p>
               </template>
               <template v-else>
                 <div class="space-y-5">
@@ -541,43 +580,46 @@
       <ClientOnly>
         <div
           v-if="lightboxOpen"
-          class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm touch-manipulation"
           @click.self="closeLightbox"
         >
           <button
             type="button"
-            class="absolute top-6 right-6 text-white/80 transition hover:text-white"
+            class="absolute top-4 right-4 sm:top-6 sm:right-6 text-white/80 transition hover:text-white active:scale-90 touch-manipulation min-w-[44px] min-h-[44px] flex items-center justify-center"
             @click="closeLightbox"
+            aria-label="Close lightbox"
           >
-            <svg class="h-8 w-8" viewBox="0 0 24 24">
+            <svg class="h-6 w-6 sm:h-8 sm:w-8" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <div class="w-full max-w-4xl px-4">
+          <div class="w-full max-w-4xl px-3 sm:px-4">
             <div class="relative">
               <img
                 :src="galleryImages[lightboxIndex]"
                 :alt="`${event?.title} enlarged photo ${lightboxIndex + 1}`"
-                class="h-auto w-full rounded-2xl bg-black/20 object-contain shadow-2xl"
+                class="h-auto w-full rounded-xl sm:rounded-2xl bg-black/20 object-contain shadow-2xl max-h-[85vh] sm:max-h-[90vh]"
               />
               <div
                 v-if="galleryImages.length > 1"
-                class="absolute inset-x-0 bottom-3 flex justify-between px-4 text-sm text-white/80"
+                class="absolute inset-x-0 bottom-2 sm:bottom-3 flex justify-between items-center px-3 sm:px-4 text-xs sm:text-sm text-white/80"
               >
                 <button
                   type="button"
-                  class="transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  class="transition hover:text-white active:scale-90 disabled:cursor-not-allowed disabled:opacity-40 touch-manipulation px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-black/30 backdrop-blur-sm min-h-[44px]"
                   @click.stop="prevLightboxImage"
                   :disabled="galleryImages.length <= 1"
+                  aria-label="Previous image"
                 >
                   ‹ Prev
                 </button>
-                <span>{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</span>
+                <span class="px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-sm">{{ lightboxIndex + 1 }} / {{ galleryImages.length }}</span>
                 <button
                   type="button"
-                  class="transition hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                  class="transition hover:text-white active:scale-90 disabled:cursor-not-allowed disabled:opacity-40 touch-manipulation px-3 py-2 sm:px-4 sm:py-2.5 rounded-lg bg-black/30 backdrop-blur-sm min-h-[44px]"
                   @click.stop="nextLightboxImage"
                   :disabled="galleryImages.length <= 1"
+                  aria-label="Next image"
                 >
                   Next ›
                 </button>
