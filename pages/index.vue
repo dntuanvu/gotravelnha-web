@@ -411,6 +411,7 @@ const openFunnelDeal = async (category) => {
   const fallbackUrl = category === 'flight' ? flightLink : category === 'hotel' ? hotelLink : '/klook'
   const baseUrl = shortcut?.link || fallbackUrl
   const provider = shortcut?.provider || (category === 'activity' ? 'klook' : 'trip')
+  const openedWindow = typeof window !== 'undefined' ? window.open('', '_blank', 'noopener,noreferrer') : null
 
   trackClick('deals_hub_link', {
     campaign: `homepage-funnel-${category}`,
@@ -443,13 +444,17 @@ const openFunnelDeal = async (category) => {
     })
 
     const outboundUrl = response?.outboundUrl || baseUrl
-    if (typeof window !== 'undefined') {
-      window.open(outboundUrl, '_blank', 'noopener,noreferrer')
+    if (openedWindow) {
+      openedWindow.location.href = outboundUrl
+    } else if (typeof window !== 'undefined') {
+      window.location.href = outboundUrl
     }
   } catch (error) {
     console.error('Homepage funnel click tracking failed:', error)
-    if (typeof window !== 'undefined') {
-      window.open(baseUrl, '_blank', 'noopener,noreferrer')
+    if (openedWindow) {
+      openedWindow.location.href = baseUrl
+    } else if (typeof window !== 'undefined') {
+      window.location.href = baseUrl
     }
   }
 }
