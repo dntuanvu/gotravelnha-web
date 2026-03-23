@@ -194,6 +194,115 @@ model UserActivity {
   @@index([sessionId])
 }
 
+model AffiliateEntity {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  title     String
+  location  String?
+  category  String?
+  status    String   @default("active") // active, archived, draft
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  offers AffiliateOffer[]
+  clicks AffiliateClickEvent[]
+
+  @@index([status])
+  @@index([location])
+  @@index([category])
+  @@map("affiliate_entities")
+}
+
+model AffiliateOffer {
+  id                 String   @id @default(uuid())
+  entityId           String
+  provider           String   // trip, klook
+  providerProductId  String?
+  baseUrl            String
+  affiliateUrl       String?
+  priceAmount        Float?
+  currency           String?  @default("SGD")
+  priceText          String?
+  score              Float?   @default(0)
+  availabilityStatus String   @default("available") // available, stale, missing
+  lastVerifiedAt     DateTime?
+  expiresAt          DateTime?
+  isActive           Boolean  @default(true)
+  metadata           Json?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  entity AffiliateEntity       @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  clicks AffiliateClickEvent[]
+
+  @@index([entityId, isActive])
+  @@index([provider, isActive])
+  @@index([availabilityStatus])
+  @@index([lastVerifiedAt])
+  @@map("affiliate_offers")
+}
+
+model AffiliatePlacement {
+  id        String   @id @default(uuid())
+  key       String   @unique // search_card_primary, detail_sticky, etc
+  label     String
+  isActive  Boolean  @default(true)
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clicks AffiliateClickEvent[]
+
+  @@index([isActive])
+  @@map("affiliate_placements")
+}
+
+model AffiliateClickEvent {
+  id           String   @id @default(uuid())
+  sessionId    String
+  userId       String?
+  entityId     String?
+  offerId      String?
+  provider     String
+  placementKey String?
+  placementId  String?
+  pagePath     String?
+  referrer     String?
+  deviceType   String? // desktop, mobile, tablet, unknown
+  subId        String?
+  outboundUrl  String
+  metadata     Json?
+  createdAt    DateTime @default(now())
+
+  entity    AffiliateEntity?    @relation(fields: [entityId], references: [id], onDelete: SetNull)
+  offer     AffiliateOffer?     @relation(fields: [offerId], references: [id], onDelete: SetNull)
+  placement AffiliatePlacement? @relation(fields: [placementId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([provider])
+  @@index([subId])
+  @@index([entityId])
+  @@index([offerId])
+  @@index([placementKey])
+  @@index([createdAt])
+  @@map("affiliate_click_events")
+}
+
+model AffiliateConversionEvent {
+  id         String   @id @default(uuid())
+  provider   String
+  subId      String
+  commission Float?
+  currency   String?  @default("USD")
+  rawPayload Json?
+  createdAt  DateTime @default(now())
+
+  @@index([provider, subId])
+  @@index([createdAt])
+  @@map("affiliate_conversion_events")
+}
+
 model AttractionsgBooking {
   id                    String         @id @default(cuid())
   eventId               String         @db.Uuid

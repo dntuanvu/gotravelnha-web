@@ -1,15 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-12">
-    <div class="max-w-7xl mx-auto px-4 pt-8 space-y-8">
-      <NuxtLink to="/admin" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2">
-        <span>← Back to Admin Dashboard</span>
-      </NuxtLink>
-
-      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900">📊 Real-Time Analytics</h1>
-          <p class="text-gray-600">Monitor live user behaviour and page engagement</p>
-        </div>
+  <div class="min-h-full bg-gray-50 pb-12">
+    <div class="px-4 sm:px-6 lg:px-8 py-5 space-y-8">
+      <div class="flex flex-wrap gap-3 items-center justify-end">
         <div class="flex flex-wrap gap-3 items-center">
           <label class="flex items-center gap-2 text-sm text-gray-700">
             <span>Window</span>
@@ -50,6 +42,49 @@
       </div>
 
       <div v-if="analytics" class="space-y-8">
+        <div v-if="affiliate" class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold text-gray-900">💸 Affiliate Performance</h2>
+            <span class="text-xs text-gray-500">Last {{ affiliate.totals.windowMinutes }} mins</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="p-4 rounded-lg bg-indigo-50 border border-indigo-100">
+              <div class="text-sm text-indigo-700">Total clicks</div>
+              <div class="text-2xl font-bold text-indigo-900">{{ affiliate.totals.totalClicks }}</div>
+            </div>
+            <div class="p-4 rounded-lg bg-emerald-50 border border-emerald-100">
+              <div class="text-sm text-emerald-700">Window clicks</div>
+              <div class="text-2xl font-bold text-emerald-900">{{ affiliate.totals.windowClicks }}</div>
+            </div>
+            <div class="p-4 rounded-lg bg-amber-50 border border-amber-100">
+              <div class="text-sm text-amber-700">Top provider</div>
+              <div class="text-2xl font-bold text-amber-900">
+                {{ affiliate.topProviders[0]?.provider || '—' }}
+              </div>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2">Top providers</h3>
+              <ul class="space-y-2 text-sm">
+                <li v-for="item in affiliate.topProviders" :key="item.provider" class="flex justify-between bg-gray-50 rounded px-3 py-2">
+                  <span>{{ item.provider }}</span>
+                  <span class="font-medium text-gray-700">{{ item.count }}</span>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h3 class="font-semibold text-gray-800 mb-2">Top placements</h3>
+              <ul class="space-y-2 text-sm">
+                <li v-for="item in affiliate.topPlacements" :key="item.placementKey || 'unknown'" class="flex justify-between bg-gray-50 rounded px-3 py-2">
+                  <span>{{ item.placementKey || 'unknown' }}</span>
+                  <span class="font-medium text-gray-700">{{ item.count }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-2">
@@ -195,7 +230,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'admin',
   middleware: 'admin'
 })
 
@@ -222,7 +257,19 @@ interface AnalyticsResponse {
   }>
 }
 
+interface AffiliateAnalyticsResponse {
+  totals: {
+    totalClicks: number
+    windowClicks: number
+    windowMinutes: number
+  }
+  topProviders: Array<{ provider: string; count: number }>
+  topPlacements: Array<{ placementKey: string | null; count: number }>
+  topPages: Array<{ pagePath: string | null; count: number }>
+}
+
 const analytics = ref<AnalyticsResponse | null>(null)
+const affiliate = ref<AffiliateAnalyticsResponse | null>(null)
 const loading = ref(false)
 const error = ref<string | null>(null)
 const windowMinutes = ref(60)
@@ -242,6 +289,15 @@ const fetchAnalytics = async () => {
     })
     if (response.success) {
       analytics.value = response.data
+    }
+
+    const affiliateResponse = await $fetch<{ success: boolean; data: AffiliateAnalyticsResponse }>('/api/admin/analytics/affiliate', {
+      query: {
+        window: windowMinutes.value
+      }
+    })
+    if (affiliateResponse.success) {
+      affiliate.value = affiliateResponse.data
     }
   } catch (err: any) {
     console.error('Failed to load analytics:', err)

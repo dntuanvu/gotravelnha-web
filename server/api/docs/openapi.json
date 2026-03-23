@@ -1,0 +1,810 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "GoVietHub API",
+    "version": "1.0.0",
+    "description": "API documentation for GoVietHub - Travel deals aggregation and booking platform",
+    "contact": {
+      "name": "API Support",
+      "email": "support@gotravelnha.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://gotravelnha.com",
+      "description": "Production server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Admin",
+      "description": "Admin-only endpoints for managing the platform"
+    },
+    {
+      "name": "Events",
+      "description": "Event management endpoints (AttractionsSG, Klook, Trip.com)"
+    },
+    {
+      "name": "Scrapers",
+      "description": "Affiliate source management (crawler retired)"
+    },
+    {
+      "name": "Affiliate",
+      "description": "Affiliate offer resolution and tracking"
+    },
+    {
+      "name": "Auth",
+      "description": "Authentication and user management"
+    },
+    {
+      "name": "Bookings",
+      "description": "Booking management and checkout"
+    },
+    {
+      "name": "Klook",
+      "description": "Klook platform integration"
+    },
+    {
+      "name": "Trip",
+      "description": "Trip.com platform integration"
+    },
+    {
+      "name": "AttractionsSG",
+      "description": "AttractionsSG platform integration"
+    }
+  ],
+  "paths": {
+    "/api/admin/attractionsg": {
+      "get": {
+        "tags": ["Admin", "Events"],
+        "summary": "Get AttractionsSG events (admin)",
+        "description": "Retrieve AttractionsSG events with filtering, sorting, and pagination for admin management",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer", "minimum": 1, "default": 1},
+            "description": "Page number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {"type": "integer", "minimum": 1, "maximum": 200, "default": 50},
+            "description": "Items per page"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {"type": "string"},
+            "description": "Search query (title, slug, location, description)"
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {"type": "string", "enum": ["all", "published", "draft"], "default": "all"},
+            "description": "Filter by publication status"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {"type": "string", "enum": ["latest", "alpha", "priceAsc", "priceDesc"], "default": "latest"},
+            "description": "Sort order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/AttractionsgEvent"}
+                    },
+                    "pagination": {"$ref": "#/components/schemas/Pagination"}
+                  }
+                }
+              }
+            }
+          },
+          "500": {"$ref": "#/components/responses/ServerError"}
+        }
+      },
+      "post": {
+        "tags": ["Admin", "Events"],
+        "summary": "Update AttractionsSG events",
+        "description": "Update multiple AttractionsSG events (pricing, publish status, etc.)",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/UpdateAttractionsgEventRequest"}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "updated": {"type": "integer"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/AttractionsgEvent"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "500": {"$ref": "#/components/responses/ServerError"}
+        }
+      }
+    },
+    "/api/admin/klook": {
+      "get": {
+        "tags": ["Admin", "Events", "Klook"],
+        "summary": "Get Klook events (admin)",
+        "description": "Retrieve Klook events with filtering, sorting, and pagination for admin management",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {"type": "integer", "minimum": 1, "default": 1}
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {"type": "integer", "minimum": 1, "maximum": 200, "default": 50}
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {"type": "string", "enum": ["all", "active", "inactive"], "default": "all"}
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {"type": "string", "enum": ["latest", "alpha", "priceAsc", "priceDesc"], "default": "latest"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Event"}
+                    },
+                    "pagination": {"$ref": "#/components/schemas/Pagination"}
+                  }
+                }
+              }
+            }
+          },
+          "500": {"$ref": "#/components/responses/ServerError"}
+        }
+      },
+      "post": {
+        "tags": ["Admin", "Events", "Klook"],
+        "summary": "Update Klook events",
+        "description": "Update multiple Klook events (active status, etc.)",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {"$ref": "#/components/schemas/UpdateKlookEventRequest"}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "updated": {"type": "integer"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/Event"}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {"$ref": "#/components/responses/BadRequest"},
+          "500": {"$ref": "#/components/responses/ServerError"}
+        }
+      }
+    },
+    "/api/admin/scraper/sources": {
+      "get": {
+        "tags": ["Admin", "Scrapers"],
+        "summary": "Get scraper sources",
+        "description": "List all configured scraper sources (URLs) for crawling",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/ScraperSource"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Admin", "Scrapers"],
+        "summary": "Create scraper source",
+        "description": "Add a new URL to crawl",
+        "security": [{"bearerAuth": []}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CreateScraperSourceRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Source created"},
+          "400": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    },
+    "/api/admin/scraper/jobs": {
+      "get": {
+        "tags": ["Admin", "Scrapers"],
+        "summary": "Get scraper jobs",
+        "description": "List all scraping jobs with their status",
+        "security": [{"bearerAuth": []}],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/ScraperJob"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/affiliate/offers": {
+      "get": {
+        "tags": ["Affiliate"],
+        "summary": "Resolve affiliate offers by entity",
+        "parameters": [
+          {"name": "entityId", "in": "query", "schema": {"type": "string"}},
+          {"name": "slug", "in": "query", "schema": {"type": "string"}},
+          {"name": "placementKey", "in": "query", "schema": {"type": "string"}},
+          {"name": "pagePath", "in": "query", "schema": {"type": "string"}},
+          {"name": "sessionId", "in": "query", "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Offer resolution result"},
+          "400": {"$ref": "#/components/responses/BadRequest"}
+        }
+      }
+    },
+    "/api/affiliate/deals": {
+      "get": {
+        "tags": ["Affiliate"],
+        "summary": "Get affiliate deals feed",
+        "parameters": [
+          {"name": "limit", "in": "query", "schema": {"type": "integer", "default": 100}},
+          {"name": "platform", "in": "query", "schema": {"type": "string"}},
+          {"name": "category", "in": "query", "schema": {"type": "string"}},
+          {"name": "sessionId", "in": "query", "schema": {"type": "string"}}
+        ],
+        "responses": {
+          "200": {"description": "Deals list"}
+        }
+      }
+    },
+    "/api/affiliate/click": {
+      "post": {
+        "tags": ["Affiliate"],
+        "summary": "Track affiliate click and return outbound URL",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "offerId": {"type": "string"},
+                  "provider": {"type": "string"},
+                  "baseUrl": {"type": "string"},
+                  "placementKey": {"type": "string"},
+                  "pagePath": {"type": "string"},
+                  "sessionId": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Tracked click with outbound URL"}
+        }
+      }
+    },
+    "/api/affiliate/events": {
+      "post": {
+        "tags": ["Affiliate"],
+        "summary": "Track non-click affiliate events",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["eventName"],
+                "properties": {
+                  "eventName": {"type": "string", "enum": ["affiliate_offer_impression", "affiliate_offer_fallback_used", "affiliate_offer_unavailable"]},
+                  "sessionId": {"type": "string"},
+                  "provider": {"type": "string"},
+                  "entityId": {"type": "string"},
+                  "offerId": {"type": "string"},
+                  "placementKey": {"type": "string"},
+                  "pagePath": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {"description": "Tracked event"}
+        }
+      }
+    },
+    "/api/admin/analytics/affiliate": {
+      "get": {
+        "tags": ["Admin", "Affiliate"],
+        "summary": "Get affiliate analytics",
+        "security": [{"bearerAuth": []}],
+        "parameters": [
+          {"name": "window", "in": "query", "schema": {"type": "integer", "default": 60}}
+        ],
+        "responses": {
+          "200": {"description": "Affiliate analytics payload"}
+        }
+      }
+    },
+    "/api/attractionsg/crawl": {
+      "post": {
+        "tags": ["AttractionsSG", "Scrapers"],
+        "summary": "Trigger AttractionsSG crawl",
+        "description": "Start a crawl job for AttractionsSG events",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullCrawl": {"type": "boolean", "default": false},
+                  "maxPages": {"type": "integer", "default": 30}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Crawl job started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "message": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/attractionsg/events": {
+      "post": {
+        "tags": ["AttractionsSG", "Events"],
+        "summary": "Get AttractionsSG events (public)",
+        "description": "Retrieve published AttractionsSG events for public display",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "page": {"type": "integer", "default": 1},
+                  "limit": {"type": "integer", "default": 100},
+                  "sortBy": {"type": "string", "enum": ["title", "price", "date"], "default": "date"},
+                  "sortOrder": {"type": "string", "enum": ["asc", "desc"], "default": "desc"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {"$ref": "#/components/schemas/AttractionsgEvent"}
+                    },
+                    "pagination": {"$ref": "#/components/schemas/Pagination"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "User login",
+        "description": "Authenticate user and return session token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {"type": "string", "format": "email"},
+                  "password": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "user": {"$ref": "#/components/schemas/User"},
+                    "token": {"type": "string"}
+                  }
+                }
+              }
+            }
+          },
+          "401": {"$ref": "#/components/responses/Unauthorized"}
+        }
+      }
+    },
+    "/api/checkout/create": {
+      "post": {
+        "tags": ["Bookings"],
+        "summary": "Create checkout session",
+        "description": "Create a Stripe checkout session for event booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CreateCheckoutRequest"}
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Checkout session created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "boolean"},
+                    "sessionId": {"type": "string"},
+                    "url": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "AttractionsgEvent": {
+        "$ref": "#/components/schemas/Event",
+        "description": "Deprecated: Use Event schema with platform='attractionsg' instead"
+      },
+      "Event": {
+        "type": "object",
+        "description": "Unified Event model for all platforms (AttractionsSG, Klook, Trip.com, etc.)",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "platform": {"type": "string", "enum": ["attractionsg", "klook", "trip"], "description": "Platform source"},
+          "title": {"type": "string"},
+          "slug": {"type": "string", "nullable": true},
+          "description": {"type": "string", "nullable": true},
+          "priceText": {"type": "string", "nullable": true, "description": "Display price text (e.g., 'SGD 45.00')"},
+          "priceAmount": {"type": "number", "nullable": true, "description": "Numeric price"},
+          "resellerPriceAmount": {"type": "number", "nullable": true, "description": "Cost from reseller/supplier"},
+          "originalPriceText": {"type": "string", "nullable": true},
+          "originalPriceAmount": {"type": "number", "nullable": true},
+          "publicPrice": {"type": "number", "nullable": true, "description": "Admin-set public price"},
+          "discountedPrice": {"type": "number", "nullable": true, "description": "For Trip.com deals"},
+          "discount": {"type": "string", "nullable": true},
+          "currency": {"type": "string", "default": "SGD"},
+          "image": {"type": "string", "format": "uri", "nullable": true},
+          "gallery": {"type": "array", "items": {"type": "string", "format": "uri"}, "description": "Array of image URLs"},
+          "location": {"type": "string", "nullable": true},
+          "category": {"type": "string", "nullable": true, "description": "'activity', 'hotel', 'flight', etc."},
+          "rating": {"type": "number", "nullable": true},
+          "reviewCount": {"type": "integer", "nullable": true},
+          "link": {"type": "string", "format": "uri", "nullable": true, "description": "Original public URL (affiliate tracking added when displaying)"},
+          "sourceUrl": {"type": "string", "format": "uri", "nullable": true, "description": "Source URL for scraping"},
+          "duration": {"type": "string", "nullable": true},
+          "ageRestriction": {"type": "string", "nullable": true},
+          "cancellation": {"type": "string", "nullable": true},
+          "validFrom": {"type": "string", "nullable": true},
+          "validTo": {"type": "string", "nullable": true},
+          "dates": {"type": "string", "nullable": true, "description": "For Trip.com deals"},
+          "lastSeenAt": {"type": "string", "format": "date-time"},
+          "isActive": {"type": "boolean", "default": true},
+          "isPublished": {"type": "boolean", "default": false},
+          "publishedAt": {"type": "string", "format": "date-time", "nullable": true},
+          "notes": {"type": "string", "nullable": true},
+          "isSelfBookable": {"type": "boolean", "default": false, "description": "For Stripe checkout"},
+          "stripePriceId": {"type": "string", "nullable": true},
+          "checkoutNotes": {"type": "string", "nullable": true},
+          "scraperJobId": {"type": "string", "format": "uuid", "nullable": true},
+          "raw": {"type": "object", "nullable": true, "description": "Raw data storage"},
+          "metadata": {"type": "object", "nullable": true},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        },
+        "required": ["id", "platform", "title"]
+      },
+      "KlookActivity": {
+        "$ref": "#/components/schemas/Event",
+        "description": "Deprecated: Use Event schema with platform='klook' instead"
+      },
+      "UpdateAttractionsgEventRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "publicPrice": {"type": "number", "nullable": true},
+          "isPublished": {"type": "boolean"},
+          "notes": {"type": "string", "nullable": true},
+          "publishedAt": {"type": "string", "format": "date-time", "nullable": true},
+          "isSelfBookable": {"type": "boolean"},
+          "stripePriceId": {"type": "string", "nullable": true},
+          "checkoutNotes": {"type": "string", "nullable": true}
+        }
+      },
+      "UpdateKlookEventRequest": {
+        "type": "object",
+        "required": ["id"],
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "isActive": {"type": "boolean"},
+          "isPublished": {"type": "boolean"},
+          "publishedAt": {"type": "string", "format": "date-time", "nullable": true},
+          "publicPrice": {"type": "number", "nullable": true},
+          "notes": {"type": "string", "nullable": true},
+          "isSelfBookable": {"type": "boolean"},
+          "stripePriceId": {"type": "string", "nullable": true},
+          "checkoutNotes": {"type": "string", "nullable": true}
+        }
+      },
+      "UpdateEventRequest": {
+        "type": "object",
+        "required": ["id"],
+        "description": "Unified update request for all platform events",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "isActive": {"type": "boolean"},
+          "isPublished": {"type": "boolean"},
+          "publishedAt": {"type": "string", "format": "date-time", "nullable": true},
+          "publicPrice": {"type": "number", "nullable": true},
+          "notes": {"type": "string", "nullable": true},
+          "isSelfBookable": {"type": "boolean"},
+          "stripePriceId": {"type": "string", "nullable": true},
+          "checkoutNotes": {"type": "string", "nullable": true},
+          "resellerPriceAmount": {"type": "number", "nullable": true}
+        }
+      },
+      "ScraperSource": {
+        "type": "object",
+        "properties": {
+          "url": {"type": "string"},
+          "platform": {"type": "string", "enum": ["trip", "klook", "attractionsg"]},
+          "sourceType": {"type": "string"},
+          "isActive": {"type": "boolean"},
+          "lastScrapedAt": {"type": "string", "format": "date-time"},
+          "scrapeCount": {"type": "integer"},
+          "createdAt": {"type": "string", "format": "date-time"},
+          "updatedAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "CreateScraperSourceRequest": {
+        "type": "object",
+        "required": ["url", "platform"],
+        "properties": {
+          "url": {"type": "string", "format": "uri"},
+          "platform": {"type": "string", "enum": ["trip", "klook", "attractionsg"]},
+          "sourceType": {"type": "string"},
+          "isActive": {"type": "boolean", "default": true}
+        }
+      },
+      "ScraperJob": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "platform": {"type": "string"},
+          "sourceUrl": {"type": "string"},
+          "jobType": {"type": "string"},
+          "status": {"type": "string", "enum": ["PENDING", "RUNNING", "COMPLETED", "FAILED", "CANCELLED"]},
+          "priority": {"type": "integer"},
+          "startedAt": {"type": "string", "format": "date-time"},
+          "completedAt": {"type": "string", "format": "date-time"},
+          "error": {"type": "string"},
+          "createdAt": {"type": "string", "format": "date-time"}
+        }
+      },
+      "CreateCheckoutRequest": {
+        "type": "object",
+        "required": ["eventId", "quantity"],
+        "properties": {
+          "eventId": {"type": "string", "format": "uuid"},
+          "quantity": {"type": "integer", "minimum": 1},
+          "adultCount": {"type": "integer", "default": 0},
+          "childCount": {"type": "integer", "default": 0},
+          "optionCode": {"type": "string"},
+          "customerEmail": {"type": "string", "format": "email"},
+          "customerName": {"type": "string"},
+          "customerPhone": {"type": "string"}
+        }
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "string", "format": "uuid"},
+          "username": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "firstName": {"type": "string"},
+          "lastName": {"type": "string"},
+          "role": {"type": "string", "enum": ["ADMIN", "USER"]}
+        }
+      },
+      "Pagination": {
+        "type": "object",
+        "properties": {
+          "page": {"type": "integer"},
+          "limit": {"type": "integer"},
+          "total": {"type": "integer"},
+          "totalPages": {"type": "integer"}
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "Bad request",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {"type": "integer", "example": 400},
+                "message": {"type": "string"}
+              }
+            }
+          }
+        }
+      },
+      "Unauthorized": {
+        "description": "Unauthorized",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {"type": "integer", "example": 401},
+                "message": {"type": "string"}
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "Internal server error",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {"type": "integer", "example": 500},
+                "message": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

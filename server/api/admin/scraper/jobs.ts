@@ -67,6 +67,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  if (platform === 'trip' || platform === 'klook') {
+    throw createError({
+      statusCode: 410,
+      message: `${platform} crawler has been retired. Use affiliate offers instead of crawling.`
+    })
+  }
+
   try {
     // Check if source exists, create if not
     let source = await prisma.scraperSource.findUnique({

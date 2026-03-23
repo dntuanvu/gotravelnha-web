@@ -1,31 +1,9 @@
-import { defineEventHandler, readBody } from 'h3'
-import { createError } from 'h3'
+import { defineEventHandler, readBody, createError } from 'h3'
 import prisma from '~/server/utils/prisma'
-
-// Type definitions
-interface TripDeal {
-  id: string
-  title: string | null
-  description: string | null
-  discountedPrice: string | null
-  originalPrice: string | null
-  currency: string | null
-  image: string | null
-  affiliateLink: string | null
-  sourceUrl: string | null
-  category: string | null
-  location: string | null
-  discount: string | null
-  discountPercent: string | null
-  metadata: any
-  job?: {
-    platform: string | null
-  }
-}
 
 interface SearchRequest {
   query: string
-  platforms?: string[] // ['trip', 'klook', 'attractionsg']
+  platforms?: string[] // ['trip', 'klook']
   category?: string // 'hotel', 'flight', 'activity', 'attraction'
   location?: string
   limit?: number
@@ -54,14 +32,20 @@ interface SearchResult {
   relevanceScore?: number
 }
 
+function normalizeProvider(platform: string): string {
+  const value = String(platform || '').toLowerCase().trim()
+  if (value === 'trip.com') return 'trip'
+  return value
+}
+
 /**
  * POST /api/search/global
- * Unified search across Trip.com, Klook, and SG Attractions
+ * Unified search across Trip.com and Klook
  */
 export default defineEventHandler(async (event) => {
   try {
     const body = (await readBody(event)) as SearchRequest
-    const { query, platforms = ['trip', 'klook', 'attractionsg'], category, location, limit = 20, page = 1 } = body
+    const { query, platforms = ['trip', 'klook'], category, location, limit = 20, page = 1 } = body
 
     if (!query || query.trim().length === 0) {
       return {
@@ -78,277 +62,209 @@ export default defineEventHandler(async (event) => {
     }
 
     const searchQuery = query.trim()
-    const offset = (page - 1) * limit
-    const results: SearchResult[] = []
+    const safePage = Math.max(Number(page) || 1, 1)
+    const safeLimit = Math.min(Math.max(Number(limit) || 20, 1), 100)
+    const offset = (safePage - 1) * safeLimit
+
+    const normalizedPlatforms = (platforms || ['trip', 'klook']).map(normalizeProvider)
+
+    const where: any = {
+      isActive: true,
+      provider: { in: [...new Set([...normalizedPlatforms, 'trip.com'])] },
+      availabilityStatus: { in: ['available', 'stale'] },
+      entity: {
+        status: 'active'
+      }
+    }
+
+    if (searchQuery) {
+      where.OR = [
+        {
+          entity: {
+            title: { contains: searchQuery, mode: 'insensitive' }
+          }
+        },
+        {
+          entity: {
+            location: { contains: searchQuery, mode: 'insensitive' }
+          }
+        },
+        {
+          entity: {
+            category: { contains: searchQuery, mode: 'insensitive' }
+          }
+        },
+        {
+          priceText: { contains: searchQuery, mode: 'insensitive' }
+        }
+      ]
+    }
+
+    if (category) {
+      where.entity = {
+        ...(where.entity || {}),
+        category: { contains: category, mode: 'insensitive' }
+      }
+    }
+
+    if (location) {
+      where.entity = {
+        ...(where.entity || {}),
+        location: { contains: location, mode: 'insensitive' }
+      }
+    }
+
+    const [offers, total, groupedProviders] = await Promise.all([
+      prisma.affiliateOffer.findMany({
+        where,
+        include: {
+          entity: true
+        },
+        skip: offset,
+        take: safeLimit,
+        orderBy: [{ score: 'desc' }, { updatedAt: 'desc' }]
+      }),
+      prisma.affiliateOffer.count({ where }),
+      prisma.affiliateOffer.groupBy({
+        by: ['provider'],
+        where,
+        _count: { provider: true }
+      })
+    ])
+
     const platformCounts: Record<string, number> = {}
-
-    // Search Trip.com deals
-    if (platforms.includes('trip')) {
-      try {
-        const tripWhere: any = {
-          isValid: true
-        }
-
-        if (searchQuery) {
-          tripWhere.OR = [
-            { title: { contains: searchQuery, mode: 'insensitive' } },
-            { description: { contains: searchQuery, mode: 'insensitive' } },
-            { location: { contains: searchQuery, mode: 'insensitive' } }
-          ]
-        }
-
-        if (category) {
-          tripWhere.category = category
-        }
-
-        if (location) {
-          tripWhere.location = { contains: location, mode: 'insensitive' }
-        }
-
-        const tripDeals = await prisma.tripScrapedData.findMany({
-          where: tripWhere,
-          take: limit,
-          skip: offset,
-          orderBy: { createdAt: 'desc' },
-          include: {
-            job: {
-              select: {
-                platform: true
-              }
-            }
-          }
-        })
-
-        const tripResults: SearchResult[] = tripDeals.map((deal) => {
-          const price = parseFloat(deal.discountedPrice || deal.originalPrice || '0')
-          const originalPrice = deal.originalPrice ? parseFloat(deal.originalPrice) : null
-          
-          return {
-            id: `trip-${deal.id}`,
-            platform: 'trip',
-            platformLabel: 'Trip.com',
-            title: deal.title || 'Untitled Deal',
-            description: deal.description || '',
-            price: deal.discountedPrice || deal.originalPrice || '',
-            priceAmount: price || undefined,
-            originalPrice: deal.originalPrice || '',
-            originalPriceAmount: originalPrice || undefined,
-            currency: deal.currency || 'SGD',
-            image: deal.image || '',
-            link: deal.affiliateLink || deal.sourceUrl || '',
-            category: deal.category || 'general',
-            location: deal.location || '',
-            discount: deal.discount || deal.discountPercent || '',
-            metadata: deal.metadata as Record<string, any> || {},
-            relevanceScore: calculateRelevance(searchQuery, deal.title || '', deal.description || '')
-          }
-        })
-
-        results.push(...tripResults)
-        platformCounts.trip = await prisma.tripScrapedData.count({ where: tripWhere })
-      } catch (error: any) {
-        console.error('Error searching Trip.com:', error)
-        platformCounts.trip = 0
-      }
+    for (const grouped of groupedProviders) {
+      platformCounts[grouped.provider] = grouped._count.provider
     }
 
-    // Search Klook promo codes
-    if (platforms.includes('klook')) {
-      try {
-        const klookPromoWhere: any = {
-          isActive: true,
-          validUntil: { gte: new Date() }
-        }
+    const results: SearchResult[] = offers.map((offer) => {
+      const metadata = (offer.metadata || {}) as Record<string, any>
+      const description =
+        typeof metadata.description === 'string'
+          ? metadata.description
+          : typeof offer.priceText === 'string'
+            ? offer.priceText
+            : ''
+      const ratingRaw = Number(metadata.rating)
+      const discountRaw = metadata.discount ?? metadata.discountPercent ?? null
 
-        if (searchQuery) {
-          klookPromoWhere.OR = [
-            { promoCodeDescription: { contains: searchQuery, mode: 'insensitive' } },
-            { affiliateDescription: { contains: searchQuery, mode: 'insensitive' } },
-            { promoCode: { contains: searchQuery, mode: 'insensitive' } }
-          ]
-        }
-
-        const klookPromos = await prisma.klookPromoCode.findMany({
-          where: klookPromoWhere,
-          take: Math.ceil(limit / 3), // Allocate portion to promos
-          orderBy: { validUntil: 'desc' }
-        })
-
-        const klookPromoResults: SearchResult[] = klookPromos.map((promo) => ({
-          id: `klook-promo-${promo.id}`,
-          platform: 'klook',
-          platformLabel: 'Klook',
-          title: promo.promoCodeDescription || promo.affiliateDescription || `Klook Promo: ${promo.promoCode}`,
-          description: promo.affiliateDescription || promo.promoCodeDescription || '',
-          price: 0,
-          currency: 'SGD',
-          link: `https://www.klook.com?promo=${promo.promoCode}`,
-          category: 'activity',
-          promoCode: promo.promoCode,
-          discount: promo.discountDescription || '',
-          metadata: {
-            redeemFrom: promo.redeemFrom,
-            redeemBefore: promo.redeemBefore,
-            validUntil: promo.validUntil
-          },
-          relevanceScore: calculateRelevance(searchQuery, promo.promoCodeDescription || '', promo.affiliateDescription || '')
-        }))
-
-        results.push(...klookPromoResults)
-
-        // Search Klook hotel deals
-        const klookHotelWhere: any = {
-          isActive: true
-        }
-
-        if (searchQuery) {
-          klookHotelWhere.OR = [
-            { hotelName: { contains: searchQuery, mode: 'insensitive' } },
-            { title: { contains: searchQuery, mode: 'insensitive' } },
-            { description: { contains: searchQuery, mode: 'insensitive' } },
-            { location: { contains: searchQuery, mode: 'insensitive' } }
-          ]
-        }
-
-        if (location) {
-          klookHotelWhere.location = { contains: location, mode: 'insensitive' }
-        }
-
-        const klookHotels = await prisma.klookHotelDeal.findMany({
-          where: klookHotelWhere,
-          take: Math.ceil(limit / 3),
-          orderBy: { updatedAt: 'desc' }
-        })
-
-        const klookHotelResults: SearchResult[] = klookHotels.map((hotel) => ({
-          id: `klook-hotel-${hotel.id}`,
-          platform: 'klook',
-          platformLabel: 'Klook',
-          title: hotel.hotelName || hotel.title || 'Klook Hotel',
-          description: hotel.description || '',
-          price: hotel.price?.toString() || hotel.discountedPrice?.toString() || '',
-          priceAmount: Number(hotel.price || hotel.discountedPrice) || undefined,
-          originalPrice: hotel.originalPrice?.toString() || '',
-          originalPriceAmount: Number(hotel.originalPrice) || undefined,
-          currency: hotel.currency || 'SGD',
-          link: hotel.affiliateLink || '',
-          category: 'hotel',
-          location: hotel.location || '',
-          discount: hotel.discountPercent || '',
-          metadata: {},
-          relevanceScore: calculateRelevance(searchQuery, hotel.hotelName || hotel.title || '', hotel.description || '')
-        }))
-
-        results.push(...klookHotelResults)
-        platformCounts.klook = (await prisma.klookPromoCode.count({ where: klookPromoWhere })) + 
-                                (await prisma.klookHotelDeal.count({ where: klookHotelWhere }))
-      } catch (error: any) {
-        console.error('Error searching Klook:', error)
-        platformCounts.klook = 0
+      return {
+        id: offer.id,
+        platform: normalizeProvider(offer.provider),
+        platformLabel: getPlatformLabel(offer.provider),
+        title: offer.entity?.title || 'Untitled Offer',
+        description,
+        price: offer.priceText || offer.priceAmount || undefined,
+        priceAmount: offer.priceAmount || undefined,
+        originalPrice: metadata.originalPrice ?? undefined,
+        originalPriceAmount: Number(metadata.originalPrice) || undefined,
+        currency: offer.currency || 'SGD',
+        image: (metadata.image as string) || undefined,
+        link: offer.baseUrl || offer.affiliateUrl || undefined,
+        category: offer.entity?.category || undefined,
+        location: offer.entity?.location || undefined,
+        rating: Number.isFinite(ratingRaw) ? ratingRaw : undefined,
+        discount: discountRaw || undefined,
+        promoCode: (metadata.promoCode as string) || undefined,
+        metadata,
+        relevanceScore: calculateRelevance(searchQuery, offer.entity?.title || '', description)
       }
-    }
-
-    // Search SG Attractions
-    if (platforms.includes('attractionsg')) {
-      try {
-        const attractionsWhere: any = {
-          isActive: true,
-          isPublished: true
-        }
-
-        if (searchQuery) {
-          attractionsWhere.OR = [
-            { title: { contains: searchQuery, mode: 'insensitive' } },
-            { description: { contains: searchQuery, mode: 'insensitive' } },
-            { category: { contains: searchQuery, mode: 'insensitive' } },
-            { location: { contains: searchQuery, mode: 'insensitive' } }
-          ]
-        }
-
-        if (category && category === 'attraction') {
-          // Keep all attractions
-        } else if (category) {
-          // Skip if category doesn't match attractions
-          attractionsWhere.category = { contains: category, mode: 'insensitive' }
-        }
-
-        if (location) {
-          attractionsWhere.location = { contains: location, mode: 'insensitive' }
-        }
-
-        const attractionsEvents = await prisma.attractionsgEvent.findMany({
-          where: attractionsWhere,
-          take: Math.ceil(limit / 3),
-          orderBy: { lastSeenAt: 'desc' }
-        })
-
-        const attractionsResults: SearchResult[] = attractionsEvents.map((event) => {
-          const raw = event.raw as Record<string, any> | null
-          // Use slug for the link, fallback to ID if slug doesn't exist
-          const slug = event.slug || raw?.slug || event.id
-          // Make sure we're using the slug in the link, not the UUID
-          const detailLink = slug ? `/attractionsg/${slug}` : `/attractionsg/${event.id}`
-          
-          return {
-            id: `attractionsg-${event.id}`,
-            platform: 'attractionsg',
-            platformLabel: 'SG Attractions',
-            title: event.title,
-            description: event.description || raw?.description || '',
-            price: event.priceText || raw?.price || '',
-            priceAmount: event.priceAmount ?? raw?.priceAmount ?? undefined,
-            originalPrice: event.originalPriceText || raw?.originalPrice || '',
-            originalPriceAmount: event.originalPriceAmount ?? raw?.originalPriceAmount ?? undefined,
-            currency: 'SGD',
-            image: event.image || raw?.image || '',
-            link: event.link || raw?.link || detailLink,
-            slug: slug, // Store slug separately for easier access
-            category: 'attraction',
-            location: event.location || raw?.location || '',
-            rating: event.rating ?? (typeof raw?.rating === 'number' ? raw.rating : undefined),
-            metadata: {
-              duration: event.duration || raw?.duration,
-              ageRestriction: event.ageRestriction || raw?.ageRestriction,
-              isSelfBookable: event.isSelfBookable,
-              slug: slug // Include in metadata too
-            },
-            relevanceScore: calculateRelevance(searchQuery, event.title, event.description || '')
-          }
-        })
-
-        results.push(...attractionsResults)
-        platformCounts.attractionsg = await prisma.attractionsgEvent.count({ where: attractionsWhere })
-      } catch (error: any) {
-        console.error('Error searching SG Attractions:', error)
-        platformCounts.attractionsg = 0
-      }
-    }
-
-    // Sort by relevance score (higher is better), then by price
-    results.sort((a, b) => {
-      const relevanceDiff = (b.relevanceScore || 0) - (a.relevanceScore || 0)
-      if (Math.abs(relevanceDiff) > 0.1) {
-        return relevanceDiff
-      }
-      // Secondary sort by price (cheaper first)
-      const priceA = a.priceAmount || Infinity
-      const priceB = b.priceAmount || Infinity
-      return priceA - priceB
     })
 
-    // Apply pagination to final results
-    const paginatedResults = results.slice(offset, offset + limit)
-    const total = results.length
+    if (total === 0) {
+      const fallbackSources = await prisma.scraperSource.findMany({
+        where: {
+          isActive: true,
+          platform: {
+            in: ['trip', 'trip.com', 'klook']
+          }
+        },
+        orderBy: { createdAt: 'desc' },
+        take: 50
+      })
+
+      const sourceResults: SearchResult[] = fallbackSources
+        .map((source) => {
+          const provider = normalizeProvider(source.platform)
+          const sourceType = String(source.sourceType || '').toLowerCase()
+          const sourceUrl = source.url
+          const lowerText = `${sourceUrl} ${sourceType} ${provider}`.toLowerCase()
+
+          if (normalizedPlatforms.length > 0 && !normalizedPlatforms.includes(provider)) return null
+          if (category && !lowerText.includes(category.toLowerCase())) return null
+          if (location && !lowerText.includes(location.toLowerCase())) return null
+
+          const matchesQuery =
+            lowerText.includes(searchQuery.toLowerCase()) ||
+            calculateRelevance(searchQuery, sourceUrl, sourceType) > 0
+          if (!matchesQuery) return null
+
+          const urlLower = sourceUrl.toLowerCase()
+          const inferredCategory = urlLower.includes('/flights')
+            ? 'flight'
+            : (urlLower.includes('/hotels') || urlLower.includes('/hotel'))
+              ? 'hotel'
+              : sourceType.includes('flight')
+                ? 'flight'
+                : sourceType.includes('hotel')
+                  ? 'hotel'
+                  : provider === 'trip'
+                    ? 'hotel'
+                    : 'activity'
+
+          const titlePrefix = provider === 'trip' ? 'Trip.com' : 'Klook'
+
+          return {
+            id: `source-${provider}-${Buffer.from(sourceUrl).toString('base64').slice(0, 12)}`,
+            platform: provider,
+            platformLabel: getPlatformLabel(provider),
+            title: `${titlePrefix} ${inferredCategory.charAt(0).toUpperCase() + inferredCategory.slice(1)} Deals`,
+            description: `Imported from source URL (${source.sourceType})`,
+            link: sourceUrl,
+            category: inferredCategory,
+            metadata: {
+              sourceType: source.sourceType,
+              fallback: true
+            },
+            relevanceScore: calculateRelevance(searchQuery, sourceUrl, sourceType)
+          } as SearchResult
+        })
+        .filter((item): item is SearchResult => Boolean(item))
+        .slice(offset, offset + safeLimit)
+
+      const fallbackPlatformCounts: Record<string, number> = {}
+      for (const item of sourceResults) {
+        fallbackPlatformCounts[item.platform] = (fallbackPlatformCounts[item.platform] || 0) + 1
+      }
+
+      return {
+        success: true,
+        data: sourceResults,
+        total: sourceResults.length,
+        platforms: fallbackPlatformCounts,
+        pagination: {
+          page: safePage,
+          limit: safeLimit,
+          totalPages: sourceResults.length > 0 ? 1 : 0
+        },
+        query: searchQuery,
+        filters: {
+          platforms,
+          category,
+          location
+        }
+      }
+    }
 
     return {
       success: true,
-      data: paginatedResults,
+      data: results,
       total,
       platforms: platformCounts,
       pagination: {
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit)
+        page: safePage,
+        limit: safeLimit,
+        totalPages: Math.ceil(total / safeLimit)
       },
       query: searchQuery,
       filters: {
@@ -365,6 +281,13 @@ export default defineEventHandler(async (event) => {
     })
   }
 })
+
+function getPlatformLabel(platform: string): string {
+  const normalized = platform.toLowerCase()
+  if (normalized === 'trip' || normalized === 'trip.com') return 'Trip.com'
+  if (normalized === 'klook') return 'Klook'
+  return platform
+}
 
 /**
  * Calculate relevance score based on query matching

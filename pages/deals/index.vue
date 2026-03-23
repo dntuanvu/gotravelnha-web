@@ -8,7 +8,7 @@
             🔥 Best Travel Deals
           </h1>
           <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-            Exclusive promotions from Trip.com, Klook, and Singapore Attractions
+            Curated affiliate deals from Trip.com and Klook
           </p>
         </div>
       </div>
@@ -26,7 +26,6 @@
             <option value="all">All Platforms</option>
             <option value="trip">Trip.com</option>
             <option value="klook">Klook</option>
-            <option value="attractionsg">Singapore Attractions</option>
           </select>
 
           <label class="text-sm font-medium text-gray-700 ml-4">Category:</label>
@@ -229,16 +228,13 @@
 
             <!-- Action Buttons -->
             <div class="space-y-2 mt-4">
-              <a
+              <button
                 v-if="deal.affiliateLink && !deal.promoCode"
-                :href="deal.affiliateLink"
-                @click="trackClick('deal_view', deal)"
-                target="_blank"
-                rel="noopener noreferrer"
+                @click="openAffiliateDeal(deal)"
                 class="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold transform hover:scale-105"
               >
                 View Deal →
-              </a>
+              </button>
               <button
                 v-else
                 @click="navigateToDealDetails(deal)"
@@ -432,7 +428,6 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useTripDeeplink } from '~/composables/useTripDeeplink'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 import SocialShare from '~/components/SocialShare.vue'
 
@@ -445,7 +440,6 @@ definePageMeta({
 
 const route = useRoute()
 
-const { generateDeeplink } = useTripDeeplink()
 const { trackClick } = useActivityTracker()
 
 // State
@@ -485,83 +479,22 @@ onMounted(async () => {
 async function loadDeals() {
   loading.value = true
   try {
-    // Load Trip.com deals
-    const tripResponse: any = await $fetch('/api/admin/scraper/data', {
-      params: {
-        limit: 100 // Get more deals for filtering
-      }
-    })
-    
-    let allDeals: any[] = []
-    
-    if (tripResponse && tripResponse.success) {
-      // Transform Trip.com deals to include platform field from job
-      allDeals = tripResponse.data.map((deal: any) => ({
-        ...deal,
-        platform: deal.job?.platform || 'trip'
-      })) || []
-    }
-    
-    // Load Klook promo codes
-    try {
-      const klookResponse: any = await $fetch('/api/klook/promo-codes')
-      
-      if (klookResponse && klookResponse.success && klookResponse.data) {
-        // Transform Klook promo codes to match deal structure
-        const klookDeals = klookResponse.data.map((code: any) => ({
-          id: `klook-promo-${code.id}`, // Match the format used in detail page
-          platform: 'klook',
-          title: code.promoCodeDescription || code.affiliateDescription,
-          description: code.affiliateDescription,
-          discountPercent: extractDiscountPercent(code.discountDescription),
-          discount: code.discountDescription,
-          promoCode: code.promoCode,
-          validUntil: code.validUntil,
-          validDate: formatValidDate(code.validUntil),
-          termsAndConditions: code.termsAndConditions,
-          applicableTo: code.applicableToResidentsOf,
-          notApplicableTo: code.notApplicableToResidentsOf,
-          // For promo codes, we'll use a generic Klook link with promo code
-          affiliateLink: `https://www.klook.com?promo=${code.promoCode}`,
-          category: 'promotion',
-          createdAt: code.importedAt
-        }))
-        
-        allDeals = [...allDeals, ...klookDeals]
-      }
-    } catch (klookError) {
-      console.warn('Failed to load Klook promo codes:', klookError)
+    const sessionId = typeof window !== 'undefined'
+      ? (localStorage.getItem('activity_session_id') || `deals-${Date.now().toString(36)}`)
+      : 'anonymous'
+
+    if (typeof window !== 'undefined' && !localStorage.getItem('activity_session_id')) {
+      localStorage.setItem('activity_session_id', sessionId)
     }
 
-    // Load Klook hotel deals
-    try {
-      const klookHotelsResponse: any = await $fetch('/api/klook/hotel-deals')
-      
-      if (klookHotelsResponse && klookHotelsResponse.success && klookHotelsResponse.data) {
-        // Transform Klook hotel deals to match deal structure
-        const klookHotelDeals = klookHotelsResponse.data.map((hotel: any) => ({
-          id: `klook-hotel-${hotel.id}`, // Match the format used in detail page
-          platform: 'klook',
-          title: hotel.hotelName,
-          category: 'hotel',
-          starRating: hotel.starRating,
-          price: Number(hotel.originalPrice) || 0,
-          discountedPrice: Number(hotel.discountedPrice) || 0,
-          currency: hotel.currency,
-          discountPercent: hotel.savingsPercent ? Math.round(parseFloat(hotel.savingsPercent.toString())) : '0',
-          savings: hotel.savings.toString(),
-          affiliateLink: hotel.affiliateLink,
-          badge: hotel.dealCategory,
-          createdAt: hotel.importedAt
-        }))
-        
-        allDeals = [...allDeals, ...klookHotelDeals]
+    const affiliateResponse: any = await $fetch('/api/affiliate/deals', {
+      params: {
+        limit: 200,
+        sessionId
       }
-    } catch (klookHotelsError) {
-      console.warn('Failed to load Klook hotel deals:', klookHotelsError)
-    }
-    
-    deals.value = allDeals
+    })
+
+    deals.value = affiliateResponse?.success ? (affiliateResponse.data || []) : []
   } catch (error) {
     console.error('Failed to load deals:', error)
   } finally {
@@ -570,17 +503,6 @@ async function loadDeals() {
 }
 
 // Helper function to extract discount percentage from text like "8% off"
-function extractDiscountPercent(discountText: string): string {
-  const match = discountText.match(/(\d+)%/)
-  return match ? match[1] : '0'
-}
-
-// Helper function to format valid date
-function formatValidDate(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
-}
-
 // Refresh deals
 async function refreshDeals() {
   await loadDeals()
@@ -734,7 +656,6 @@ function getPlatformName(platform: string): string {
   const names: Record<string, string> = {
     trip: 'Trip.com',
     klook: 'Klook',
-    attractionsg: 'SG Attractions'
   }
   return names[platform] || 'Platform'
 }
@@ -743,7 +664,6 @@ function getPlatformIcon(platform: string): string {
   const icons: Record<string, string> = {
     trip: '🏨 Trip.com',
     klook: 'Klook',
-    attractionsg: '🎢 SG Attractions'
   }
   return icons[platform] || '🌐 Platform'
 }
@@ -765,31 +685,33 @@ function clearFilters() {
   currentPage.value = 1
 }
 
-function generateAffiliateLink(tripUrl?: string): string {
-  if (!tripUrl) {
-    // Generate generic affiliate link
-    return generateDeeplink({
-      type: 'generic',
-      params: {}
-    })
-  }
-
-  // Parse existing URL and add affiliate params
+async function openAffiliateDeal(deal: any) {
+  if (!deal?.affiliateLink) return
   try {
-    const url = new URL(tripUrl)
-    const config = useRuntimeConfig()
-    
-    // Add affiliate parameters if not present
-    if (!url.searchParams.has('Allianceid') && config.public.TRIP_ALLIANCE_ID) {
-      url.searchParams.set('Allianceid', config.public.TRIP_ALLIANCE_ID)
+    const sessionId = typeof window !== 'undefined'
+      ? (localStorage.getItem('activity_session_id') || `deals-${Date.now().toString(36)}`)
+      : 'anonymous'
+    if (typeof window !== 'undefined' && !localStorage.getItem('activity_session_id')) {
+      localStorage.setItem('activity_session_id', sessionId)
     }
-    if (!url.searchParams.has('SID') && config.public.TRIP_SID) {
-      url.searchParams.set('SID', config.public.TRIP_SID)
-    }
-    
-    return url.toString()
-  } catch {
-    return tripUrl
+
+    const response: any = await $fetch('/api/affiliate/click', {
+      method: 'POST',
+      body: {
+        provider: deal.platform,
+        baseUrl: deal.affiliateLink,
+        placementKey: 'deals_grid',
+        pagePath: '/deals',
+        sessionId,
+        metadata: { dealId: deal.id }
+      }
+    })
+
+    trackClick('deal_view', deal)
+    window.open(response?.outboundUrl || deal.affiliateLink, '_blank', 'noopener,noreferrer')
+  } catch (error) {
+    console.error('Failed to track affiliate click:', error)
+    window.open(deal.affiliateLink, '_blank', 'noopener,noreferrer')
   }
 }
 

@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-12-15T06:55:24.812Z",
+  "note": "Backup before removing deprecated tables",
+  "tableStatus": {
+    "attractionsg_events": 100,
+    "attractionsg_bookings": 3,
+    "klook_activities": 0,
+    "trip_scraped_data": 0
+  }
+}

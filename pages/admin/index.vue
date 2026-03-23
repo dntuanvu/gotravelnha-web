@@ -1,12 +1,6 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-12">
-    <div class="max-w-7xl mx-auto px-4 pt-8">
-      <!-- Page Header -->
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">🔐 Admin Portal</h1>
-        <p class="text-gray-600">Manage events, analytics, and scraping</p>
-      </div>
-      
+  <div class="min-h-full bg-gray-50 pb-12">
+    <div class="px-4 sm:px-6 lg:px-8 py-5">
       <!-- Quick Stats -->
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -14,7 +8,9 @@
             <span class="text-gray-600 text-sm font-medium">Total Events</span>
             <span class="text-blue-600 text-2xl">🎫</span>
           </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.totalEvents.toLocaleString() }}</p>
+          <p class="text-3xl font-bold text-gray-900">
+            {{ loadingStats ? '...' : stats.totalEvents.toLocaleString() }}
+          </p>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -22,7 +18,9 @@
             <span class="text-gray-600 text-sm font-medium">Active Users</span>
             <span class="text-green-600 text-2xl">👥</span>
           </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.activeUsers.toLocaleString() }}</p>
+          <p class="text-3xl font-bold text-gray-900">
+            {{ loadingStats ? '...' : stats.activeUsers.toLocaleString() }}
+          </p>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -30,15 +28,17 @@
             <span class="text-gray-600 text-sm font-medium">Revenue</span>
             <span class="text-yellow-600 text-2xl">💰</span>
           </div>
-          <p class="text-3xl font-bold text-gray-900">SGD {{ stats.revenue.toLocaleString() }}</p>
+          <p class="text-3xl font-bold text-gray-900">
+            {{ loadingStats ? '...' : `SGD ${stats.revenue.toLocaleString()}` }}
+          </p>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-600 text-sm font-medium">Last Scrape</span>
+            <span class="text-gray-600 text-sm font-medium">Last Sync</span>
             <span class="text-purple-600 text-2xl">🤖</span>
           </div>
-          <p class="text-sm font-medium text-gray-900">{{ stats.lastScrape }}</p>
+          <p class="text-sm font-medium text-gray-900">{{ loadingStats ? '...' : stats.lastScrape }}</p>
         </div>
       </div>
 
@@ -71,17 +71,6 @@
                   <div class="text-sm text-gray-600">Campaign performance</div>
                 </div>
               </NuxtLink>
-
-              <button
-                @click="viewEvents"
-                class="flex items-center gap-3 p-4 bg-green-50 border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-left group"
-              >
-                <span class="text-2xl">🎫</span>
-                <div>
-                  <div class="font-semibold text-gray-900 group-hover:text-green-600">View Events</div>
-                  <div class="text-sm text-gray-600">AttractionsSG data</div>
-                </div>
-              </button>
 
               <NuxtLink
                 to="/admin/scrapers"
@@ -180,14 +169,6 @@
                   Active
                 </span>
               </div>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-700 flex items-center gap-2">
-                  🎫 AttractionsSG
-                </span>
-                <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
-                  Static Data
-                </span>
-              </div>
             </div>
           </div>
 
@@ -199,7 +180,6 @@
               <a href="/admin/analytics" class="block text-blue-600 hover:text-blue-800 font-medium">Analytics Dashboard</a>
               <a href="/trip" class="block text-blue-600 hover:text-blue-800 font-medium">Trip.com Page</a>
               <a href="/klook" class="block text-blue-600 hover:text-blue-800 font-medium">Klook Page</a>
-              <a href="/attractionsg" class="block text-blue-600 hover:text-blue-800 font-medium">AttractionsSG Page</a>
             </div>
           </div>
         </div>
@@ -210,29 +190,69 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'admin',
   middleware: 'admin'
 })
 
-const router = useRouter()
-
-// Mock stats - replace with real data later
 const stats = ref({
-  totalEvents: 320,
-  activeUsers: 128,
-  revenue: 45230,
-  lastScrape: '2 hours ago'
+  totalEvents: 0,
+  activeUsers: 0,
+  revenue: 0,
+  lastScrape: 'Never'
 })
+const loadingStats = ref(false)
+
+const formatRelativeTime = (value?: string | Date | null) => {
+  if (!value) return 'Never'
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return 'Never'
+
+  const diffMs = Date.now() - date.getTime()
+  const minutes = Math.floor(diffMs / 60000)
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} minute${minutes === 1 ? '' : 's'} ago`
+  const hours = Math.floor(minutes / 60)
+  if (hours < 24) return `${hours} hour${hours === 1 ? '' : 's'} ago`
+  const days = Math.floor(hours / 24)
+  return `${days} day${days === 1 ? '' : 's'} ago`
+}
+
+const loadStats = async () => {
+  try {
+    loadingStats.value = true
+    const res = await $fetch<{
+      success?: boolean
+      data?: {
+        totalEvents?: number
+        activeUsers?: number
+        revenue?: number
+        lastScrapeAt?: string | null
+      }
+    }>('/api/admin/dashboard/stats')
+
+    if (res?.success && res?.data) {
+      stats.value = {
+        totalEvents: Number(res.data.totalEvents || 0),
+        activeUsers: Number(res.data.activeUsers || 0),
+        revenue: Number(res.data.revenue || 0),
+        lastScrape: formatRelativeTime(res.data.lastScrapeAt)
+      }
+    }
+  } catch (error) {
+    console.error('Failed to load admin dashboard stats:', error)
+  } finally {
+    loadingStats.value = false
+  }
+}
 
 const recentActivity = ref([
   {
     id: 1,
-    icon: '🎫',
-    title: 'Events Updated',
-    description: 'AttractionsSG data refreshed',
+    icon: '🏨',
+    title: 'Trip Data Updated',
+    description: 'Trip.com data refreshed',
     time: '2 hours ago'
   },
   {
@@ -251,12 +271,7 @@ const recentActivity = ref([
   }
 ])
 
-const viewEvents = () => {
-  router.push('/admin/attractionsg')
-}
-
-
 onMounted(() => {
-  console.log('🔐 Admin dashboard loaded')
+  loadStats()
 })
 </script>

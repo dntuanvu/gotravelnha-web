@@ -1,58 +1,18 @@
 <template>
-  <div class="min-h-screen bg-gray-50 pb-12">
-    <div class="max-w-7xl mx-auto px-4 pt-8">
-      <NuxtLink to="/admin" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-2 mb-4">
-        <span>← Back to Admin Dashboard</span>
-      </NuxtLink>
-      <!-- Page Header -->
-      <div class="mb-6 sm:mb-8">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div class="flex-1">
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 flex items-center gap-2">
-              <span>👥</span>
-              <span>User Management</span>
-            </h1>
-            <p class="text-sm sm:text-base text-gray-600">Manage all users and create admin accounts</p>
-          </div>
-          <button
-            @click="showCreateModal = true"
-            class="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all transform hover:scale-105 flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            <span>➕</span>
-            <span>Create User</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Stats -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-600 text-sm font-medium">Total Users</span>
-            <span class="text-blue-600 text-2xl">👥</span>
-          </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.totalUsers }}</p>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-600 text-sm font-medium">Admins</span>
-            <span class="text-purple-600 text-2xl">🔐</span>
-          </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.admins }}</p>
-        </div>
-
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <div class="flex items-center justify-between mb-2">
-            <span class="text-gray-600 text-sm font-medium">Regular Users</span>
-            <span class="text-green-600 text-2xl">👤</span>
-          </div>
-          <p class="text-3xl font-bold text-gray-900">{{ stats.regularUsers }}</p>
-        </div>
+  <div class="min-h-full bg-gray-50 pb-12">
+    <div class="px-4 sm:px-6 lg:px-8 py-5">
+      <div class="mb-4 flex justify-end">
+        <button
+          @click="showCreateModal = true"
+          class="w-full sm:w-auto px-4 sm:px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 font-semibold transition-all flex items-center justify-center gap-2 text-sm"
+        >
+          <span>➕</span>
+          <span>Create User</span>
+        </button>
       </div>
 
       <!-- Search and Filters -->
-      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+      <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-4">
         <div class="flex flex-col md:flex-row gap-4">
           <div class="flex-1">
             <input
@@ -97,40 +57,40 @@
           <table class="w-full">
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="user in paginatedUsers" :key="user.id" class="hover:bg-gray-50 transition-colors">
                 <!-- User Info -->
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="flex-shrink-0 h-10 w-10">
-                      <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
+                    <div class="flex-shrink-0 h-9 w-9">
+                      <div class="h-9 w-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold text-sm">
                         {{ user.firstName ? user.firstName.charAt(0) : user.username.charAt(0) }}
                       </div>
                     </div>
-                    <div class="ml-4">
+                    <div class="ml-3">
                       <div class="text-sm font-medium text-gray-900">
                         {{ user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.username }}
                       </div>
-                      <div class="text-sm text-gray-500">@{{ user.username }}</div>
+                      <div class="text-xs text-gray-500">@{{ user.username }}</div>
                     </div>
                   </div>
                 </td>
 
                 <!-- Email -->
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                   <div class="text-sm text-gray-900">{{ user.email }}</div>
                 </td>
 
                 <!-- Role -->
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                   <span
                     :class="[
                       'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full',
@@ -142,7 +102,7 @@
                 </td>
 
                 <!-- Status -->
-                <td class="px-6 py-4 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                   <span
                     :class="[
                       'px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full',
@@ -154,12 +114,12 @@
                 </td>
 
                 <!-- Joined Date -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
                   {{ formatDate(user.createdAt) }}
                 </td>
 
                 <!-- Actions -->
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td class="px-4 py-3 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center gap-2">
                     <button
                       @click="editUser(user)"
@@ -193,7 +153,7 @@
 
               <!-- Empty State -->
               <tr v-if="paginatedUsers.length === 0">
-                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                <td colspan="6" class="px-4 py-10 text-center text-gray-500">
                   <span class="text-4xl block mb-2">🔍</span>
                   <p class="text-lg font-medium">No users found</p>
                   <p class="text-sm">Try adjusting your search or filters</p>
@@ -205,60 +165,50 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 0" class="mt-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <!-- Page Info -->
-          <div class="text-sm text-gray-600">
+      <div v-if="filteredUsers.length > 0" class="mt-3 bg-white rounded-xl shadow-sm border border-gray-200 px-4 py-3">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm text-gray-600">
+          <div>
             Showing {{ paginationInfo.start }} to {{ paginationInfo.end }} of {{ paginationInfo.total }} users
           </div>
-
-          <!-- Pagination Controls -->
-          <div class="flex items-center gap-2">
-            <!-- Previous Button -->
-            <button
-              @click="previousPage"
-              :disabled="currentPage === 1"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-
-            <!-- Page Numbers -->
-            <div class="flex gap-1">
-              <template v-for="page in visiblePages" :key="page">
-                <button
-                  v-if="page !== -1"
-                  @click="goToPage(page)"
-                  :class="[
-                    'px-3 py-2 rounded-lg font-medium transition-colors',
-                    currentPage === page
-                      ? 'bg-blue-600 text-white'
-                      : 'border border-gray-300 text-gray-700 hover:bg-gray-50'
-                  ]"
-                >
-                  {{ page }}
-                </button>
-                <span
-                  v-else
-                  class="px-3 py-2 text-gray-400"
-                >
-                  ...
-                </span>
-              </template>
+          <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-2">
+              <label for="rows-per-page" class="text-gray-500">Rows per page</label>
+              <select
+                id="rows-per-page"
+                v-model.number="itemsPerPage"
+                class="px-2 py-1.5 text-sm border border-gray-300 rounded-md bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option :value="10">10</option>
+                <option :value="25">25</option>
+                <option :value="50">50</option>
+                <option :value="100">100</option>
+              </select>
             </div>
-
-            <!-- Next Button -->
-            <button
-              @click="nextPage"
-              :disabled="currentPage === totalPages"
-              class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
+            <div class="text-gray-700">
+              {{ paginationInfo.start }}-{{ paginationInfo.end }} of {{ paginationInfo.total }}
+            </div>
+            <div class="flex items-center gap-1">
+              <button
+                @click="previousPage"
+                :disabled="currentPage === 1"
+                class="h-8 w-8 inline-flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Previous page"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <button
+                @click="nextPage"
+                :disabled="currentPage === totalPages"
+                class="h-8 w-8 inline-flex items-center justify-center border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                aria-label="Next page"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -447,7 +397,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 import { useAuthState } from '~/composables/useAuthState'
 
 definePageMeta({
-  layout: 'default',
+  layout: 'admin',
   middleware: 'admin'
 })
 
@@ -481,14 +431,6 @@ const userForm = ref({
   lastName: '',
   role: 'USER',
   isActive: true
-})
-
-const stats = computed(() => {
-  return {
-    totalUsers: users.value.length,
-    admins: users.value.filter(u => u.role === 'ADMIN').length,
-    regularUsers: users.value.filter(u => u.role === 'USER').length
-  }
 })
 
 const filteredUsers = computed(() => {
@@ -529,53 +471,15 @@ const totalPages = computed(() => {
   return Math.ceil(filteredUsers.value.length / itemsPerPage.value)
 })
 
-const visiblePages = computed(() => {
-  const current = currentPage.value
-  const total = totalPages.value
-  const maxVisible = 7
-
-  if (total <= maxVisible) {
-    return Array.from({ length: total }, (_, i) => i + 1)
-  }
-
-  const pages: number[] = []
-  
-  if (current <= 4) {
-    // Show first pages
-    for (let i = 1; i <= 5; i++) {
-      pages.push(i)
-    }
-    pages.push(-1, total) // Ellipsis and last page
-  } else if (current >= total - 3) {
-    // Show last pages
-    pages.push(1, -1) // First page and ellipsis
-    for (let i = total - 4; i <= total; i++) {
-      pages.push(i)
-    }
-  } else {
-    // Show pages around current
-    pages.push(1, -1) // First page and ellipsis
-    for (let i = current - 1; i <= current + 1; i++) {
-      pages.push(i)
-    }
-    pages.push(-1, total) // Ellipsis and last page
-  }
-  
-  return pages
-})
-
 const paginationInfo = computed(() => {
+  const total = filteredUsers.value.length
+  if (total === 0) {
+    return { start: 0, end: 0, total: 0 }
+  }
   const start = (currentPage.value - 1) * itemsPerPage.value + 1
   const end = Math.min(currentPage.value * itemsPerPage.value, filteredUsers.value.length)
-  const total = filteredUsers.value.length
   return { start, end, total }
 })
-
-const goToPage = (page: number) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
-  }
-}
 
 const previousPage = () => {
   if (currentPage.value > 1) {
@@ -747,8 +651,8 @@ const formatDate = (dateString: string) => {
   })
 }
 
-// Watch for filter changes to reset pagination
-watch([searchQuery, filterRole, filterStatus], () => {
+// Watch for filter/paging changes to reset pagination
+watch([searchQuery, filterRole, filterStatus, itemsPerPage], () => {
   currentPage.value = 1
 })
 
