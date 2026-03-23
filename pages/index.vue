@@ -16,30 +16,36 @@
 
         <!-- Category Filters (Platform Navigation) -->
         <div class="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-          <button
-            type="button"
-            @click="openFunnelDeal('activity')"
+          <a
+            :href="getFunnelHref('activity')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'activity')"
             class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
           >
             <KlookIcon :size="20" />
             <span>Klook</span>
-          </button>
-          <button
-            type="button"
-            @click="openFunnelDeal('flight')"
+          </a>
+          <a
+            :href="getFunnelHref('flight')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'flight')"
             class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
           >
             <span class="text-lg">✈️</span>
             <span>Flights</span>
-          </button>
-          <button
-            type="button"
-            @click="openFunnelDeal('hotel')"
+          </a>
+          <a
+            :href="getFunnelHref('hotel')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'hotel')"
             class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
           >
             <span class="text-lg">🏨</span>
             <span>Hotels</span>
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -89,7 +95,7 @@
 
           <!-- Enhanced Quick Access Pills with better animations -->
           <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-8 sm:mb-10 animate-slide-up-delayed px-2">
-            <button type="button" @click="openFunnelDeal('activity')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+            <a :href="getFunnelHref('activity')" :target="isIOSSafari() ? null : '_blank'" rel="noopener noreferrer" @click="handleFunnelClick($event, 'activity')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
               <div class="flex items-center gap-2.5 sm:gap-3">
                 <KlookIcon :size="22" class="sm:w-6 sm:h-6 group-hover:scale-110 transition-transform duration-300" />
                 <span class="text-slate-900 font-bold text-base sm:text-lg">Klook</span>
@@ -97,8 +103,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                 </svg>
               </div>
-            </button>
-            <button type="button" @click="openFunnelDeal('flight')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+            </a>
+            <a :href="getFunnelHref('flight')" :target="isIOSSafari() ? null : '_blank'" rel="noopener noreferrer" @click="handleFunnelClick($event, 'flight')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
               <div class="flex items-center gap-2.5 sm:gap-3">
                 <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">✈️</span>
                 <span class="text-slate-900 font-bold text-base sm:text-lg">Flights</span>
@@ -106,8 +112,8 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                 </svg>
               </div>
-            </button>
-            <button type="button" @click="openFunnelDeal('hotel')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+            </a>
+            <a :href="getFunnelHref('hotel')" :target="isIOSSafari() ? null : '_blank'" rel="noopener noreferrer" @click="handleFunnelClick($event, 'hotel')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
               <div class="flex items-center gap-2.5 sm:gap-3">
                 <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🏨</span>
                 <span class="text-slate-900 font-bold text-base sm:text-lg">Hotels</span>
@@ -115,7 +121,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                 </svg>
               </div>
-            </button>
+            </a>
           </div>
 
           <!-- Enhanced Trust Badges with icons -->
@@ -157,35 +163,41 @@
           <p class="text-slate-600 mt-2">Start from your intent and jump straight to tracked partner offers.</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <button
-            type="button"
-            @click="openFunnelDeal('flight')"
-            class="group rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+            <a
+              :href="getFunnelHref('flight')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'flight')"
+              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="text-3xl mb-3">✈️</div>
             <h3 class="text-lg font-bold text-slate-900">Flights</h3>
             <p class="text-sm text-slate-600 mt-1">Compare airline booking entry points quickly.</p>
-          </button>
-          <button
-            type="button"
-            @click="openFunnelDeal('hotel')"
-            class="group rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+            </a>
+            <a
+              :href="getFunnelHref('hotel')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'hotel')"
+              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="text-3xl mb-3">🏨</div>
             <h3 class="text-lg font-bold text-slate-900">Hotels</h3>
             <p class="text-sm text-slate-600 mt-1">Open the best hotel booking routes in one click.</p>
-          </button>
-          <button
-            type="button"
-            @click="openFunnelDeal('activity')"
-            class="group rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+            </a>
+            <a
+              :href="getFunnelHref('activity')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'activity')"
+              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="mb-3 flex justify-center">
               <KlookIcon :size="30" />
             </div>
             <h3 class="text-lg font-bold text-slate-900">Activities</h3>
             <p class="text-sm text-slate-600 mt-1">Discover tours and attraction offers faster.</p>
-          </button>
+            </a>
         </div>
       </div>
     </section>
@@ -312,30 +324,36 @@
             Get exclusive deals and save on your next trip
           </p>
           <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 px-2">
-            <button
-              type="button"
-              @click="openFunnelDeal('activity')"
+            <a
+              :href="getFunnelHref('activity')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'activity')"
               class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
             >
               <KlookIcon :size="20" />
               Find Activities
-            </button>
-            <button
-              type="button"
-              @click="openFunnelDeal('flight')"
+            </a>
+            <a
+              :href="getFunnelHref('flight')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'flight')"
               class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
             >
               <span class="text-xl">✈️</span>
               Book Flights
-            </button>
-            <button
-              type="button"
-              @click="openFunnelDeal('hotel')"
+            </a>
+            <a
+              :href="getFunnelHref('hotel')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'hotel')"
               class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
             >
               <span class="text-xl">🏨</span>
               Book Hotels
-            </button>
+            </a>
           </div>
         </div>
       </div>
@@ -458,6 +476,80 @@ const openFunnelDeal = async (category) => {
     } else if (typeof window !== 'undefined') {
       window.open(baseUrl, '_blank', 'noopener,noreferrer')
     }
+  }
+}
+
+const getFunnelConfig = (category) => {
+  const shortcut = findShortcutByCategory(category)
+  const fallbackUrl = category === 'flight' ? flightLink : category === 'hotel' ? hotelLink : '/klook'
+  return {
+    shortcut,
+    baseUrl: shortcut?.link || fallbackUrl,
+    provider: shortcut?.provider || (category === 'activity' ? 'klook' : 'trip')
+  }
+}
+
+const getFunnelHref = (category) => {
+  return getFunnelConfig(category).baseUrl
+}
+
+const isIOSSafari = () => {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent || ''
+  const isIOS = /iPad|iPhone|iPod/.test(ua)
+  const isSafari = /Safari/.test(ua) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(ua)
+  return isIOS && isSafari
+}
+
+const handleFunnelClick = (event, category) => {
+  if (!isIOSSafari()) {
+    event.preventDefault()
+    openFunnelDeal(category)
+    return
+  }
+
+  const { shortcut, baseUrl, provider } = getFunnelConfig(category)
+
+  trackClick('deals_hub_link', {
+    campaign: `homepage-funnel-${category}`,
+    route: baseUrl,
+    intent: category
+  })
+
+  try {
+    const sessionId = typeof window !== 'undefined'
+      ? (localStorage.getItem('activity_session_id') || `home-${Date.now().toString(36)}`)
+      : 'anonymous'
+
+    if (typeof window !== 'undefined' && !localStorage.getItem('activity_session_id')) {
+      localStorage.setItem('activity_session_id', sessionId)
+    }
+
+    const payload = {
+      provider,
+      baseUrl,
+      placementKey: `homepage_funnel_${category}`,
+      pagePath: '/',
+      sessionId,
+      metadata: {
+        category,
+        title: shortcut?.title || `${category} funnel card`
+      }
+    }
+
+    if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+      const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' })
+      navigator.sendBeacon('/api/affiliate/click', blob)
+    } else {
+      fetch('/api/affiliate/click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive: true
+      }).catch(() => {})
+    }
+  } catch (error) {
+    console.error('Background affiliate tracking failed on iOS Safari:', error)
   }
 }
 
