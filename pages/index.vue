@@ -170,7 +170,9 @@
               @click="handleFunnelClick($event, 'flight')"
               class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
-            <div class="text-3xl mb-3">✈️</div>
+            <div class="h-9 mb-3 flex items-center">
+              <span class="text-3xl leading-none">✈️</span>
+            </div>
             <h3 class="text-lg font-bold text-slate-900">Flights</h3>
             <p class="text-sm text-slate-600 mt-1">Compare airline booking entry points quickly.</p>
             </a>
@@ -181,7 +183,9 @@
               @click="handleFunnelClick($event, 'hotel')"
               class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
-            <div class="text-3xl mb-3">🏨</div>
+            <div class="h-9 mb-3 flex items-center">
+              <span class="text-3xl leading-none">🏨</span>
+            </div>
             <h3 class="text-lg font-bold text-slate-900">Hotels</h3>
             <p class="text-sm text-slate-600 mt-1">Open the best hotel booking routes in one click.</p>
             </a>
@@ -192,8 +196,8 @@
               @click="handleFunnelClick($event, 'activity')"
               class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
-            <div class="mb-3 flex justify-center">
-              <KlookIcon :size="30" />
+            <div class="h-9 mb-3 flex items-center">
+              <KlookIcon :size="28" />
             </div>
             <h3 class="text-lg font-bold text-slate-900">Activities</h3>
             <p class="text-sm text-slate-600 mt-1">Discover tours and attraction offers faster.</p>
