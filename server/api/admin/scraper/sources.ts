@@ -39,16 +39,72 @@ export default defineEventHandler(async (event) => {
   // Handle POST request
   if (event.node.req.method === 'POST') {
     const body = await readBody(event)
-    const { url, platform, sourceType, isActive } = body
-
-    if (!url || !platform || !sourceType) {
-      throw createError({
-        statusCode: 400,
-        message: 'Missing required fields: url, platform, sourceType'
-      })
-    }
+    const { url, existingUrl, platform, sourceType, isActive } = body
 
     try {
+      // Toggle active/inactive only
+      if (url && !platform && !sourceType && typeof isActive === 'boolean') {
+        const toggled = await prisma.scraperSource.update({
+          where: { url },
+          data: { isActive }
+        })
+        return { success: true, data: toggled }
+      }
+
+      if (!url || !platform || !sourceType) {
+        throw createError({
+          statusCode: 400,
+          message: 'Missing required fields: url, platform, sourceType'
+        })
+      }
+
+      // Edit flow where URL might be changed (PK = url)
+      if (existingUrl && existingUrl !== url) {
+        const result = await prisma.$transaction(async (tx) => {
+          const previous = await tx.scraperSource.findUnique({
+            where: { url: existingUrl }
+          })
+
+          if (!previous) {
+            throw createError({
+              statusCode: 404,
+              message: 'Existing source not found'
+            })
+          }
+
+          const updated = await tx.scraperSource.upsert({
+            where: { url },
+            create: {
+              url,
+              platform,
+              sourceType,
+              isActive: isActive !== false,
+              scrapeCount: previous.scrapeCount || 0,
+              lastScrapedAt: previous.lastScrapedAt || null,
+              metadata: previous.metadata || null
+            },
+            update: {
+              platform,
+              sourceType,
+              isActive: isActive !== false
+            }
+          })
+
+          // Keep history and avoid FK disruption by disabling old URL
+          await tx.scraperSource.update({
+            where: { url: existingUrl },
+            data: { isActive: false }
+          })
+
+          return updated
+        })
+
+        return {
+          success: true,
+          data: result
+        }
+      }
+
       const source = await prisma.scraperSource.upsert({
         where: { url },
         create: {
@@ -74,6 +130,35 @@ export default defineEventHandler(async (event) => {
       throw createError({
         statusCode: 500,
         message: error.message || 'Failed to create/update scraper source'
+      })
+    }
+  }
+
+  // Handle DELETE request
+  if (event.node.req.method === 'DELETE') {
+    const body = await readBody(event)
+    const { url } = body || {}
+
+    if (!url) {
+      throw createError({
+        statusCode: 400,
+        message: 'Missing required field: url'
+      })
+    }
+
+    try {
+      await prisma.scraperSource.delete({
+        where: { url }
+      })
+
+      return {
+        success: true
+      }
+    } catch (error: any) {
+      console.error('Error deleting scraper source:', error)
+      throw createError({
+        statusCode: 500,
+        message: error.message || 'Failed to delete scraper source'
       })
     }
   }

@@ -414,9 +414,6 @@ const openFunnelDeal = async (category) => {
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isSafari = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(navigator.userAgent)
   const shouldUseSameTab = isIOS && isSafari
-  const openedWindow = (!shouldUseSameTab && typeof window !== 'undefined')
-    ? window.open('', '_blank', 'noopener,noreferrer')
-    : null
 
   trackClick('deals_hub_link', {
     campaign: `homepage-funnel-${category}`,
@@ -451,19 +448,15 @@ const openFunnelDeal = async (category) => {
     const outboundUrl = response?.outboundUrl || baseUrl
     if (shouldUseSameTab && typeof window !== 'undefined') {
       window.location.href = outboundUrl
-    } else if (openedWindow) {
-      openedWindow.location.href = outboundUrl
     } else if (typeof window !== 'undefined') {
-      window.location.href = outboundUrl
+      window.open(outboundUrl, '_blank', 'noopener,noreferrer')
     }
   } catch (error) {
     console.error('Homepage funnel click tracking failed:', error)
     if (shouldUseSameTab && typeof window !== 'undefined') {
       window.location.href = baseUrl
-    } else if (openedWindow) {
-      openedWindow.location.href = baseUrl
     } else if (typeof window !== 'undefined') {
-      window.location.href = baseUrl
+      window.open(baseUrl, '_blank', 'noopener,noreferrer')
     }
   }
 }

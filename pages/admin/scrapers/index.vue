@@ -3,7 +3,7 @@
     <div class="px-4 sm:px-6 lg:px-8 py-5">
       <div class="mb-6 flex justify-end">
         <button
-          @click="showAddSourceModal = true"
+          @click="resetSourceForm(); showAddSourceModal = true"
           class="px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-semibold transition-colors"
         >
           Add Affiliate Source URL
@@ -39,15 +39,29 @@
                     {{ source.platform }} • {{ source.sourceType }} • {{ source.lastScrapedAt ? formatDate(source.lastScrapedAt) : 'Never verified' }}
                   </p>
                 </div>
-                <button
-                  @click="toggleSource(source.url, !source.isActive)"
-                  :class="[
-                    'px-3 py-1.5 text-xs rounded transition-colors whitespace-nowrap',
-                    source.isActive ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : 'bg-green-100 text-green-700 hover:bg-green-200'
-                  ]"
-                >
-                  {{ source.isActive ? 'Disable' : 'Enable' }}
-                </button>
+                <div class="flex items-center gap-2">
+                  <button
+                    @click="startEditSource(source)"
+                    class="px-3 py-1.5 text-xs rounded bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors whitespace-nowrap"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    @click="deleteSource(source.url)"
+                    class="px-3 py-1.5 text-xs rounded bg-red-100 text-red-700 hover:bg-red-200 transition-colors whitespace-nowrap"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    @click="toggleSource(source.url, !source.isActive)"
+                    :class="[
+                      'px-3 py-1.5 text-xs rounded transition-colors whitespace-nowrap',
+                      source.isActive ? 'bg-gray-200 text-gray-700 hover:bg-gray-300' : 'bg-green-100 text-green-700 hover:bg-green-200'
+                    ]"
+                  >
+                    {{ source.isActive ? 'Disable' : 'Enable' }}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -119,11 +133,11 @@
       <div
         v-if="showAddSourceModal"
         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-        @click="showAddSourceModal = false"
+        @click="closeSourceModal"
       >
         <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full" @click.stop>
           <div class="border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-            <h3 class="text-lg font-semibold text-gray-900">Add Affiliate Source URL</h3>
+            <h3 class="text-lg font-semibold text-gray-900">{{ isEditingSource ? 'Edit Affiliate Source URL' : 'Add Affiliate Source URL' }}</h3>
             <button @click="showAddSourceModal = false" class="text-gray-400 hover:text-gray-600">x</button>
           </div>
           <div class="p-6">
@@ -169,11 +183,11 @@
                   :disabled="loading"
                   class="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  {{ loading ? 'Adding...' : 'Add Source' }}
+                  {{ loading ? (isEditingSource ? 'Saving...' : 'Adding...') : (isEditingSource ? 'Save Changes' : 'Add Source') }}
                 </button>
                 <button
                   type="button"
-                  @click="showAddSourceModal = false"
+                  @click="closeSourceModal"
                   class="px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300"
                 >
                   Cancel
@@ -197,11 +211,13 @@ definePageMeta({
 
 const loading = ref(false)
 const showAddSourceModal = ref(false)
+const isEditingSource = ref(false)
 const sources = ref<any[]>([])
 const slots = ref<any[]>([])
 const slotSaving = ref(false)
 
 const newSource = ref({
+  existingUrl: '',
   platform: '',
   url: '',
   sourceType: 'affiliate_link'
@@ -244,7 +260,7 @@ const handleAddSource = async () => {
     }) as any
 
     if (response?.success) {
-      newSource.value = { platform: '', url: '', sourceType: 'affiliate_link' }
+      resetSourceForm()
       showAddSourceModal.value = false
       await loadSources()
     }
@@ -259,6 +275,45 @@ const toggleSource = async (url: string, isActive: boolean) => {
     body: { url, isActive }
   })
   await loadSources()
+}
+
+const deleteSource = async (url: string) => {
+  const confirmed = typeof window !== 'undefined'
+    ? window.confirm('Delete this affiliate source URL? This action cannot be undone.')
+    : false
+  if (!confirmed) return
+
+  await $fetch('/api/admin/scraper/sources', {
+    method: 'DELETE',
+    body: { url }
+  })
+  await loadSources()
+}
+
+const resetSourceForm = () => {
+  isEditingSource.value = false
+  newSource.value = {
+    existingUrl: '',
+    platform: '',
+    url: '',
+    sourceType: 'affiliate_link'
+  }
+}
+
+const closeSourceModal = () => {
+  showAddSourceModal.value = false
+  resetSourceForm()
+}
+
+const startEditSource = (source: any) => {
+  isEditingSource.value = true
+  newSource.value = {
+    existingUrl: source.url,
+    platform: source.platform || '',
+    url: source.url || '',
+    sourceType: source.sourceType || 'affiliate_link'
+  }
+  showAddSourceModal.value = true
 }
 
 const resetSlotForm = () => {
