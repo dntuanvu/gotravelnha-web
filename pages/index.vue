@@ -46,6 +46,16 @@
             <span class="text-lg">🏨</span>
             <span>Hotels</span>
           </a>
+          <a
+            :href="getFunnelHref('attraction')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'attraction')"
+            class="flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm whitespace-nowrap transition-all touch-manipulation min-h-[48px] bg-white text-slate-700 shadow-md hover:shadow-lg hover:bg-slate-50 active:scale-95"
+          >
+            <span class="text-lg">🎡</span>
+            <span>Attractions</span>
+          </a>
         </div>
       </div>
     </section>
@@ -122,6 +132,15 @@
                 </svg>
               </div>
             </a>
+            <a :href="getFunnelHref('attraction')" :target="isIOSSafari() ? null : '_blank'" rel="noopener noreferrer" @click="handleFunnelClick($event, 'attraction')" class="group bg-white/95 backdrop-blur-md px-5 sm:px-6 py-3.5 sm:py-4 rounded-2xl hover:bg-white active:scale-95 transition-all cursor-pointer border border-white/50 shadow-xl hover:shadow-2xl touch-manipulation w-full sm:w-auto min-h-[56px] flex items-center justify-center">
+              <div class="flex items-center gap-2.5 sm:gap-3">
+                <span class="text-xl sm:text-2xl group-hover:scale-110 transition-transform duration-300">🎡</span>
+                <span class="text-slate-900 font-bold text-base sm:text-lg">Attractions</span>
+                <svg class="w-5 h-5 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-600 transition-all duration-300 hidden sm:inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                </svg>
+              </div>
+            </a>
           </div>
 
           <!-- Enhanced Trust Badges with icons -->
@@ -162,7 +181,7 @@
           <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Plan Fast With Deals Hub</h2>
           <p class="text-slate-600 mt-2">Start from your intent and jump straight to tracked partner offers.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             <a
               :href="getFunnelHref('flight')"
               :target="isIOSSafari() ? null : '_blank'"
@@ -201,6 +220,19 @@
             </div>
             <h3 class="text-lg font-bold text-slate-900">Activities</h3>
             <p class="text-sm text-slate-600 mt-1">Discover tours and attraction offers faster.</p>
+            </a>
+            <a
+              :href="getFunnelHref('attraction')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'attraction')"
+              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+          >
+            <div class="h-9 mb-3 flex items-center">
+              <span class="text-3xl leading-none">🎡</span>
+            </div>
+            <h3 class="text-lg font-bold text-slate-900">Attractions</h3>
+            <p class="text-sm text-slate-600 mt-1">Open Trip.com attraction pages in one click.</p>
             </a>
         </div>
       </div>
@@ -358,6 +390,16 @@
               <span class="text-xl">🏨</span>
               Book Hotels
             </a>
+            <a
+              :href="getFunnelHref('attraction')"
+              :target="isIOSSafari() ? null : '_blank'"
+              rel="noopener noreferrer"
+              @click="handleFunnelClick($event, 'attraction')"
+              class="px-6 sm:px-8 py-4 bg-white text-emerald-700 rounded-xl hover:bg-emerald-50 active:bg-emerald-100 font-bold transition-all transform hover:scale-105 active:scale-95 hover:-translate-y-1 shadow-xl flex items-center justify-center gap-2 touch-manipulation min-h-[56px] w-full sm:w-auto"
+            >
+              <span class="text-xl">🎡</span>
+              Explore Attractions
+            </a>
           </div>
         </div>
       </div>
@@ -412,6 +454,19 @@ const hotelLink = generateDeeplink({
     campaign: 'homepage-hero-hotel'
   }
 })
+const attractionLink = 'https://www.trip.com/things-to-do/?Allianceid=3883416&SID=22874365&trip_sub1=&trip_sub3=D16803670'
+
+const getCategoryFallbackUrl = (category) => {
+  if (category === 'flight') return flightLink
+  if (category === 'hotel') return hotelLink
+  if (category === 'attraction') return attractionLink
+  return '/klook'
+}
+
+const getCategoryProvider = (category) => {
+  if (category === 'activity') return 'klook'
+  return 'trip'
+}
 
 const findShortcutByCategory = (category) => {
   return funnelShortcuts.value.find((item) => item.category === category)
@@ -430,9 +485,9 @@ const loadFunnelShortcuts = async () => {
 
 const openFunnelDeal = async (category) => {
   const shortcut = findShortcutByCategory(category)
-  const fallbackUrl = category === 'flight' ? flightLink : category === 'hotel' ? hotelLink : '/klook'
+  const fallbackUrl = getCategoryFallbackUrl(category)
   const baseUrl = shortcut?.link || fallbackUrl
-  const provider = shortcut?.provider || (category === 'activity' ? 'klook' : 'trip')
+  const provider = shortcut?.provider || getCategoryProvider(category)
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isSafari = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(navigator.userAgent)
   const shouldUseSameTab = isIOS && isSafari
@@ -485,11 +540,11 @@ const openFunnelDeal = async (category) => {
 
 const getFunnelConfig = (category) => {
   const shortcut = findShortcutByCategory(category)
-  const fallbackUrl = category === 'flight' ? flightLink : category === 'hotel' ? hotelLink : '/klook'
+  const fallbackUrl = getCategoryFallbackUrl(category)
   return {
     shortcut,
     baseUrl: shortcut?.link || fallbackUrl,
-    provider: shortcut?.provider || (category === 'activity' ? 'klook' : 'trip')
+    provider: shortcut?.provider || getCategoryProvider(category)
   }
 }
 

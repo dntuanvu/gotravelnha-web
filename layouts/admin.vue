@@ -77,6 +77,46 @@
             </NuxtLink>
           </li>
 
+          <li>
+            <NuxtLink
+              to="/admin/affiliate-performance"
+              @click="closeSidebar"
+              :class="[
+                'flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+                sidebarCollapsed && isDesktop ? 'justify-center' : '',
+                $route.path === '/admin/affiliate-performance'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ]"
+              :title="sidebarCollapsed && isDesktop ? 'Affiliate Performance' : ''"
+            >
+              <svg class="w-5 h-5 flex-shrink-0" :class="sidebarCollapsed && isDesktop ? '' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a5 5 0 00-10 0v2m-2 0h14a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1z"></path>
+              </svg>
+              <span v-show="!sidebarCollapsed || !isDesktop">Affiliate Performance</span>
+            </NuxtLink>
+          </li>
+
+          <li>
+            <NuxtLink
+              to="/admin/deal-template-generator"
+              @click="closeSidebar"
+              :class="[
+                'flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors',
+                sidebarCollapsed && isDesktop ? 'justify-center' : '',
+                $route.path === '/admin/deal-template-generator'
+                  ? 'bg-blue-600 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              ]"
+              :title="sidebarCollapsed && isDesktop ? 'Deal Template Generator' : ''"
+            >
+              <svg class="w-5 h-5 flex-shrink-0" :class="sidebarCollapsed && isDesktop ? '' : 'mr-3'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6l4 2m5-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span v-show="!sidebarCollapsed || !isDesktop">Deal Template Generator</span>
+            </NuxtLink>
+          </li>
+
           <!-- Scrapers with Sub-menu -->
           <li class="relative">
             <div>
@@ -411,6 +451,8 @@ const pageTitle = computed(() => {
     '/admin': 'Dashboard',
     '/admin/users': 'User Management',
     '/admin/analytics': 'Analytics',
+    '/admin/affiliate-performance': 'Affiliate Performance',
+    '/admin/deal-template-generator': 'Deal Template Generator',
     '/admin/scrapers': 'Scraper Management',
     '/admin/scrapers/klook': 'Klook Events',
     '/admin/scrapers/trip': 'Trip Events',

@@ -67,14 +67,14 @@
           <div class="klook-search-widget-container">
             <ins 
               class="klk-aff-widget" 
-              data-wid="89020"
+              :data-wid="searchWidgetId"
               data-height="340px"
-              data-adid="1041352"
+              :data-adid="klookAdId"
               data-lang=""
               data-prod="search_vertical"
               data-currency=""
             >
-              <a href="//www.klook.com/?aid=">Klook.com</a>
+              <a :href="`//www.klook.com/?aid=${klookAdId}`">Klook.com</a>
             </ins>
           </div>
         </div>
@@ -222,6 +222,9 @@ const categories = KLOOK_CATEGORIES
 
 const activeWidgets = ref<any[]>([])
 const selectedTab = ref<'things_to_do' | 'hotels'>('things_to_do')
+const runtimeConfig = useRuntimeConfig()
+const klookAdId = computed(() => String(runtimeConfig.public?.KLOOK_AD_ID || '1041352'))
+const searchWidgetId = computed(() => String(runtimeConfig.public?.KLOOK_SEARCH_WIDGET_ID || '89020'))
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)

@@ -96,6 +96,8 @@ export default defineNuxtConfig({
         TRIP_ALLIANCE_ID: process.env.TRIP_ALLIANCE_ID || '3883416',
         TRIP_SID: process.env.TRIP_SID || '22874365',
         TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com',
+        KLOOK_AD_ID: process.env.KLOOK_AD_ID || '1041352',
+        KLOOK_SEARCH_WIDGET_ID: process.env.KLOOK_SEARCH_WIDGET_ID || '89020',
         STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
              siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com',
              enableBestDealsNav: process.env.NUXT_PUBLIC_ENABLE_BEST_DEALS_NAV ?? 'true',

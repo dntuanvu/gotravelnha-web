@@ -517,6 +517,11 @@ onBeforeUnmount(() => {
             <a href="#" class="hover:text-slate-300 active:text-slate-200 transition-colors touch-manipulation py-1">Terms of Service</a>
           </div>
         </div>
+        <div class="mt-4 rounded-xl border border-amber-200/30 bg-amber-50/10 p-3 sm:p-4">
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Affiliate disclosure: Some outbound links to Trip.com and Klook are affiliate links. If you book through them, GoVietHub may earn a commission at no extra cost to you.
+          </p>
+        </div>
       </div>
     </footer>
   </div>
