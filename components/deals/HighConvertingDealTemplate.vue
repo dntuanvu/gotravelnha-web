@@ -110,6 +110,7 @@
 <script setup lang="ts">
 import type { DealComparisonOption, DealPageTemplate } from '~/types/deal-template'
 import { useActivityTracker } from '~/composables/useActivityTracker'
+import { appendKlookAffiliateId, appendTripAffiliateIds } from '~/utils/affiliate-links'
 import { unwrapKlookAffiliateRedirectUrl } from '~/utils/unwrapKlookAffiliateRedirect'
 
 const props = defineProps<{
@@ -117,9 +118,29 @@ const props = defineProps<{
 }>()
 
 const { shouldUseSameTabAfterAsyncClick, isIOSSafari } = useIosOutboundNavigation()
+const runtimeConfig = useRuntimeConfig()
 
-/** Same-tab `href` as homepage funnel on iOS Safari — `www.klook.com` / Trip for universal links. */
-const partnerNavHref = (option: DealComparisonOption) => unwrapKlookAffiliateRedirectUrl(option.baseUrl)
+/**
+ * Native `<a href>` (iOS Safari) must include affiliate IDs in the URL itself — same
+ * public IDs as `nuxt.config` / server `buildAffiliateLink`. Desktop/mobile use API
+ * `outboundUrl` which already applies these plus extra UTM/subid.
+ */
+const partnerNavHref = (option: DealComparisonOption) => {
+  let url = unwrapKlookAffiliateRedirectUrl(option.baseUrl)
+  const pub = runtimeConfig.public
+  const p = option.provider
+  if (p === 'klook') {
+    url = appendKlookAffiliateId(url, String(pub.KLOOK_AD_ID || ''))
+  }
+  if (p === 'trip' || p === 'trip.com') {
+    url = appendTripAffiliateIds(
+      url,
+      String(pub.TRIP_ALLIANCE_ID || ''),
+      String(pub.TRIP_SID || '')
+    )
+  }
+  return url
+}
 
 const partnerOpenHint = computed(() =>
   shouldUseSameTabAfterAsyncClick()
