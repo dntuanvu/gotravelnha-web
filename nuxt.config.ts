@@ -20,20 +20,23 @@ export default defineNuxtConfig({
             { name: 'language', content: 'English' },
             { name: 'revisit-after', content: '7 days' },
     
-            // Social: Open Graph (Facebook, WhatsApp)
+            // Social: Open Graph (Facebook, WhatsApp, Zalo, Telegram, LinkedIn — use raster, not SVG)
             { property: 'og:title', content: 'GoTravelNha - Discover, Compare & Book Travel Deals' },
             { property: 'og:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and more.' },
-            { property: 'og:image', content: '/favicon.svg' },
+            { property: 'og:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png', key: 'og-image' },
+            { property: 'og:image:secure_url', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png', key: 'og-image-secure' },
+            { property: 'og:image:type', content: 'image/png', key: 'og-image-type' },
+            { property: 'og:image:alt', content: 'GoTravelNha travel deals', key: 'og-image-alt' },
             { property: 'og:url', content: 'https://gotravelnha.com/' },
             { property: 'og:type', content: 'website' },
             { property: 'og:site_name', content: 'GoTravelNha' },
             { property: 'og:locale', content: 'en_US' },
     
-            // Social: Twitter
+            // Social: Twitter / X
             { name: 'twitter:card', content: 'summary_large_image' },
             { name: 'twitter:title', content: 'GoTravelNha - Discover, Compare & Book Travel Deals' },
             { name: 'twitter:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions.' },
-            { name: 'twitter:image', content: '/favicon.svg' },
+            { name: 'twitter:image', content: 'https://storage.googleapis.com/travella_assets_images/app_icon.png', key: 'twitter-image' },
             { name: 'twitter:site', content: '@GoTravelNha' }
           ],
           link: [

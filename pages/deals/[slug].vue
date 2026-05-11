@@ -50,6 +50,7 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import HighConvertingDealTemplate from '~/components/deals/HighConvertingDealTemplate.vue'
 import type { DealPageTemplate } from '~/types/deal-template'
+import { inferOgImageMime, resolveAbsoluteOgImage } from '~/utils/socialPreview'
 
 definePageMeta({
   layout: 'default'
@@ -126,15 +127,22 @@ const openLegacyDeal = async () => {
 
 useHead(() => {
   const page = template.value
+  const legacy = legacyDeal.value as { title?: string; description?: string; image?: string } | null
   const title = page
     ? `${page.title} | GoTravelNha Deals`
-    : legacyDeal.value
-      ? `${legacyDeal.value.title} | GoTravelNha Deals`
+    : legacy
+      ? `${legacy.title} | GoTravelNha Deals`
       : 'Deal Page Not Found | GoTravelNha'
   const description = page
     ? page.description
-    : legacyDeal.value?.description || 'This deal page is unavailable. Browse all latest travel deals on GoTravelNha.'
+    : legacy?.description || 'This deal page is unavailable. Browse all latest travel deals on GoTravelNha.'
   const canonical = `${baseUrl.value}/deals/${slug.value}`
+
+  const rawImage = page?.heroImage || legacy?.image || null
+  const ogImage = resolveAbsoluteOgImage(rawImage, baseUrl.value)
+  const ogImageSecure = ogImage.startsWith('https://') ? ogImage : ogImage.replace(/^http:\/\//i, 'https://')
+  const imageMime = inferOgImageMime(ogImage)
+  const imageAlt = page?.title || legacy?.title || 'GoTravelNha travel deals'
 
   const jsonLd = page
     ? {
@@ -142,8 +150,8 @@ useHead(() => {
         '@type': 'Product',
         name: page.title,
         description: page.description,
-        image: page.heroImage,
-        brand: 'GoTravelNha',
+        image: ogImage,
+        brand: { '@type': 'Brand', name: 'GoTravelNha' },
         category: page.category,
         areaServed: page.destination,
         offers: page.comparison.map((option) => ({
@@ -159,18 +167,28 @@ useHead(() => {
   return {
     title,
     meta: [
-      { name: 'description', content: description },
-      { property: 'og:title', content: title },
-      { property: 'og:description', content: description },
-      { property: 'og:url', content: canonical },
-      { property: 'og:type', content: 'article' },
-      { property: 'og:image', content: page?.heroImage || `${baseUrl.value}/favicon.svg` }
+      { name: 'description', content: description, key: 'description' },
+      { property: 'og:title', content: title, key: 'og-title' },
+      { property: 'og:description', content: description, key: 'og-description' },
+      { property: 'og:url', content: canonical, key: 'og-url' },
+      { property: 'og:type', content: page ? 'article' : 'website', key: 'og-type' },
+      { property: 'og:site_name', content: 'GoTravelNha', key: 'og-site-name' },
+      { property: 'og:locale', content: 'en_US', key: 'og-locale' },
+      { property: 'og:image', content: ogImage, key: 'og-image' },
+      { property: 'og:image:secure_url', content: ogImageSecure, key: 'og-image-secure' },
+      { property: 'og:image:type', content: imageMime, key: 'og-image-type' },
+      { property: 'og:image:alt', content: imageAlt, key: 'og-image-alt' },
+      { name: 'twitter:card', content: 'summary_large_image', key: 'twitter-card' },
+      { name: 'twitter:title', content: title, key: 'twitter-title' },
+      { name: 'twitter:description', content: description, key: 'twitter-description' },
+      { name: 'twitter:image', content: ogImage, key: 'twitter-image' }
     ],
-    link: [{ rel: 'canonical', href: canonical }],
+    link: [{ rel: 'canonical', href: canonical, key: 'canonical' }],
     script: jsonLd
       ? [
           {
             type: 'application/ld+json',
+            key: 'deal-jsonld',
             children: JSON.stringify(jsonLd)
           }
         ]

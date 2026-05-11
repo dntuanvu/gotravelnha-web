@@ -77,10 +77,14 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
 import type { DealPageTemplate } from '~/types/deal-template'
+import { inferOgImageMime, resolveAbsoluteOgImage } from '~/utils/socialPreview'
 
 definePageMeta({
   layout: 'default'
 })
+
+const requestURL = useRequestURL()
+const siteOrigin = `${requestURL.protocol}//${requestURL.host}`
 
 const dealTemplates = ref<DealPageTemplate[]>([])
 const loadingTemplates = ref(false)
@@ -124,6 +128,44 @@ const filteredTemplates = computed(() => {
 
 onMounted(async () => {
   await loadTemplates()
+})
+
+const hubOgImage = computed(() => {
+  const first = dealTemplates.value.find((t) => t.heroImage)
+  return resolveAbsoluteOgImage(first?.heroImage || null, siteOrigin)
+})
+
+const hubImageMime = computed(() => inferOgImageMime(hubOgImage.value))
+
+useHead(() => {
+  const title = 'Compare flights, hotels & attractions | GoTravelNha Deals'
+  const description =
+    'Pick your travel intent and compare Trip.com and Klook in one place — flights, hotels, and Singapore attractions.'
+  const canonical = `${siteOrigin}/deals`
+  const img = hubOgImage.value
+  const secure = img.startsWith('https://') ? img : img.replace(/^http:\/\//i, 'https://')
+
+  return {
+    title,
+    meta: [
+      { name: 'description', content: description, key: 'description' },
+      { property: 'og:title', content: title, key: 'og-title' },
+      { property: 'og:description', content: description, key: 'og-description' },
+      { property: 'og:url', content: canonical, key: 'og-url' },
+      { property: 'og:type', content: 'website', key: 'og-type' },
+      { property: 'og:site_name', content: 'GoTravelNha', key: 'og-site-name' },
+      { property: 'og:locale', content: 'en_US', key: 'og-locale' },
+      { property: 'og:image', content: img, key: 'og-image' },
+      { property: 'og:image:secure_url', content: secure, key: 'og-image-secure' },
+      { property: 'og:image:type', content: hubImageMime.value, key: 'og-image-type' },
+      { property: 'og:image:alt', content: 'GoTravelNha travel comparison hub', key: 'og-image-alt' },
+      { name: 'twitter:card', content: 'summary_large_image', key: 'twitter-card' },
+      { name: 'twitter:title', content: title, key: 'twitter-title' },
+      { name: 'twitter:description', content: description, key: 'twitter-description' },
+      { name: 'twitter:image', content: img, key: 'twitter-image' }
+    ],
+    link: [{ rel: 'canonical', href: canonical, key: 'canonical' }]
+  }
 })
 </script>
 
