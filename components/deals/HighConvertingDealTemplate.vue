@@ -74,7 +74,7 @@
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 sm:mt-6 mb-2">
       <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         <h2 class="text-lg sm:text-xl font-bold text-slate-900 mb-1">Compare & book</h2>
-        <p class="text-sm text-slate-600 mb-4">Tap a partner to open their site in a new tab.</p>
+        <p class="text-sm text-slate-600 mb-4">{{ partnerOpenHint }}</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           <article
             v-for="option in template.comparison"
@@ -112,6 +112,14 @@ import { useActivityTracker } from '~/composables/useActivityTracker'
 const props = defineProps<{
   template: DealPageTemplate
 }>()
+
+const { shouldUseSameTabAfterAsyncClick } = useIosOutboundNavigation()
+
+const partnerOpenHint = computed(() =>
+  shouldUseSameTabAfterAsyncClick()
+    ? 'Tap a partner to open their app or site (same tab on iPhone/iPad).'
+    : 'Tap a partner to open their site in a new tab.'
+)
 
 /** Hub comparison pages (flight / hotel / attractions) omit the partner-source pill. */
 const showLastUpdatedPill = computed(() => {
@@ -154,10 +162,19 @@ const openAffiliate = async (provider: string, baseUrl: string, label: string, p
       placementKey,
       slug: props.template.slug
     })
-    window.open(response?.outboundUrl || baseUrl, '_blank', 'noopener,noreferrer')
+    const outboundUrl = response?.outboundUrl || baseUrl
+    if (shouldUseSameTabAfterAsyncClick()) {
+      window.location.assign(outboundUrl)
+    } else {
+      window.open(outboundUrl, '_blank', 'noopener,noreferrer')
+    }
   } catch (error) {
     console.error('Failed to track template affiliate click:', error)
-    window.open(baseUrl, '_blank', 'noopener,noreferrer')
+    if (shouldUseSameTabAfterAsyncClick()) {
+      window.location.assign(baseUrl)
+    } else {
+      window.open(baseUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 }
 </script>
