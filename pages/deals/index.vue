@@ -55,17 +55,44 @@
           v-for="item in filteredTemplates"
           :key="item.slug"
           :to="`/deals/${item.slug}`"
-          class="group overflow-hidden rounded-2xl border border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg transition-all"
+          :class="[
+            'group relative overflow-hidden rounded-2xl border bg-white shadow-sm transition-all duration-200',
+            hubCardRingClass(item.slug)
+          ]"
         >
-          <div class="h-40 bg-slate-100">
-            <img v-if="item.heroImage" :src="item.heroImage" :alt="item.title" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+          <div
+            class="absolute inset-x-0 top-0 z-10 h-1 bg-gradient-to-r opacity-95"
+            :class="hubAccentBarClass(item.slug)"
+            aria-hidden="true"
+          />
+          <div class="h-44 sm:h-48 bg-slate-100">
+            <img
+              v-if="item.heroImage"
+              :src="item.heroImage"
+              :alt="item.title"
+              class="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+            />
           </div>
-          <div class="p-4">
-            <div class="text-xs uppercase tracking-wide text-slate-500">{{ item.destination }} • {{ item.category }}</div>
-            <h3 class="mt-1 text-lg font-bold text-slate-900 line-clamp-2">{{ item.title }}</h3>
-            <p class="mt-1 text-sm text-slate-600 line-clamp-2">{{ item.description }}</p>
-            <div class="mt-3 inline-flex items-center text-sm font-semibold text-emerald-700">
-              Start comparison →
+          <div class="p-4 sm:p-5">
+            <div class="text-xs uppercase tracking-wide text-slate-500">{{ item.destination }} · {{ item.category }}</div>
+            <h3 class="mt-1.5 text-lg font-bold text-slate-900 line-clamp-2 leading-snug">{{ item.title }}</h3>
+            <p class="mt-2 text-sm font-medium text-emerald-800/90 leading-snug line-clamp-2">
+              {{ hubOutcomeLine(item) }}
+            </p>
+            <p class="mt-1.5 text-sm text-slate-600 line-clamp-2">{{ item.description }}</p>
+            <div class="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-slate-600">
+              <span class="inline-flex items-center gap-1 rounded-full border border-sky-200/80 bg-sky-50/90 px-2 py-0.5 font-semibold text-sky-900">
+                <TripWordmark />
+              </span>
+              <span class="text-slate-400" aria-hidden="true">+</span>
+              <span class="inline-flex items-center gap-1 rounded-full border border-orange-200/80 bg-orange-50/90 px-2 py-0.5 font-semibold text-orange-950/90">
+                <KlookIcon :size="14" class="shrink-0" />
+                Klook
+              </span>
+            </div>
+            <div class="mt-3.5 inline-flex items-center text-sm font-semibold text-emerald-700 group-hover:text-emerald-800">
+              Start comparison
+              <span class="ml-0.5 transition-transform group-hover:translate-x-0.5" aria-hidden="true">→</span>
             </div>
           </div>
         </NuxtLink>
@@ -76,6 +103,8 @@
 
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue'
+import KlookIcon from '~/components/KlookIcon.vue'
+import TripWordmark from '~/components/TripWordmark.vue'
 import type { DealPageTemplate } from '~/types/deal-template'
 import { inferOgImageMime, resolveAbsoluteOgImage } from '~/utils/socialPreview'
 
@@ -111,6 +140,38 @@ const loadTemplates = async () => {
   } finally {
     loadingTemplates.value = false
   }
+}
+
+const hubOutcomeFallback: Record<string, string> = {
+  flights: 'Side-by-side flight search — fewer tabs, clearer fares.',
+  hotels: 'Stack up room rates and perks before you pay.',
+  attractions: 'Ticket options for Singapore highlights in one glance.'
+}
+
+const hubOutcomeLine = (item: DealPageTemplate) =>
+  item.hubOutcome?.trim() ||
+  hubOutcomeFallback[item.slug] ||
+  item.summaryBullets?.[0] ||
+  'Compare trusted partners in one place.'
+
+const hubAccentBarClass = (slug: string) => {
+  if (slug === 'flights') return 'from-sky-400 via-indigo-400 to-cyan-500'
+  if (slug === 'hotels') return 'from-amber-400 via-orange-400 to-rose-400'
+  if (slug === 'attractions') return 'from-fuchsia-500 via-purple-500 to-indigo-500'
+  return 'from-emerald-400 to-teal-500'
+}
+
+const hubCardRingClass = (slug: string) => {
+  if (slug === 'flights') {
+    return 'border-sky-200/90 hover:border-sky-400 hover:shadow-md hover:shadow-sky-100/40'
+  }
+  if (slug === 'hotels') {
+    return 'border-amber-200/90 hover:border-amber-400 hover:shadow-md hover:shadow-amber-100/50'
+  }
+  if (slug === 'attractions') {
+    return 'border-fuchsia-200/90 hover:border-fuchsia-400 hover:shadow-md hover:shadow-fuchsia-100/40'
+  }
+  return 'border-slate-200 hover:border-emerald-300 hover:shadow-lg'
 }
 
 const filteredTemplates = computed(() => {

@@ -9,6 +9,8 @@ export interface DealComparisonOption {
 export interface DealPageTemplate {
   id?: string
   slug: string
+  /** Short outcome line on /deals hub cards (trust + scanability). */
+  hubOutcome?: string
   title: string
   description: string
   destination: string

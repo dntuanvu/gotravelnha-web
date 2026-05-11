@@ -3,16 +3,6 @@
     class="min-h-[100dvh] bg-gradient-to-b from-slate-50 via-white to-emerald-50 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:pb-12"
   >
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-10">
-      <NuxtLink
-        to="/deals"
-        class="inline-flex items-center gap-2 min-h-[44px] py-2 pr-3 -ml-1 pl-1 rounded-xl text-sm font-semibold text-emerald-700 hover:text-emerald-800 hover:bg-emerald-50 active:bg-emerald-100 touch-manipulation"
-      >
-        <span aria-hidden="true">←</span>
-        Back to hub
-      </NuxtLink>
-    </section>
-
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-3 sm:mt-4">
       <div class="rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-lg bg-white">
         <div class="relative h-52 sm:h-64 md:h-80">
           <img
@@ -72,35 +62,79 @@
     </section>
 
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 sm:mt-6 mb-2">
-      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
-        <h2 class="text-lg sm:text-xl font-bold text-slate-900 mb-1">Compare & book</h2>
-        <p class="text-sm text-slate-600 mb-4">{{ partnerOpenHint }}</p>
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden">
+        <div
+          class="bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700 px-4 py-3.5 sm:px-6 sm:py-4 text-center shadow-inner"
+        >
+          <p class="text-sm sm:text-base font-black text-white tracking-tight">
+            {{ bookStripTitle }}
+          </p>
+          <p class="mt-1 text-xs sm:text-sm font-medium text-emerald-50/95 leading-snug max-w-2xl mx-auto">
+            {{ bookStripSub }}
+          </p>
+        </div>
+        <div class="p-4 sm:p-6">
+          <div class="mb-4 space-y-1.5">
+            <h2 class="text-lg sm:text-xl font-bold text-slate-900">Compare & book</h2>
+            <p class="text-sm text-slate-600">{{ partnerOpenHint }}</p>
+          </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
           <article
             v-for="option in template.comparison"
             :key="option.label"
-            class="rounded-xl border border-slate-200 p-4 sm:p-5 flex flex-col"
+            :class="[
+              'rounded-2xl border p-4 sm:p-5 flex flex-col shadow-sm transition-shadow duration-200 hover:shadow-md',
+              partnerCardSurface(option.provider)
+            ]"
           >
-            <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between mb-2">
-              <h3 class="font-bold text-slate-900 text-base leading-snug pr-2 break-words">{{ option.label }}</h3>
-              <span
-                class="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 uppercase tracking-wide shrink-0 self-start"
+            <div class="flex gap-3 sm:gap-4 mb-3">
+              <div
+                :class="[
+                  'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-inner',
+                  option.provider === 'trip'
+                    ? 'bg-sky-100 ring-1 ring-sky-200/90'
+                    : 'bg-orange-50 ring-1 ring-orange-200/90'
+                ]"
+                aria-hidden="true"
               >
-                {{ option.provider }}
-              </span>
+                <span
+                  v-if="option.provider === 'trip'"
+                  class="text-[11px] font-black uppercase leading-tight tracking-tight text-sky-800"
+                >Trip</span>
+                <KlookIcon v-else :size="24" class="shrink-0" />
+              </div>
+              <div class="min-w-0 flex-1">
+                <h3 class="font-bold text-slate-900 text-base leading-snug break-words">{{ option.label }}</h3>
+              </div>
             </div>
             <p class="text-sm text-slate-700 leading-relaxed grow">{{ option.priceNote }}</p>
-            <p class="text-sm text-emerald-700 font-medium mt-2 leading-snug">{{ option.highlight }}</p>
+            <p
+              class="text-sm font-medium mt-3 leading-snug rounded-xl border px-3 py-2.5"
+              :class="
+                option.provider === 'trip'
+                  ? 'border-sky-100 bg-sky-50/80 text-sky-950'
+                  : 'border-orange-100 bg-orange-50/70 text-orange-950'
+              "
+            >
+              {{ option.highlight }}
+            </p>
             <a
               :href="partnerNavHref(option)"
               :target="isIOSSafari() ? undefined : '_blank'"
               rel="noopener noreferrer"
-              class="mt-4 w-full min-h-[48px] px-4 py-3.5 rounded-xl border-2 border-emerald-600 text-emerald-800 bg-emerald-50/40 hover:bg-emerald-50 active:bg-emerald-100 font-semibold text-[15px] sm:text-base touch-manipulation inline-flex items-center justify-center no-underline"
+              :class="[
+                'mt-4 w-full min-h-[48px] px-4 py-3.5 rounded-xl border-2 font-semibold text-[15px] sm:text-base touch-manipulation inline-flex items-center justify-center no-underline transition-colors',
+                partnerCtaButtonClass(option.provider)
+              ]"
               @click="onPartnerTap($event, option)"
             >
-              Open {{ option.provider === 'trip' ? 'Trip.com' : 'Klook' }}
+              {{ partnerCtaLabel(option) }}
             </a>
+            <p class="mt-2.5 text-center text-[11px] sm:text-xs text-slate-500 leading-snug px-0.5">
+              {{ partnerPostCtaHint(option) }}
+            </p>
           </article>
+        </div>
         </div>
       </div>
     </section>
@@ -108,6 +142,7 @@
 </template>
 
 <script setup lang="ts">
+import KlookIcon from '~/components/KlookIcon.vue'
 import type { DealComparisonOption, DealPageTemplate } from '~/types/deal-template'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 import { appendKlookAffiliateId, appendTripAffiliateIds } from '~/utils/affiliate-links'
@@ -148,6 +183,55 @@ const partnerOpenHint = computed(() =>
     : 'Tap a partner to open their site in a new tab.'
 )
 
+const bookStripTitle = 'Ready to book?'
+
+const bookStripSub = computed(() => {
+  const c = props.template.category
+  if (c === 'flight') {
+    return 'Open Trip.com or Klook to see live fares, pick your flights, and complete checkout on the partner you trust most.'
+  }
+  if (c === 'hotel') {
+    return 'Compare room types and rates, then book the stay you want — payment and confirmation happen on the partner site.'
+  }
+  return 'Compare ticket options and availability, then book your visit — checkout is on Trip.com or Klook.'
+})
+
+const partnerPostCtaHint = (option: DealComparisonOption) => {
+  if (option.provider === 'trip' || option.provider === 'trip.com') {
+    return 'Live prices, seats, and checkout are on Trip.com after you tap.'
+  }
+  return 'Live prices, tickets, and checkout are on Klook after you tap.'
+}
+
+const partnerCardSurface = (provider: string) => {
+  if (provider === 'trip' || provider === 'trip.com') {
+    return 'border-sky-200/90 bg-gradient-to-b from-sky-50/80 via-white to-white'
+  }
+  return 'border-orange-200/90 bg-gradient-to-b from-orange-50/55 via-white to-white'
+}
+
+const partnerCtaButtonClass = (provider: string) => {
+  if (provider === 'trip' || provider === 'trip.com') {
+    return 'border-sky-600 bg-sky-50 text-sky-950 hover:bg-sky-100 active:bg-sky-100'
+  }
+  return 'border-orange-500 bg-orange-50/90 text-orange-950 hover:bg-orange-100 active:bg-orange-100'
+}
+
+const partnerCtaLabel = (option: DealComparisonOption) => {
+  const cat = props.template.category
+  if (option.provider === 'trip' || option.provider === 'trip.com') {
+    if (cat === 'flight') return 'Search flights on Trip.com'
+    if (cat === 'hotel') return 'Browse hotels on Trip.com'
+    return 'Browse things to do on Trip.com'
+  }
+  if (option.provider === 'klook') {
+    if (cat === 'flight') return 'Search transport & flights on Klook'
+    if (cat === 'hotel') return 'Browse hotels on Klook'
+    return 'Browse attraction tickets on Klook'
+  }
+  return 'Open partner'
+}
+
 /** Hub comparison pages (flight / hotel / attractions) omit the partner-source pill. */
 const showLastUpdatedPill = computed(() => {
   const c = props.template.category
@@ -172,7 +256,7 @@ const getSessionId = () => {
  */
 const onPartnerTap = (ev: MouseEvent, option: DealComparisonOption) => {
   const placementKey = `${props.template.placementKey}_comparison_${option.provider}`
-  const label = `Check ${option.label} Price`
+  const ctaLabel = partnerCtaLabel(option)
 
   if (isIOSSafari()) {
     trackClick('deal_template_affiliate_click', {
@@ -190,7 +274,7 @@ const onPartnerTap = (ev: MouseEvent, option: DealComparisonOption) => {
         sessionId,
         metadata: {
           templateSlug: props.template.slug,
-          ctaLabel: label
+          ctaLabel
         }
       }
       const body = JSON.stringify(payload)
@@ -211,7 +295,7 @@ const onPartnerTap = (ev: MouseEvent, option: DealComparisonOption) => {
   }
 
   ev.preventDefault()
-  void openAffiliate(option.provider, option.baseUrl, label, placementKey)
+  void openAffiliate(option.provider, option.baseUrl, ctaLabel, placementKey)
 }
 
 const openAffiliate = async (provider: string, baseUrl: string, label: string, placementKey: string) => {

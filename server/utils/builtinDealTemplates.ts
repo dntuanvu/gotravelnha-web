@@ -69,6 +69,8 @@ export function getBuiltinDealTemplate(
 
     return {
       slug: 'flights',
+      hubOutcome:
+        'Compare fares and routes across partners in one stop — then book where the total works best for you.',
       title: 'Find your best flight booking option',
       description:
         'Check Trip.com and Klook side by side, then book where the total fare works best for your trip.',
@@ -118,6 +120,7 @@ export function getBuiltinDealTemplate(
 
     return {
       slug: 'hotels',
+      hubOutcome: 'See room types, filters, and promos side by side — pick the stay that fits your trip.',
       title: 'Find your best hotel booking option',
       description:
         'Compare hotel booking pages on Trip.com and Klook to find the right stay and rate.',
@@ -167,6 +170,7 @@ export function getBuiltinDealTemplate(
 
     return {
       slug: 'attractions',
+      hubOutcome: 'Stack up Singapore tickets and bundles fast — fewer tabs, clearer value.',
       title: 'Find your best attraction ticket option',
       description:
         'Compare attraction ticket pages on Trip.com and Klook, then book where value is best.',

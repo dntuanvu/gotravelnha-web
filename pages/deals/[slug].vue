@@ -2,10 +2,6 @@
   <HighConvertingDealTemplate v-if="template" :template="template" />
   <div v-else-if="legacyDeal" class="min-h-screen bg-slate-50 px-4 py-12">
     <div class="max-w-4xl mx-auto bg-white border border-slate-200 rounded-2xl p-6 sm:p-8">
-      <NuxtLink to="/deals" class="inline-flex items-center gap-2 text-sm text-emerald-700 hover:text-emerald-800 font-medium mb-5">
-        <span>←</span>
-        Back to deals
-      </NuxtLink>
       <h1 class="text-2xl sm:text-3xl font-bold text-slate-900">{{ legacyDeal.title }}</h1>
       <p v-if="legacyDeal.description" class="mt-3 text-slate-600">{{ legacyDeal.description }}</p>
       <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
