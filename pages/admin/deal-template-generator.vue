@@ -10,6 +10,58 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5 space-y-4">
           <h3 class="text-lg font-bold text-gray-900">Template Inputs</h3>
 
+          <div class="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+            <div class="flex items-center justify-between">
+              <h4 class="text-sm font-bold text-slate-900">DB Templates</h4>
+              <button @click="loadDbTemplates" class="text-xs px-2 py-1 rounded bg-slate-200 hover:bg-slate-300">Refresh</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+              <input
+                v-model="dbSearch"
+                type="text"
+                placeholder="Search by slug/title/destination"
+                class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm"
+              />
+              <button @click="loadDbTemplates" class="px-3 py-2 rounded-lg bg-slate-700 text-white hover:bg-slate-800 text-sm">
+                Search
+              </button>
+            </div>
+            <div class="overflow-x-auto border border-slate-200 rounded-lg bg-white">
+              <table class="min-w-full text-xs">
+                <thead class="bg-slate-100 text-slate-600">
+                  <tr>
+                    <th class="px-3 py-2 text-left">Slug</th>
+                    <th class="px-3 py-2 text-left">Title</th>
+                    <th class="px-3 py-2 text-left">Provider</th>
+                    <th class="px-3 py-2 text-left">Updated</th>
+                    <th class="px-3 py-2 text-left">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="item in dbTemplates" :key="item.id" class="border-t border-slate-100">
+                    <td class="px-3 py-2 font-medium">{{ item.slug }}</td>
+                    <td class="px-3 py-2">{{ item.title }}</td>
+                    <td class="px-3 py-2 uppercase">{{ item.primaryProvider }}</td>
+                    <td class="px-3 py-2">{{ formatShortDate(item.updatedAt) }}</td>
+                    <td class="px-3 py-2">
+                      <button @click="loadTemplate(item)" class="text-blue-600 hover:text-blue-700 font-semibold">Load</button>
+                    </td>
+                  </tr>
+                  <tr v-if="dbTemplates.length === 0">
+                    <td colspan="5" class="px-3 py-3 text-slate-500">No templates found.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="flex items-center justify-between text-xs text-slate-600">
+              <span>Page {{ dbPage }} / {{ dbTotalPages }}</span>
+              <div class="flex gap-2">
+                <button @click="prevDbPage" :disabled="dbPage <= 1" class="px-2 py-1 rounded border border-slate-300 disabled:opacity-50">Prev</button>
+                <button @click="nextDbPage" :disabled="dbPage >= dbTotalPages" class="px-2 py-1 rounded border border-slate-300 disabled:opacity-50">Next</button>
+              </div>
+            </div>
+          </div>
+
           <div class="rounded-lg border border-blue-200 bg-blue-50 p-3 space-y-2">
             <h4 class="text-sm font-bold text-blue-900">Trip.com Affiliate Mapping</h4>
             <p class="text-xs text-blue-800">
@@ -84,7 +136,18 @@
 
           <label class="text-sm block">
             <span class="block text-gray-700 mb-1">Hero Image URL</span>
-            <input v-model="form.heroImage" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+            <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-2">
+              <input v-model="form.heroImage" type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg" />
+              <button
+                @click="fetchHeroImageFromPrimaryUrl"
+                class="px-3 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-700 text-sm font-semibold"
+              >
+                Auto Fetch
+              </button>
+            </div>
+            <div class="mt-1 text-xs text-slate-500">
+              Source: {{ form.heroImageSource || 'manual' }}<span v-if="form.heroImageFetchedAt"> • fetched {{ formatShortDate(form.heroImageFetchedAt) }}</span>
+            </div>
           </label>
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -152,13 +215,21 @@
           <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <div class="flex items-center justify-between mb-3">
               <h3 class="text-lg font-bold text-gray-900">Generated Block</h3>
-              <button @click="copyOutput" class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
-                {{ copied ? 'Copied' : 'Copy' }}
-              </button>
+              <div class="flex items-center gap-2">
+                <button @click="saveTemplate" class="px-3 py-1.5 text-sm rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">
+                  {{ editingTemplateId ? 'Update DB' : 'Save to DB' }}
+                </button>
+                <button @click="copyOutput" class="px-3 py-1.5 text-sm rounded-lg bg-emerald-600 text-white hover:bg-emerald-700">
+                  {{ copied ? 'Copied' : 'Copy' }}
+                </button>
+              </div>
             </div>
             <textarea readonly :value="generatedBlock" rows="22" class="w-full px-3 py-2 border border-gray-300 rounded-lg font-mono text-xs"></textarea>
             <p class="text-xs text-gray-500 mt-2">
-              Paste this object into `data/deal-page-templates.ts` inside `DEAL_PAGE_TEMPLATES`.
+              This block is optional for backup. Primary source is now the database.
+            </p>
+            <p v-if="saveMessage" class="text-xs mt-2" :class="saveMessageType === 'success' ? 'text-emerald-700' : 'text-red-600'">
+              {{ saveMessage }}
             </p>
           </div>
         </div>
@@ -169,6 +240,7 @@
 
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import type { DealPageTemplate } from '~/types/deal-template'
 
 definePageMeta({
   layout: 'admin',
@@ -189,6 +261,8 @@ const form = ref({
   description: 'Compare top affiliate booking options with clear CTA and weekly-updated tips.',
   destination: 'Singapore',
   heroImage: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1600&q=80',
+    heroImageSource: 'manual' as 'manual' | 'og',
+    heroImageFetchedAt: null as string | null,
   badge: 'High Intent',
   category: 'activity' as 'activity' | 'hotel' | 'flight',
   lastUpdatedLabel: 'Updated weekly',
@@ -203,6 +277,14 @@ const klookFallbackInput = ref('https://www.klook.com/')
 const summaryInput = ref('Strong search intent for this destination.\nClear booking decision in one page.\nOptimized for mobile CTA clicks.')
 const tipsInput = ref('Re-check prices before sharing.\nPrioritize weekday inventory updates.\nKeep social CTA and page CTA aligned.')
 const copied = ref(false)
+const editingTemplateId = ref<string | null>(null)
+const dbTemplates = ref<any[]>([])
+const dbSearch = ref('')
+const dbPage = ref(1)
+const dbTotalPages = ref(1)
+const dbLimit = 8
+const saveMessage = ref('')
+const saveMessageType = ref<'success' | 'error'>('success')
 
 const comparisons = ref([
   {
@@ -335,5 +417,142 @@ const applyTripMapping = () => {
     }
   ]
 }
+
+const buildPayload = (): DealPageTemplate => ({
+  slug: form.value.slug || slugify(form.value.title),
+  title: form.value.title,
+  description: form.value.description,
+  destination: form.value.destination,
+  heroImage: form.value.heroImage,
+  heroImageSource: form.value.heroImageSource || 'manual',
+  heroImageFetchedAt: form.value.heroImageFetchedAt || null,
+  badge: form.value.badge,
+  category: form.value.category,
+  lastUpdatedLabel: form.value.lastUpdatedLabel,
+  primaryProvider: form.value.primaryProvider,
+  primaryCtaLabel: form.value.primaryCtaLabel,
+  primaryBaseUrl: form.value.primaryBaseUrl,
+  placementKey: form.value.placementKey || `deal_template_${slugify(form.value.title).slice(0, 24)}_primary`,
+  summaryBullets: parsedSummaryBullets.value,
+  tips: parsedTips.value,
+  comparison: comparisons.value
+})
+
+const saveTemplate = async () => {
+  saveMessage.value = ''
+  try {
+    const payload = buildPayload()
+    const endpoint = editingTemplateId.value
+      ? `/api/admin/deal-templates/${editingTemplateId.value}`
+      : '/api/admin/deal-templates'
+    const method = editingTemplateId.value ? 'PUT' : 'POST'
+    const response: any = await $fetch(endpoint, {
+      method,
+      body: payload
+    })
+
+    if (!response?.success) {
+      throw new Error(response?.error || 'Save failed')
+    }
+
+    saveMessageType.value = 'success'
+    saveMessage.value = editingTemplateId.value ? 'Template updated in DB.' : 'Template saved to DB.'
+    if (!editingTemplateId.value) {
+      editingTemplateId.value = response?.data?.id || null
+    }
+    await loadDbTemplates()
+  } catch (error: any) {
+    saveMessageType.value = 'error'
+    saveMessage.value = error?.message || 'Failed to save template'
+  }
+}
+
+const hydrateFormFromTemplate = (item: any) => {
+  editingTemplateId.value = item.id
+  form.value = {
+    title: item.title || '',
+    slug: item.slug || '',
+    description: item.description || '',
+    destination: item.destination || '',
+    heroImage: item.heroImage || '',
+    heroImageSource: item.heroImageSource || 'manual',
+    heroImageFetchedAt: item.heroImageFetchedAt || null,
+    badge: item.badge || '',
+    category: item.category || 'activity',
+    lastUpdatedLabel: item.lastUpdatedLabel || 'Updated weekly',
+    primaryProvider: item.primaryProvider || 'klook',
+    primaryCtaLabel: item.primaryCtaLabel || 'Check Live Price',
+    primaryBaseUrl: item.primaryBaseUrl || '',
+    placementKey: item.placementKey || ''
+  }
+  summaryInput.value = Array.isArray(item.summaryBullets) ? item.summaryBullets.join('\n') : ''
+  tipsInput.value = Array.isArray(item.tips) ? item.tips.join('\n') : ''
+  comparisons.value = Array.isArray(item.comparison) && item.comparison.length
+    ? item.comparison
+    : comparisons.value
+}
+
+const loadDbTemplates = async () => {
+  try {
+    const response: any = await $fetch('/api/admin/deal-templates', {
+      params: {
+        search: dbSearch.value || undefined,
+        page: dbPage.value,
+        limit: dbLimit
+      }
+    })
+    dbTemplates.value = response?.success ? (response.data || []) : []
+    dbTotalPages.value = response?.pagination?.totalPages || 1
+  } catch (error) {
+    console.error('Failed to load DB templates:', error)
+  }
+}
+
+const loadTemplate = (selected: any) => {
+  hydrateFormFromTemplate(selected)
+  saveMessageType.value = 'success'
+  saveMessage.value = `Loaded template: ${selected.slug}`
+}
+
+const prevDbPage = async () => {
+  if (dbPage.value <= 1) return
+  dbPage.value -= 1
+  await loadDbTemplates()
+}
+
+const nextDbPage = async () => {
+  if (dbPage.value >= dbTotalPages.value) return
+  dbPage.value += 1
+  await loadDbTemplates()
+}
+
+const formatShortDate = (value?: string) => {
+  if (!value) return '—'
+  return new Date(value).toLocaleString()
+}
+
+const fetchHeroImageFromPrimaryUrl = async () => {
+  if (!form.value.primaryBaseUrl) return
+  saveMessage.value = ''
+  try {
+    const response: any = await $fetch('/api/admin/deal-templates/fetch-image', {
+      method: 'POST',
+      body: { url: form.value.primaryBaseUrl }
+    })
+    if (!response?.success || !response?.data?.heroImage) {
+      throw new Error(response?.error || 'No image found')
+    }
+    form.value.heroImage = response.data.heroImage
+    form.value.heroImageSource = 'og'
+    form.value.heroImageFetchedAt = response.data.heroImageFetchedAt
+    saveMessageType.value = 'success'
+    saveMessage.value = 'Hero image fetched from page metadata.'
+  } catch (error: any) {
+    saveMessageType.value = 'error'
+    saveMessage.value = error?.message || 'Failed to auto fetch hero image.'
+  }
+}
+
+await loadDbTemplates()
 </script>
 

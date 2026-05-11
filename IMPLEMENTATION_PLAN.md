@@ -1,7 +1,7 @@
-# GoVietHub Core Features Implementation Plan
+# GoTravelNha Core Features Implementation Plan
 
 ## Overview
-This document outlines the implementation plan to build out GoVietHub's core value propositions:
+This document outlines the implementation plan to build out GoTravelNha's core value propositions:
 
 1. **Compare prices across top travel platforms instantly**
 2. **Exclusive promo codes and deals you won't find elsewhere**
@@ -121,7 +121,7 @@ This document outlines the implementation plan to build out GoVietHub's core val
   - Filter by platform, category
   - Copy code with one click
   - Show usage count, expiry dates
-  - Exclusive badge for GoVietHub-only codes
+  - Exclusive badge for GoTravelNha-only codes
 
 #### 4.2 Promo Code Integration
 - Show applicable codes on product pages
@@ -136,7 +136,7 @@ This document outlines the implementation plan to build out GoVietHub's core val
 
 #### 5.1 Value Proposition Section
 - **File:** Update `pages/index.vue`
-- Add "What makes GoVietHub special" section with:
+- Add "What makes GoTravelNha special" section with:
   - Icon + description for each feature
   - Links to relevant pages
   - Stats (e.g., "Compare 100+ deals")

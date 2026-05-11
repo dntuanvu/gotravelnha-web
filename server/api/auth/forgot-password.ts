@@ -72,9 +72,9 @@ export default defineEventHandler(async (event) => {
 
     // Send email
     const mailOptions = {
-      from: `GoVietHub <${process.env.SMTP_USER}>`,
+      from: `GoTravelNha <${process.env.SMTP_USER}>`,
       to: email,
-      subject: 'Reset Your Password - GoVietHub',
+      subject: 'Reset Your Password - GoTravelNha',
       html: `
         <!DOCTYPE html>
         <html>
@@ -92,7 +92,7 @@ export default defineEventHandler(async (event) => {
             <p style="font-size: 16px; margin-bottom: 20px;">Hello,</p>
             
             <p style="font-size: 16px; margin-bottom: 20px;">
-              We received a request to reset your password for your GoVietHub account. 
+              We received a request to reset your password for your GoTravelNha account. 
               Click the button below to create a new password:
             </p>
             
@@ -123,7 +123,7 @@ export default defineEventHandler(async (event) => {
             
             <p style="font-size: 12px; color: #999; margin-top: 20px;">
               Happy travels! ✈️<br>
-              The GoVietHub Team
+              The GoTravelNha Team
             </p>
           </div>
         </body>

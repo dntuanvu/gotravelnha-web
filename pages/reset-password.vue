@@ -84,7 +84,7 @@
         <!-- Back to Site Link -->
         <div class="mt-4 text-center">
           <NuxtLink to="/" class="text-sm text-gray-600 hover:text-gray-900 transition-colors">
-            ← Back to GoVietHub
+            ← Back to GoTravelNha
           </NuxtLink>
         </div>
       </div>

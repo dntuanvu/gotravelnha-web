@@ -1,4 +1,4 @@
-# GoVietHub Affiliate Accounts - Next Steps & Opportunities
+# GoTravelNha Affiliate Accounts - Next Steps & Opportunities
 
 ## Current Implementation Status
 

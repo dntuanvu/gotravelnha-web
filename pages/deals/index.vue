@@ -1,807 +1,129 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
-    <!-- Hero Section -->
-    <section class="bg-gradient-to-r from-blue-600 via-indigo-700 to-purple-800 text-white py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center">
-          <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-            🔥 Best Travel Deals
-          </h1>
-          <p class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
-            Curated affiliate deals from Trip.com and Klook
-          </p>
-        </div>
+  <div class="bg-gradient-to-b from-slate-50 via-white to-emerald-50">
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-10 sm:pb-14 space-y-5 sm:space-y-7">
+      <div class="rounded-3xl bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 p-6 sm:p-10 text-white shadow-2xl">
+        <p class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-white/15 border border-white/25">Affiliate-first travel hub</p>
+        <h1 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black leading-tight">Find flights, hotels, and attractions faster</h1>
+        <p class="mt-3 text-emerald-50/95 max-w-3xl">
+          Pick your intent, compare partner options, and open tracked booking links in one click.
+        </p>
       </div>
-    </section>
 
-    <!-- Filters -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-        <div class="flex flex-wrap gap-4 items-center">
-          <label class="text-sm font-medium text-gray-700">Platform:</label>
-          <select 
-            v-model="filters.platform"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Platforms</option>
-            <option value="trip">Trip.com</option>
-            <option value="klook">Klook</option>
-          </select>
-
-          <label class="text-sm font-medium text-gray-700 ml-4">Category:</label>
-          <select 
-            v-model="filters.category"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="all">All Categories</option>
-            <option value="hotel">Hotels</option>
-            <option value="flight">Flights</option>
-            <option value="activity">Activities</option>
-            <option value="train">Trains</option>
-            <option value="car">Car Rentals</option>
-            <option value="package">Packages</option>
-          </select>
-
-          <label class="text-sm font-medium text-gray-700 ml-4">Sort:</label>
-          <select 
-            v-model="filters.sort"
-            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="newest">Newest First</option>
-            <option value="lowest">Lowest Price</option>
-            <option value="highest">Highest Discount</option>
-          </select>
-
+      <div v-if="false" class="bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
           <button
-            @click="refreshDeals"
-            :disabled="loading"
-            class="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+            v-for="chip in categoryChips"
+            :key="chip.id"
+            @click="activeCategory = chip.id"
+            :class="[
+              'text-left rounded-xl border px-4 py-3 transition-colors',
+              activeCategory === chip.id
+                ? 'border-emerald-400 bg-emerald-50'
+                : 'border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/40'
+            ]"
           >
-            {{ loading ? '🔄 Refreshing...' : '🔄 Refresh Deals' }}
+            <div class="text-lg">{{ chip.icon }}</div>
+            <div class="mt-1 font-semibold text-slate-900">{{ chip.label }}</div>
           </button>
         </div>
-      </div>
 
-      <!-- Deal Type Tabs -->
-      <div class="bg-white rounded-xl shadow-lg p-2 mb-8 flex gap-2">
-        <button
-          @click="activeTab = 'all'"
-          :class="activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-          class="flex-1 px-6 py-3 rounded-lg font-semibold transition-all"
-        >
-          <span class="text-2xl">🔥</span> All Deals
-        </button>
-        <button
-          @click="activeTab = 'promo'"
-          :class="activeTab === 'promo' ? 'bg-orange-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-          class="flex-1 px-6 py-3 rounded-lg font-semibold transition-all"
-        >
-          <span class="text-2xl">🎫</span> Promo Codes
-        </button>
-        <button
-          @click="activeTab = 'hotel'"
-          :class="activeTab === 'hotel' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'"
-          class="flex-1 px-6 py-3 rounded-lg font-semibold transition-all"
-        >
-          <span class="text-2xl">🏨</span> Hotel Deals
-        </button>
-      </div>
-
-      <!-- Stats Bar -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-          <div class="text-3xl font-bold text-blue-600">{{ totalDeals }}</div>
-          <div class="text-gray-600 text-sm">Total Deals</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-          <div class="text-3xl font-bold text-green-600">{{ averageDiscount }}%</div>
-          <div class="text-gray-600 text-sm">Avg Discount</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-          <div class="text-3xl font-bold text-purple-600">{{ platformsCount }}</div>
-          <div class="text-gray-600 text-sm">Platforms</div>
-        </div>
-        <div class="bg-white rounded-xl shadow-lg p-6 text-center">
-          <div class="text-3xl font-bold text-orange-600">{{ lastUpdated }}</div>
-          <div class="text-gray-600 text-sm">Last Updated</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Deals Grid -->
-    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-      <!-- Loading State -->
-      <div v-if="loading && !deals.length" class="text-center py-16">
-        <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-        <p class="mt-4 text-gray-600">Loading amazing deals...</p>
-      </div>
-
-      <!-- No Deals -->
-      <div v-else-if="!filteredDeals.length && !loading" class="text-center py-16">
-        <div class="text-6xl mb-4">🎒</div>
-        <h3 class="text-2xl font-bold text-gray-900 mb-2">No Deals Found</h3>
-        <p class="text-gray-600 mb-6">We couldn't find any deals matching your filters.</p>
-        <button
-          @click="clearFilters"
-          class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          Clear Filters
-        </button>
-      </div>
-
-      <!-- Deals Grid -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div
-          v-for="deal in paginatedDeals"
-          :key="deal.id"
-          class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
-        >
-          <!-- Deal Image -->
-          <div class="relative h-48 bg-gray-200 overflow-hidden">
-            <img
-              v-if="deal.image"
-              :src="deal.image"
-              :alt="deal.title"
-              class="w-full h-full object-cover"
-              @error="handleImageError"
-            />
-            <div v-else class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
-              <KlookIcon v-if="deal.platform === 'klook'" :size="64" class="text-white" />
-              <span v-else class="text-6xl">✈️</span>
-            </div>
-            
-            <!-- Discount Badge -->
-            <div v-if="deal.discountPercent" class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full font-bold text-lg shadow-lg">
-              -{{ deal.discountPercent }}%
-            </div>
-
-            <!-- Platform Badge -->
-            <div class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-sm font-semibold flex items-center gap-1.5">
-              <KlookIcon v-if="deal.platform === 'klook'" :size="16" />
-              <span>{{ getPlatformName(deal.platform || 'trip') }}</span>
-            </div>
-          </div>
-
-          <!-- Deal Info -->
-          <div class="p-6">
-            <!-- Badge/Tag with Share Button -->
-            <div class="mb-3 flex flex-wrap gap-2 items-center justify-between">
-              <div class="flex flex-wrap gap-2">
-                <span v-if="deal.badge" class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs font-semibold rounded">
-                  {{ deal.badge }}
-                </span>
-                <span v-if="deal.promoCode" class="inline-block px-2 py-1 bg-orange-100 text-orange-800 text-xs font-semibold rounded font-mono">
-                  🎫 {{ deal.promoCode }}
-                </span>
-              </div>
-              <button
-                @click.stop="showSocialShare(deal)"
-                class="p-1.5 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-blue-600 transition-colors duration-200 flex items-center justify-center"
-                title="Share Deal"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                </svg>
-              </button>
-            </div>
-
-            <!-- Title -->
-            <h3 class="font-bold text-lg mb-2 line-clamp-2 min-h-[3rem]">
-              {{ deal.title || 'Special Deal' }}
-            </h3>
-
-            <!-- Location -->
-            <p v-if="deal.location" class="text-gray-600 text-sm mb-3 flex items-center">
-              <span class="mr-1">📍</span>
-              {{ deal.location }}
-            </p>
-
-            <!-- Rating -->
-            <div v-if="deal.rating" class="flex items-center gap-1 mb-3 text-yellow-500">
-              <span>{{ deal.rating }}</span>
-            </div>
-
-            <!-- Description -->
-            <p v-if="deal.description" class="text-gray-600 text-sm mb-4 line-clamp-2">
-              {{ deal.description }}
-            </p>
-
-            <!-- Price -->
-            <div class="mb-4">
-              <div class="flex items-baseline gap-2">
-                <span class="text-3xl font-bold text-blue-600">
-                  {{ getCurrencySymbol(deal.currency || 'SGD') }}{{ formatPrice(deal.discountedPrice || deal.price) }}
-                </span>
-                <span
-                  v-if="deal.originalPrice"
-                  class="text-gray-400 line-through text-lg"
-                >
-                  {{ getCurrencySymbol(deal.currency || 'SGD') }}{{ formatPrice(deal.originalPrice) }}
-                </span>
-              </div>
-              
-              <!-- Valid Date -->
-              <div v-if="deal.validDate" class="text-xs text-gray-500 mt-1">
-                Valid: {{ deal.validDate }}
-              </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="space-y-2 mt-4">
-              <button
-                v-if="deal.affiliateLink && !deal.promoCode"
-                @click="openAffiliateDeal(deal)"
-                class="block w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold transform hover:scale-105"
-              >
-                View Deal →
-              </button>
-              <button
-                v-else
-                @click="navigateToDealDetails(deal)"
-                class="w-full text-center px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 font-semibold transform hover:scale-105"
-              >
-                View Details →
-              </button>
-
-            </div>
-
-            <!-- Metadata -->
-            <div class="mt-3 flex justify-between text-xs text-gray-500">
-              <span v-if="deal.category" class="capitalize">{{ deal.category }}</span>
-              <span v-if="deal.createdAt">{{ formatDate(deal.createdAt) }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Social Share Modal -->
-      <div
-        v-if="showShareModal && shareDeal"
-        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-        @click="showShareModal = false"
-      >
-        <div
-          class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6"
-          @click.stop
-        >
-          <div class="flex items-center justify-between mb-4">
-            <h3 class="text-xl font-bold text-gray-900">Share This Deal</h3>
-            <button
-              @click="showShareModal = false"
-              class="text-gray-400 hover:text-gray-600 text-2xl"
-            >
-              ×
-            </button>
-          </div>
-          <SocialShare
-            :title="shareDeal.title"
-            :description="shareDeal.description || `Save on ${shareDeal.title}`"
-            :url="shareDealUrl"
-            :deal-id="shareDeal.id"
+        <div class="mt-4">
+          <input
+            v-model.trim="searchText"
+            type="text"
+            placeholder="Search deal intent (e.g. flights, hotels, attraction)"
+            class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400"
           />
         </div>
       </div>
 
-      <!-- Pagination -->
-      <div v-if="totalPages > 1" class="mt-12 flex justify-center items-center gap-2">
-        <button
-          @click="currentPage = Math.max(1, currentPage - 1)"
-          :disabled="currentPage === 1"
-          class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          ← Previous
-        </button>
+      <div class="flex items-center justify-between">
+        <h2 class="text-xl sm:text-2xl font-black text-slate-900">Compare & Book</h2>
+        <span class="text-sm text-slate-500">{{ filteredTemplates.length }} result{{ filteredTemplates.length === 1 ? '' : 's' }}</span>
+      </div>
 
-        <div class="flex gap-2">
-          <button
-            v-for="page in visiblePages"
-            :key="page"
-            @click="currentPage = page"
-            :class="[
-              'px-4 py-2 rounded-lg font-semibold transition-colors',
-              page === currentPage
-                ? 'bg-blue-600 text-white'
-                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-            ]"
-          >
-            {{ page }}
-          </button>
-        </div>
+      <div v-if="loadingTemplates" class="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
+        Loading deal pages...
+      </div>
 
-        <button
-          @click="currentPage = Math.min(totalPages, currentPage + 1)"
-          :disabled="currentPage === totalPages"
-          class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      <div v-else-if="filteredTemplates.length === 0" class="rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        No comparison deal pages available yet.
+      </div>
+
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+        <NuxtLink
+          v-for="item in filteredTemplates"
+          :key="item.slug"
+          :to="`/deals/${item.slug}`"
+          class="group overflow-hidden rounded-2xl border border-slate-200 bg-white hover:border-emerald-300 hover:shadow-lg transition-all"
         >
-          Next →
-        </button>
+          <div class="h-40 bg-slate-100">
+            <img v-if="item.heroImage" :src="item.heroImage" :alt="item.title" class="w-full h-full object-cover group-hover:scale-[1.02] transition-transform" />
+          </div>
+          <div class="p-4">
+            <div class="text-xs uppercase tracking-wide text-slate-500">{{ item.destination }} • {{ item.category }}</div>
+            <h3 class="mt-1 text-lg font-bold text-slate-900 line-clamp-2">{{ item.title }}</h3>
+            <p class="mt-1 text-sm text-slate-600 line-clamp-2">{{ item.description }}</p>
+            <div class="mt-3 inline-flex items-center text-sm font-semibold text-emerald-700">
+              Start comparison →
+            </div>
+          </div>
+        </NuxtLink>
       </div>
     </section>
-
-    <!-- Deal Details Modal -->
-    <div
-      v-if="selectedDeal"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-      @click="selectedDeal = null"
-    >
-      <div
-        class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto"
-        @click.stop
-      >
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 flex items-center gap-3">
-            <span>{{ getPlatformIcon(selectedDeal.platform) }}</span>
-            <span>Deal Details</span>
-          </h3>
-          <button
-            @click="selectedDeal = null"
-            class="text-gray-400 hover:text-gray-600 text-2xl"
-          >
-            ×
-          </button>
-        </div>
-
-        <div class="space-y-6">
-          <!-- Title & Discount -->
-          <div>
-            <div class="flex items-center gap-3 mb-3">
-              <h4 class="text-2xl font-bold text-gray-900">{{ selectedDeal.title }}</h4>
-              <span v-if="selectedDeal.discountPercent" class="px-3 py-1 bg-red-500 text-white rounded-full font-bold text-lg">
-                -{{ selectedDeal.discountPercent }}%
-              </span>
-            </div>
-            <div v-if="selectedDeal.promoCode" class="inline-block px-3 py-1 bg-orange-100 text-orange-800 rounded-lg font-mono font-semibold">
-              🎫 Code: {{ selectedDeal.promoCode }}
-            </div>
-          </div>
-
-          <!-- Description -->
-          <div v-if="selectedDeal.description">
-            <h5 class="font-semibold text-gray-900 mb-2">Description</h5>
-            <p class="text-gray-700">{{ selectedDeal.description }}</p>
-          </div>
-
-          <!-- Terms & Conditions -->
-          <div v-if="selectedDeal.termsAndConditions">
-            <h5 class="font-semibold text-gray-900 mb-2">Terms & Conditions</h5>
-            <div class="bg-gray-50 rounded-lg p-4 max-h-48 overflow-y-auto">
-              <p class="text-sm text-gray-700 whitespace-pre-line">{{ selectedDeal.termsAndConditions }}</p>
-            </div>
-          </div>
-
-          <!-- Validity -->
-          <div>
-            <h5 class="font-semibold text-gray-900 mb-2">Validity</h5>
-            <div class="grid grid-cols-2 gap-4">
-              <div class="bg-blue-50 rounded-lg p-3">
-                <div class="text-xs text-blue-600 font-medium">Valid Until</div>
-                <div class="text-gray-900 font-semibold">{{ selectedDeal.validDate }}</div>
-              </div>
-              <div class="bg-green-50 rounded-lg p-3">
-                <div class="text-xs text-green-600 font-medium">Status</div>
-                <div class="text-gray-900 font-semibold">{{ new Date(selectedDeal.validUntil) > new Date() ? '🟢 Active' : '🔴 Expired' }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Eligibility -->
-          <div v-if="selectedDeal.applicableTo || selectedDeal.notApplicableTo">
-            <h5 class="font-semibold text-gray-900 mb-2">Eligibility</h5>
-            <div class="space-y-2">
-              <div v-if="selectedDeal.applicableTo" class="bg-green-50 rounded-lg p-3">
-                <div class="text-xs text-green-600 font-medium mb-1">✅ Applicable To</div>
-                <div class="text-sm text-gray-700">{{ selectedDeal.applicableTo }}</div>
-              </div>
-              <div v-if="selectedDeal.notApplicableTo" class="bg-red-50 rounded-lg p-3">
-                <div class="text-xs text-red-600 font-medium mb-1">❌ Not Applicable To</div>
-                <div class="text-sm text-gray-700">{{ selectedDeal.notApplicableTo }}</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- CTA Buttons -->
-          <div class="flex gap-3 pt-4 border-t">
-            <button
-              @click="selectedDeal = null"
-              class="flex-1 px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
-            >
-              Close
-            </button>
-            <a
-              v-if="selectedDeal.platform === 'klook'"
-              href="https://www.klook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              @click="copyPromoCode(selectedDeal.promoCode)"
-              class="flex-1 px-4 py-3 bg-gradient-to-r from-orange-600 to-pink-600 text-white rounded-lg hover:from-orange-700 hover:to-pink-700 transition-all font-semibold text-center transform hover:scale-105"
-            >
-              <KlookIcon :size="20" class="inline-block mr-1.5" />
-              Go to Klook
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useActivityTracker } from '~/composables/useActivityTracker'
-import SocialShare from '~/components/SocialShare.vue'
-
-const router = useRouter()
+import { computed, ref, onMounted } from 'vue'
+import type { DealPageTemplate } from '~/types/deal-template'
 
 definePageMeta({
-  middleware: 'auth',
   layout: 'default'
 })
 
-const route = useRoute()
+const dealTemplates = ref<DealPageTemplate[]>([])
+const loadingTemplates = ref(false)
+const searchText = ref('')
+const activeCategory = ref<'all' | 'flight' | 'hotel' | 'activity'>('all')
+const allowedBuiltinSlugs = new Set(['flights', 'hotels', 'attractions'])
 
-const { trackClick } = useActivityTracker()
+const categoryChips = [
+  { id: 'all', label: 'All intents', icon: '🧭' },
+  { id: 'flight', label: 'Flights', icon: '✈️' },
+  { id: 'hotel', label: 'Hotels', icon: '🏨' },
+  { id: 'activity', label: 'Attractions', icon: '🎡' }
+] as const
 
-// State
-const loading = ref(false)
-const deals = ref<any[]>([])
-const currentPage = ref(1)
-const itemsPerPage = 12
-const selectedDeal = ref<any>(null)
-const activeTab = ref('all')
-const showShareModal = ref(false)
-const shareDeal = ref<any>(null)
-
-// Filters
-const filters = ref({
-  platform: 'all',
-  category: 'all',
-  sort: 'newest'
-})
-
-// Watch for tab changes and reset pagination
-watch(activeTab, () => {
-  currentPage.value = 1
-})
-
-// Load deals on mount
-onMounted(async () => {
-  // Set active tab from URL query param if provided
-  const tabParam = route.query.tab as string
-  if (tabParam && ['all', 'promo', 'hotel'].includes(tabParam)) {
-    activeTab.value = tabParam
-  }
-  
-  await loadDeals()
-})
-
-// Load deals from API
-async function loadDeals() {
-  loading.value = true
+const loadTemplates = async () => {
   try {
-    const sessionId = typeof window !== 'undefined'
-      ? (localStorage.getItem('activity_session_id') || `deals-${Date.now().toString(36)}`)
-      : 'anonymous'
-
-    if (typeof window !== 'undefined' && !localStorage.getItem('activity_session_id')) {
-      localStorage.setItem('activity_session_id', sessionId)
-    }
-
-    const affiliateResponse: any = await $fetch('/api/affiliate/deals', {
-      params: {
-        limit: 200,
-        sessionId
-      }
-    })
-
-    deals.value = affiliateResponse?.success ? (affiliateResponse.data || []) : []
+    loadingTemplates.value = true
+    const response: any = await $fetch('/api/deal-templates')
+    const list = response?.success ? (response.data || []) : []
+    dealTemplates.value = list.filter((item: DealPageTemplate) => allowedBuiltinSlugs.has(item.slug))
   } catch (error) {
-    console.error('Failed to load deals:', error)
+    console.error('Failed to load deal templates:', error)
+    dealTemplates.value = []
   } finally {
-    loading.value = false
+    loadingTemplates.value = false
   }
 }
 
-// Helper function to extract discount percentage from text like "8% off"
-// Refresh deals
-async function refreshDeals() {
-  await loadDeals()
-}
+const filteredTemplates = computed(() => {
+  const keyword = searchText.value.toLowerCase().trim()
 
-// Filter and sort deals
-const filteredDeals = computed(() => {
-  let result = [...deals.value]
+  return dealTemplates.value.filter((item) => {
+    const categoryMatch = activeCategory.value === 'all' || item.category === activeCategory.value
+    if (!categoryMatch) return false
+    if (!keyword) return true
 
-  // Filter by tab (promo codes vs hotels)
-  if (activeTab.value === 'promo') {
-    result = result.filter(deal => deal.promoCode && deal.category !== 'hotel')
-  } else if (activeTab.value === 'hotel') {
-    result = result.filter(deal => deal.category === 'hotel' && !deal.promoCode)
-  }
-
-  // Filter by platform
-  if (filters.value.platform !== 'all') {
-    result = result.filter(deal => deal.platform === filters.value.platform)
-  }
-
-  // Filter by category (if not filtering by tab)
-  if (filters.value.category !== 'all' && activeTab.value === 'all') {
-    result = result.filter(deal => deal.category === filters.value.category)
-  }
-
-  // Sort
-  if (filters.value.sort === 'newest') {
-    result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-  } else if (filters.value.sort === 'lowest') {
-    result.sort((a, b) => {
-      const priceA = parseFloat(a.discountedPrice || a.price || '999999')
-      const priceB = parseFloat(b.discountedPrice || b.price || '999999')
-      return priceA - priceB
-    })
-  } else if (filters.value.sort === 'highest') {
-    result.sort((a, b) => {
-      const discA = parseFloat(a.discountPercent || '0')
-      const discB = parseFloat(b.discountPercent || '0')
-      return discB - discA
-    })
-  }
-
-  return result
+    const haystack = [item.title, item.description, item.destination, item.category, item.badge].join(' ').toLowerCase()
+    return haystack.includes(keyword)
+  })
 })
 
-// Pagination
-const totalPages = computed(() => Math.ceil(filteredDeals.value.length / itemsPerPage))
-
-const visiblePages = computed(() => {
-  const pages: number[] = []
-  const total = totalPages.value
-  const current = currentPage.value
-
-  // Show first page, current page, last page, and pages around current
-  if (total <= 7) {
-    for (let i = 1; i <= total; i++) {
-      pages.push(i)
-    }
-  } else {
-    pages.push(1)
-    if (current > 3) pages.push(-1) // Ellipsis
-
-    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
-      pages.push(i)
-    }
-
-    if (current < total - 2) pages.push(-1) // Ellipsis
-    pages.push(total)
-  }
-
-  return pages
+onMounted(async () => {
+  await loadTemplates()
 })
-
-const paginatedDeals = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage
-  const end = start + itemsPerPage
-  return filteredDeals.value.slice(start, end)
-})
-
-// Stats
-const totalDeals = computed(() => filteredDeals.value.length)
-
-const averageDiscount = computed(() => {
-  const withDiscount = filteredDeals.value.filter(d => d.discountPercent)
-  if (!withDiscount.length) return 0
-  
-  const total = withDiscount.reduce((sum, d) => sum + parseFloat(d.discountPercent || '0'), 0)
-  return Math.round(total / withDiscount.length)
-})
-
-const platformsCount = computed(() => {
-  return new Set(filteredDeals.value.map(d => d.platform)).size
-})
-
-const lastUpdated = computed(() => {
-  if (!deals.value.length) return 'Never'
-  
-  const latest = deals.value.reduce((latest, deal) => {
-    const dealTime = new Date(deal.createdAt).getTime()
-    return dealTime > new Date(latest.createdAt).getTime() ? deal : latest
-  }, deals.value[0])
-  
-  const now = new Date()
-  const updated = new Date(latest.createdAt)
-  const diffMinutes = Math.floor((now.getTime() - updated.getTime()) / 60000)
-  
-  if (diffMinutes < 1) return 'Just now'
-  if (diffMinutes < 60) return `${diffMinutes}m ago`
-  if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`
-  return `${Math.floor(diffMinutes / 1440)}d ago`
-})
-
-// Helper functions
-function getCurrencySymbol(currency: string): string {
-  const symbols: Record<string, string> = {
-    SGD: 'S$',
-    USD: '$',
-    EUR: '€',
-    GBP: '£',
-    JPY: '¥',
-    CNY: '¥',
-    VND: '₫',
-    MYR: 'RM',
-    THB: '฿',
-    IDR: 'Rp'
-  }
-  return symbols[currency] || currency
-}
-
-function formatPrice(price: string | number): string {
-  if (!price) return '0'
-  const num = typeof price === 'string' ? parseFloat(price) : price
-  return num.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })
-}
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffMs = now.getTime() - date.getTime()
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-  
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
-  
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-}
-
-function getPlatformName(platform: string): string {
-  const names: Record<string, string> = {
-    trip: 'Trip.com',
-    klook: 'Klook',
-  }
-  return names[platform] || 'Platform'
-}
-
-function getPlatformIcon(platform: string): string {
-  const icons: Record<string, string> = {
-    trip: '🏨 Trip.com',
-    klook: 'Klook',
-  }
-  return icons[platform] || '🌐 Platform'
-}
-
-function handleImageError(event: Event) {
-  const img = event.target as HTMLImageElement
-  img.style.display = 'none'
-  if (img.parentElement) {
-    img.parentElement.innerHTML = '<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500"><span class="text-6xl">✈️</span></div>'
-  }
-}
-
-function clearFilters() {
-  filters.value = {
-    platform: 'all',
-    category: 'all',
-    sort: 'newest'
-  }
-  currentPage.value = 1
-}
-
-async function openAffiliateDeal(deal: any) {
-  if (!deal?.affiliateLink) return
-  try {
-    const sessionId = typeof window !== 'undefined'
-      ? (localStorage.getItem('activity_session_id') || `deals-${Date.now().toString(36)}`)
-      : 'anonymous'
-    if (typeof window !== 'undefined' && !localStorage.getItem('activity_session_id')) {
-      localStorage.setItem('activity_session_id', sessionId)
-    }
-
-    const response: any = await $fetch('/api/affiliate/click', {
-      method: 'POST',
-      body: {
-        provider: deal.platform,
-        baseUrl: deal.affiliateLink,
-        placementKey: 'deals_grid',
-        pagePath: '/deals',
-        sessionId,
-        metadata: { dealId: deal.id }
-      }
-    })
-
-    trackClick('deal_view', deal)
-    window.open(response?.outboundUrl || deal.affiliateLink, '_blank', 'noopener,noreferrer')
-  } catch (error) {
-    console.error('Failed to track affiliate click:', error)
-    window.open(deal.affiliateLink, '_blank', 'noopener,noreferrer')
-  }
-}
-
-const shareDealUrl = computed(() => {
-  if (!shareDeal.value) return ''
-  const baseUrl = typeof window !== 'undefined' ? window.location.origin : ''
-  
-  // Case 1: If deal has affiliate link (direct link, not promo code), use affiliate link for sharing
-  if (shareDeal.value.affiliateLink && !shareDeal.value.promoCode) {
-    return shareDeal.value.affiliateLink
-  }
-  
-  // Case 2: For promo codes or deals without direct links, create shareable GoVietHub URL
-  // Generate slug from title/description
-  const titleSlug = (shareDeal.value.title || shareDeal.value.description || 'deal')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
-  
-  // Extract short unique ID
-  const dealId = shareDeal.value.id || shareDeal.value.sourceUrl?.split('/').pop() || Date.now().toString()
-  const uuidMatch = dealId.match(/([a-f0-9]{8})-([a-f0-9]{4})-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i)
-  const shortId = uuidMatch ? `${uuidMatch[1]}${uuidMatch[2]}` : dealId.substring(0, 12).replace(/[^a-f0-9]/gi, '')
-  
-  return `${baseUrl}/deals/${titleSlug}-${shortId}`
-})
-
-const showSocialShare = (deal: any) => {
-  shareDeal.value = deal
-  showShareModal.value = true
-  trackClick('social_share_modal', { dealId: deal.id })
-}
-
-// Generate slug from title/description
-const generateSlug = (text: string): string => {
-  
-  return text
-    ?.toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '') || 'deal'
-}
-
-// Navigate to individual deal detail page (for promo codes or deals without direct links)
-const navigateToDealDetails = async (deal: any) => {
-  // Generate slug from title or description
-  const titleSlug = generateSlug(deal.title || deal.description || 'deal')
-  
-  // Extract short unique ID from deal ID (first 8 chars of UUID)
-  const dealId = deal.id || deal.sourceUrl?.split('/').pop() || Date.now().toString()
-  const uuidMatch = dealId.match(/([a-f0-9]{8})-([a-f0-9]{4})-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i)
-  const shortId = uuidMatch ? `${uuidMatch[1]}${uuidMatch[2]}` : dealId.substring(0, 12).replace(/[^a-f0-9]/gi, '')
-  
-  // URL format: /deals/{slug}-{shortId}
-  // Example: /deals/save-on-your-1st-hotel-booking-db33107104e3
-  const url = `/deals/${titleSlug}-${shortId}`
-  console.log('🚀 Navigating to:', url, 'Deal:', deal.title)
-  console.log('🚀 Router object:', router)
-  console.log('🚀 Current route before navigation:', router.currentRoute.value.path)
-  
-  trackClick('deal_details_navigate', deal)
-  
-  // Force full page navigation to ensure the route loads
-  // This is more reliable for dynamic routes
-  console.log('🚀 Using window.location for full page navigation...')
-  if (typeof window !== 'undefined') {
-    window.location.href = url
-  }
-}
-
-// Keep modal for backward compatibility if needed elsewhere
-function showDealDetails(deal: any) {
-  selectedDeal.value = deal
-  trackClick('deal_details_modal', deal)
-}
-
-async function copyPromoCode(promoCode: string) {
-  try {
-    await navigator.clipboard.writeText(promoCode)
-    alert(`Promo code "${promoCode}" copied to clipboard! 🎉`)
-  } catch (err) {
-    console.error('Failed to copy:', err)
-    // Fallback: select text
-    const textArea = document.createElement('textarea')
-    textArea.value = promoCode
-    document.body.appendChild(textArea)
-    textArea.select()
-    document.execCommand('copy')
-    document.body.removeChild(textArea)
-    alert(`Promo code "${promoCode}" copied! 🎉`)
-  }
-}
 </script>
 

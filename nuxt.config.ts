@@ -6,7 +6,7 @@ export default defineNuxtConfig({
     css: ['@/assets/css/tailwind.css'],
     app: {
         head: {
-          title: 'GoVietHub - Discover, Compare & Book Travel Deals | Trip.com, Klook & More',
+          title: 'GoTravelNha - Discover, Compare & Book Travel Deals | Trip.com, Klook & More',
           htmlAttrs: {
             lang: 'en'
           },
@@ -15,26 +15,26 @@ export default defineNuxtConfig({
             { name: 'viewport', content: 'width=device-width, initial-scale=1' },
             { name: 'description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and attractions. Your all-in-one travel platform.' },
             { name: 'keywords', content: 'travel deals, compare travel prices, trip.com deals, klook deals, vietnam travel, singapore attractions, hotel bookings, flight bookings, travel comparison' },
-            { name: 'author', content: 'GoVietHub' },
+            { name: 'author', content: 'GoTravelNha' },
             { name: 'robots', content: 'index, follow' },
             { name: 'language', content: 'English' },
             { name: 'revisit-after', content: '7 days' },
     
             // Social: Open Graph (Facebook, WhatsApp)
-            { property: 'og:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
+            { property: 'og:title', content: 'GoTravelNha - Discover, Compare & Book Travel Deals' },
             { property: 'og:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and more.' },
             { property: 'og:image', content: '/favicon.svg' },
             { property: 'og:url', content: 'https://gotravelnha.com/' },
             { property: 'og:type', content: 'website' },
-            { property: 'og:site_name', content: 'GoVietHub' },
+            { property: 'og:site_name', content: 'GoTravelNha' },
             { property: 'og:locale', content: 'en_US' },
     
             // Social: Twitter
             { name: 'twitter:card', content: 'summary_large_image' },
-            { name: 'twitter:title', content: 'GoVietHub - Discover, Compare & Book Travel Deals' },
+            { name: 'twitter:title', content: 'GoTravelNha - Discover, Compare & Book Travel Deals' },
             { name: 'twitter:description', content: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions.' },
             { name: 'twitter:image', content: '/favicon.svg' },
-            { name: 'twitter:site', content: '@GoVietHub' }
+            { name: 'twitter:site', content: '@GoTravelNha' }
           ],
           link: [
             { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
@@ -48,8 +48,7 @@ export default defineNuxtConfig({
               children: JSON.stringify({
                 '@context': 'https://schema.org',
                 '@type': 'TravelAgency',
-                name: 'GoVietHub',
-                alternateName: 'GoTravelNha',
+                name: 'GoTravelNha',
                 url: 'https://gotravelnha.com',
                 logo: '/favicon.svg',
                 description: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions',
@@ -98,6 +97,10 @@ export default defineNuxtConfig({
         TRIP_BASE_URL: process.env.TRIP_BASE_URL || 'https://www.trip.com',
         KLOOK_AD_ID: process.env.KLOOK_AD_ID || '1041352',
         KLOOK_SEARCH_WIDGET_ID: process.env.KLOOK_SEARCH_WIDGET_ID || '89020',
+        /** Full Klook affiliate redirect URLs for hub pages (`/deals/flights`, `/deals/hotels`, `/deals/attractions`) */
+        KLOOK_AFFILIATE_FLIGHT_REDIRECT_URL: process.env.KLOOK_AFFILIATE_FLIGHT_REDIRECT_URL,
+        KLOOK_AFFILIATE_HOTEL_REDIRECT_URL: process.env.KLOOK_AFFILIATE_HOTEL_REDIRECT_URL,
+        KLOOK_AFFILIATE_ATTRACTION_REDIRECT_URL: process.env.KLOOK_AFFILIATE_ATTRACTION_REDIRECT_URL,
         STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
              siteUrl: process.env.NUXT_PUBLIC_SITE_URL || process.env.SITE_URL || 'https://gotravelnha.com',
              enableBestDealsNav: process.env.NUXT_PUBLIC_ENABLE_BEST_DEALS_NAV ?? 'true',

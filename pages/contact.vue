@@ -8,8 +8,8 @@
   import ContactForm from '~/components/ContactForm.vue'
   
   useSEO({
-    title: 'Contact Us - GoVietHub',
-    description: 'Get in touch with GoVietHub. We\'re here to help with your travel booking needs and answer any questions.',
+    title: 'Contact Us - GoTravelNha',
+    description: 'Get in touch with GoTravelNha. We\'re here to help with your travel booking needs and answer any questions.',
     keywords: 'contact gotravelnha, travel support, customer service',
     url: 'https://gotravelnha.com/contact'
   })

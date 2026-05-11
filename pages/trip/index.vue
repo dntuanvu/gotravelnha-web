@@ -90,8 +90,8 @@ const { startTracking, trackPageView } = useActivityTracker()
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
-const tripTitle = 'Trip.com Hotel Deals & Search | GoVietHub'
-const tripDescription = 'Plan your stay with Trip.com hotel deals, search widgets, and curated travel banners powered by GoVietHub.'
+const tripTitle = 'Trip.com Hotel Deals & Search | GoTravelNha'
+const tripDescription = 'Plan your stay with Trip.com hotel deals, search widgets, and curated travel banners powered by GoTravelNha.'
 const tripOgImage = computed(() => `${baseUrl.value}/trip-logo.png`)
 
 useHead(() => ({
@@ -103,7 +103,7 @@ useHead(() => ({
     { property: 'og:image', content: tripOgImage.value },
     { property: 'og:url', content: `${baseUrl.value}/trip` },
     { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'GoVietHub' },
+    { property: 'og:site_name', content: 'GoTravelNha' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: tripTitle },
     { name: 'twitter:description', content: tripDescription },

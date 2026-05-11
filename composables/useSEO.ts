@@ -13,7 +13,7 @@ export const useSEO = () => {
     type?: string
     structuredData?: any
   }) => {
-    const siteName = 'GoVietHub'
+    const siteName = 'GoTravelNha'
     const baseUrl = 'https://gotravelnha.com'
     const defaultImage = 'https://storage.googleapis.com/travella_assets_images/app_icon.png'
     

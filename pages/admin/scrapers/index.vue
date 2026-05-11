@@ -113,7 +113,7 @@
           </div>
         </form>
 
-        <div v-if="slots.length === 0" class="text-sm text-gray-500">No slots yet. Create one to control Deals Hub cards.</div>
+        <div v-if="slots.length === 0" class="text-sm text-gray-500">No slots yet. Create one to control Travel Comparison Hub cards.</div>
         <div v-else class="space-y-2">
           <div v-for="slot in slots" :key="slot.id" class="border border-gray-200 rounded-lg p-3 flex items-start justify-between gap-3">
             <div class="min-w-0">

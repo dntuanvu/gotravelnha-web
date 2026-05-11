@@ -61,10 +61,10 @@ export default defineEventHandler(async (event) => {
     try {
       await sendEmail({
         to: email,
-        subject: 'Welcome to GoVietHub Newsletter! 🎉',
+        subject: 'Welcome to GoTravelNha Newsletter! 🎉',
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #4F46E5;">Welcome to GoVietHub!</h1>
+            <h1 style="color: #4F46E5;">Welcome to GoTravelNha!</h1>
             <p>Thank you for subscribing to our newsletter. You'll receive:</p>
             <ul>
               <li>📧 Weekly travel deals and discounts</li>

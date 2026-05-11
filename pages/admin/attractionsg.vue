@@ -251,7 +251,7 @@
                 </div>
               </div>
               <div v-else class="text-sm text-gray-500">
-                No options detected. Customers will request via GoVietHub with general notes.
+                No options detected. Customers will request via GoTravelNha with general notes.
               </div>
 
               <div class="pt-4 border-t border-gray-200 space-y-3">

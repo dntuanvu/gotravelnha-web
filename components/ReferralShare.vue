@@ -161,22 +161,22 @@ const copyReferralLink = async () => {
 }
 
 const shareViaWhatsApp = () => {
-  const text = `Join GoVietHub and discover amazing travel deals! Use my referral code: ${referralCode.value}\n${referralLink.value}`
+  const text = `Join GoTravelNha and discover amazing travel deals! Use my referral code: ${referralCode.value}\n${referralLink.value}`
   const url = `https://wa.me/?text=${encodeURIComponent(text)}`
   window.open(url, '_blank')
   trackClick('referral', { action: 'share_whatsapp' })
 }
 
 const shareViaEmail = () => {
-  const subject = 'Join GoVietHub - Amazing Travel Deals!'
-  const body = `Hi! I thought you might be interested in GoVietHub, a travel comparison platform.\n\nUse my referral code: ${referralCode.value}\nSign up here: ${referralLink.value}`
+  const subject = 'Join GoTravelNha - Amazing Travel Deals!'
+  const body = `Hi! I thought you might be interested in GoTravelNha, a travel comparison platform.\n\nUse my referral code: ${referralCode.value}\nSign up here: ${referralLink.value}`
   const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   window.location.href = url
   trackClick('referral', { action: 'share_email' })
 }
 
 const shareViaTelegram = () => {
-  const text = `Join GoVietHub and discover amazing travel deals! Use my referral code: ${referralCode.value}\n${referralLink.value}`
+  const text = `Join GoTravelNha and discover amazing travel deals! Use my referral code: ${referralCode.value}\n${referralLink.value}`
   const url = `https://t.me/share/url?url=${encodeURIComponent(referralLink.value)}&text=${encodeURIComponent(text)}`
   window.open(url, '_blank')
   trackClick('referral', { action: 'share_telegram' })

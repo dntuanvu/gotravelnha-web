@@ -69,12 +69,12 @@ const issuePasswordReset = async (userId: string, email: string, context: { name
   try {
     await sendEmail({
       to: email,
-      subject: 'Complete Your GoVietHub Account',
+      subject: 'Complete Your GoTravelNha Account',
       html: `
-      <h2 style="font-family:sans-serif;">Welcome to GoVietHub!</h2>
+      <h2 style="font-family:sans-serif;">Welcome to GoTravelNha!</h2>
       <p style="font-family:sans-serif; font-size:15px;">Hi ${firstName},</p>
       <p style="font-family:sans-serif; font-size:15px;">
-        Thanks for booking with us. We've created a GoVietHub account for you so you can track future orders and unlock upcoming features.
+        Thanks for booking with us. We've created a GoTravelNha account for you so you can track future orders and unlock upcoming features.
       </p>
       ${bookingInfo}
       <p style="font-family:sans-serif; font-size:15px;">
@@ -90,7 +90,7 @@ const issuePasswordReset = async (userId: string, email: string, context: { name
         <a href="${resetUrl}">${resetUrl}</a>
       </p>
       <p style="font-family:sans-serif; font-size:12px; color:#7c7c7c;">This link will expire in 24 hours.</p>
-      <p style="font-family:sans-serif; font-size:13px; color:#555;">— The GoVietHub Team</p>
+      <p style="font-family:sans-serif; font-size:13px; color:#555;">— The GoTravelNha Team</p>
     `
     })
   } catch (emailError) {

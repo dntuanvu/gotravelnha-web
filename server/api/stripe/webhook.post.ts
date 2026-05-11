@@ -326,7 +326,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session, config:
   `
 
   const html = `
-    <h2>✅ New Paid Booking via GoVietHub</h2>
+    <h2>✅ New Paid Booking via GoTravelNha</h2>
     <p>A customer completed a Stripe checkout for <strong>${updatedBooking.eventTitle}</strong>.</p>
     <p><strong>Quantity:</strong> ${updatedBooking.quantity}</p>
     <p><strong>Amount Paid:</strong> SGD ${updatedBooking.amount.toFixed(2)}</p>
@@ -433,7 +433,7 @@ async function notifyCustomer(updatedBooking: Awaited<ReturnType<typeof bookings
   }).format(new Date())
 
   const html = `
-    <h2>Thanks for booking with GoVietHub!</h2>
+    <h2>Thanks for booking with GoTravelNha!</h2>
     <p>We have received your payment for <strong>${updatedBooking.eventTitle}</strong>.</p>
     <p>
       <strong>Booking details</strong><br/>
@@ -444,7 +444,7 @@ async function notifyCustomer(updatedBooking: Awaited<ReturnType<typeof bookings
     </p>
     <p>Our team is now processing your ticket with our supplier. You will receive your e-ticket via email once the order is confirmed.</p>
     <p>If you have any urgent requests, reach us at <a href="mailto:${config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER}">${config.SELF_BOOKING_NOTIFY_EMAIL || config.SMTP_USER}</a>.</p>
-    <p>Safe travels!<br/>The GoVietHub Team</p>
+    <p>Safe travels!<br/>The GoTravelNha Team</p>
   `
 
   try {

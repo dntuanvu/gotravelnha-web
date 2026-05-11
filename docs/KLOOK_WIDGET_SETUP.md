@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to configure and use Klook's Dynamic Widgets to display 100,000+ activities, tours, and experiences on GoVietHub.
+This guide explains how to configure and use Klook's Dynamic Widgets to display 100,000+ activities, tours, and experiences on GoTravelNha.
 
 ---
 
@@ -29,7 +29,7 @@ This guide explains how to configure and use Klook's Dynamic Widgets to display 
 In Klook's Dynamic Widgets section, you can configure:
 
 **Key Parameters**:
-- **Website Name**: Your site name (e.g., "GoVietHub")
+- **Website Name**: Your site name (e.g., "GoTravelNha")
 - **Language**: `en`, `en-SG`, `vi`, etc.
 - **Currency**: `SGD`, `USD`, `VND`, etc.
 - **Category**: Attractions, Tours, Transport, Food, etc.
@@ -88,7 +88,7 @@ After configuring, Klook provides:
 
 ## Implementation
 
-### Adding to GoVietHub
+### Adding to GoTravelNha
 
 **File**: `composables/useKlookWidgets.ts`
 

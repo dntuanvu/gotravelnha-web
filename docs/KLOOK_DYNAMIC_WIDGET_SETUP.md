@@ -100,7 +100,7 @@ These attributes are provided by Klook and should be included:
 
 ## Implementation Details
 
-### How GoVietHub Handles Widgets
+### How GoTravelNha Handles Widgets
 
 ```vue
 <ins class="klk-aff-widget" 
@@ -179,7 +179,7 @@ These categories match the Klook portal exactly.
 1. Is `adId` correct?
 2. Is status set to "Active"?
 3. Is `productType` set to `dynamic_widget`?
-4. Is the widget script loaded? (already included in GoVietHub)
+4. Is the widget script loaded? (already included in GoTravelNha)
 
 ### Widget Shows Wrong Content
 

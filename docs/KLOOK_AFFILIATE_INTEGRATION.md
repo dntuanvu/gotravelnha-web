@@ -72,7 +72,7 @@ Based on Klook's affiliate portal documentation, the following tools are availab
 
 ---
 
-## Integration Strategy for GoVietHub
+## Integration Strategy for GoTravelNha
 
 ### Phase 1: Quick Wins (Widget-Based)
 
@@ -258,7 +258,7 @@ New file: `pages/klook/index.vue`
 
 <script setup>
 useHead({
-  title: 'Local Experiences & Tours | GoVietHub',
+  title: 'Local Experiences & Tours | GoTravelNha',
   meta: [
     {
       name: 'description',
@@ -457,5 +457,5 @@ Klook's affiliate program offers exactly what you need to scale beyond Trip.com'
 ✅ **Curated content** for optimal conversions
 ✅ **Better commissions** for activities/tours
 
-This is a game-changer for GoVietHub! 🚀
+This is a game-changer for GoTravelNha! 🚀
 

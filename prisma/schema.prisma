@@ -530,6 +530,35 @@ model DataComparison {
   @@map("data_comparisons")
 }
 
+model DealTemplate {
+  id               String   @id @default(uuid())
+  slug             String   @unique
+  title            String
+  description      String
+  destination      String
+  heroImage        String
+  heroImageSource  String?  @default("manual")
+  heroImageFetchedAt DateTime?
+  badge            String
+  category         String
+  lastUpdatedLabel String
+  primaryProvider  String
+  primaryCtaLabel  String
+  primaryBaseUrl   String
+  placementKey     String
+  summaryBullets   Json
+  tips             Json
+  comparison       Json
+  isActive         Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@index([isActive, updatedAt])
+  @@index([slug, isActive])
+  @@index([placementKey])
+  @@map("deal_templates")
+}
+
 enum Role {
   ADMIN
   USER

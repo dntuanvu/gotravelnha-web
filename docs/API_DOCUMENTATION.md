@@ -1,8 +1,8 @@
-# GoVietHub API Documentation
+# GoTravelNha API Documentation
 
 ## Overview
 
-This document provides an overview of all API endpoints in the GoVietHub platform. For detailed OpenAPI/Swagger documentation, visit `/api/docs` or `/api/docs/openapi.json`.
+This document provides an overview of all API endpoints in the GoTravelNha platform. For detailed OpenAPI/Swagger documentation, visit `/api/docs` or `/api/docs/openapi.json`.
 
 ## Accessing API Documentation
 

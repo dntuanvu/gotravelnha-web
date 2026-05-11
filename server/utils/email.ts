@@ -57,7 +57,7 @@ export const sendEmail = async (options: {
   }
 
   const config = useRuntimeConfig()
-  const defaultFrom = `GoVietHub <${config.SMTP_USER}>`
+  const defaultFrom = `GoTravelNha <${config.SMTP_USER}>`
 
   try {
     await transporter.sendMail({

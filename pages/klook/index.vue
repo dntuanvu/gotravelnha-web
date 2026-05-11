@@ -228,7 +228,7 @@ const searchWidgetId = computed(() => String(runtimeConfig.public?.KLOOK_SEARCH_
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
-const klookTitle = 'Klook Activities, Tours & Deals | GoVietHub'
+const klookTitle = 'Klook Activities, Tours & Deals | GoTravelNha'
 const klookDescription = 'Discover curated Klook activities, tours, passes and hotel deals. Explore our embedded Klook widgets, promo codes and trending experiences.'
 const klookOgImage = computed(() => `${baseUrl.value}/klook-logo.png`)
 
@@ -241,7 +241,7 @@ useHead(() => ({
     { property: 'og:image', content: klookOgImage.value },
     { property: 'og:url', content: `${baseUrl.value}/klook` },
     { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'GoVietHub' },
+    { property: 'og:site_name', content: 'GoTravelNha' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: klookTitle },
     { name: 'twitter:description', content: klookDescription },

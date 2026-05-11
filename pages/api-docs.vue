@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-white">
     <div class="max-w-7xl mx-auto px-4 py-8">
       <div class="mb-8">
-        <h1 class="text-4xl font-bold text-gray-900 mb-2">GoVietHub API Documentation</h1>
+        <h1 class="text-4xl font-bold text-gray-900 mb-2">GoTravelNha API Documentation</h1>
         <p class="text-lg text-gray-600">
           Interactive API documentation using OpenAPI/Swagger specification
         </p>

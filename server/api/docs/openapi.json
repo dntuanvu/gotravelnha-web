@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "GoVietHub API",
+    "title": "GoTravelNha API",
     "version": "1.0.0",
-    "description": "API documentation for GoVietHub - Travel deals aggregation and booking platform",
+    "description": "API documentation for GoTravelNha - Travel deals aggregation and booking platform",
     "contact": {
       "name": "API Support",
       "email": "support@gotravelnha.com"

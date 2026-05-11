@@ -328,8 +328,8 @@ const searchTerm = ref('')
 
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
-const listingTitle = 'Singapore Attractions & Tickets | GoVietHub'
-const listingDescription = 'Browse exclusive Singapore Attractions tickets, passes, and experiences curated by GoVietHub. Compare deals, find promo codes, and plan your adventure.'
+const listingTitle = 'Singapore Attractions & Tickets | GoTravelNha'
+const listingDescription = 'Browse exclusive Singapore Attractions tickets, passes, and experiences curated by GoTravelNha. Compare deals, find promo codes, and plan your adventure.'
 const listingImage = computed(() => `${baseUrl.value}/sg-attractions-logo.svg`)
 
 useHead(() => ({
@@ -341,7 +341,7 @@ useHead(() => ({
     { property: 'og:image', content: listingImage.value },
     { property: 'og:url', content: `${baseUrl.value}/attractionsg` },
     { property: 'og:type', content: 'website' },
-    { property: 'og:site_name', content: 'GoVietHub' },
+    { property: 'og:site_name', content: 'GoTravelNha' },
     { name: 'twitter:card', content: 'summary_large_image' },
     { name: 'twitter:title', content: listingTitle },
     { name: 'twitter:description', content: listingDescription },

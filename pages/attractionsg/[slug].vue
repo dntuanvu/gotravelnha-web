@@ -332,7 +332,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 11.5c0 7-7.5 9.5-7.5 9.5s-7.5-2.5-7.5-9.5a7.5 7.5 0 1115 0z" />
                       </svg>
-                      Request via GoVietHub
+                      Request via GoTravelNha
                     </button>
                   </div>
                 </div>
@@ -347,7 +347,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.57-3 3.5S10.343 15 12 15s3-1.57 3-3.5S13.657 8 12 8z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 11.5c0 7-7.5 9.5-7.5 9.5s-7.5-2.5-7.5-9.5a7.5 7.5 0 1115 0z" />
                 </svg>
-                Request via GoVietHub
+                Request via GoTravelNha
               </button>
             </div>
 
@@ -1111,10 +1111,10 @@ const scrollToOptions = () => {
 
 const shareImage = computed(() => resolveImageUrl(activeImage.value || event.value?.image))
 const pageTitle = computed(() =>
-  event.value ? `${event.value.title} | Singapore Attractions Deals | GoVietHub` : 'Attraction Details | GoVietHub'
+  event.value ? `${event.value.title} | Singapore Attractions Deals | GoTravelNha` : 'Attraction Details | GoTravelNha'
 )
 const pageDescription = computed(() =>
-  event.value?.description || 'Book Singapore attractions with exclusive deals from GoVietHub.'
+  event.value?.description || 'Book Singapore attractions with exclusive deals from GoTravelNha.'
 )
 const canonicalUrl = computed(() =>
   `${baseUrl.value}/attractionsg/${event.value?.slug || event.value?.id || currentSlug.value || ''}`
@@ -1290,10 +1290,10 @@ useHead(() => ({
     { property: 'og:description', content: pageDescription.value },
     { property: 'og:image', content: shareImage.value },
     { property: 'og:image:secure_url', content: shareImage.value },
-    { property: 'og:image:alt', content: event.value?.title || 'GoVietHub Attraction' },
+    { property: 'og:image:alt', content: event.value?.title || 'GoTravelNha Attraction' },
     { property: 'og:url', content: canonicalUrl.value },
     { property: 'og:type', content: 'article' },
-    { property: 'og:site_name', content: 'GoVietHub' },
+    { property: 'og:site_name', content: 'GoTravelNha' },
     ...(event.value?.publishedAt
       ? [{ property: 'article:published_time', content: new Date(event.value.publishedAt).toISOString() }]
       : []),
@@ -1302,7 +1302,7 @@ useHead(() => ({
     { name: 'twitter:title', content: pageTitle.value },
     { name: 'twitter:description', content: pageDescription.value },
     { name: 'twitter:image', content: shareImage.value },
-    { name: 'twitter:image:alt', content: event.value?.title || 'GoVietHub Attraction' }
+    { name: 'twitter:image:alt', content: event.value?.title || 'GoTravelNha Attraction' }
   ],
   link: [
     { rel: 'canonical', href: canonicalUrl.value }

@@ -1,13 +1,13 @@
-# LinkedIn Post - GoVietHub Alpha Launch
+# LinkedIn Post - GoTravelNha Alpha Launch
 
 ## Option 1: Exciting Launch Announcement
 
 ```
-🌏 Excited to announce GoVietHub (formerly GoTravelNha) is now live in ALPHA! 🚀
+🌏 Excited to announce GoTravelNha is now live in ALPHA! 🚀
 
 Tired of switching between multiple travel booking sites? We've built a platform that lets you discover, compare, and book the best travel deals across Trip.com, Klook, and Singapore Attractions - all in one place! ✈️🏨🎯
 
-✨ What makes GoVietHub special:
+✨ What makes GoTravelNha special:
 • Compare prices across top travel platforms instantly
 • Exclusive promo codes and deals you won't find elsewhere
 • Save time by searching once instead of browsing multiple sites
@@ -17,7 +17,7 @@ We're in ALPHA mode - which means you get early access to features before everyo
 
 Try it now and let us know what you think: [Your Website URL]
 
-#TravelTech #TravelDeals #VietnamTravel #TravelInnovation #AlphaLaunch #TravelComparison #GoVietHub #TravelBooking
+#TravelTech #TravelDeals #VietnamTravel #TravelInnovation #AlphaLaunch #TravelComparison #GoTravelNha #TravelBooking
 ```
 
 ---
@@ -27,7 +27,7 @@ Try it now and let us know what you think: [Your Website URL]
 ```
 🔍 Found a problem: Why visit 3 different websites to find the best travel deal?
 
-That's why we built GoVietHub - your one-stop platform to compare deals across Trip.com, Klook, and Singapore Attractions! 🎯
+That's why we built GoTravelNha - your one-stop platform to compare deals across Trip.com, Klook, and Singapore Attractions! 🎯
 
 📊 Compare prices. 🔥 Find exclusive deals. ⚡ Book faster.
 
@@ -55,7 +55,7 @@ As travelers, my team and I were tired of:
 - Missing out on exclusive promo codes
 - Never knowing which platform had the best deal
 
-So we built GoVietHub - a platform that aggregates and compares travel deals from Trip.com, Klook, and Singapore Attractions.
+So we built GoTravelNha - a platform that aggregates and compares travel deals from Trip.com, Klook, and Singapore Attractions.
 
 🎯 One search. Multiple platforms. Best prices.
 
@@ -74,7 +74,7 @@ We're in ALPHA and would love your feedback! Your insights will help shape the f
 ```
 📈 Did you know travelers spend an average of 38 hours researching before booking a trip?
 
-We built GoVietHub to change that. ✨
+We built GoTravelNha to change that. ✨
 
 🎯 Our platform lets you:
 • Compare deals from Trip.com, Klook & Singapore Attractions instantly

@@ -87,7 +87,7 @@ export default defineEventHandler(async (event) => {
 ```typescript
 // 1. Generate Widget URL
 const widgetUrl = generateKlookWidgetUrl({
-  websiteName: 'GoVietHub',
+  websiteName: 'GoTravelNha',
   language: 'en-SG',
   currency: 'SGD',
   category: 'attractions',
@@ -488,7 +488,7 @@ model ScraperJob {
 - Promo codes are treasure trove of deals
 - Scalable through automation
 
-**Your GoVietHub Now Has**:
+**Your GoTravelNha Now Has**:
 - Trip.com: 7 promotional deals
 - Klook: 100,000+ activities + promo codes
 - True multi-platform comparison capability

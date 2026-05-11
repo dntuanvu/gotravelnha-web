@@ -1,4 +1,4 @@
-# GoVietHub Growth Strategy
+# GoTravelNha Growth Strategy
 
 ## 🎯 Current Implementation Status
 

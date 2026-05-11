@@ -80,7 +80,7 @@ const { trackClick } = useActivityTracker()
 const copied = ref(false)
 
 const shareUrl = computed(() => props.url || (typeof window !== 'undefined' ? window.location.href : ''))
-const shareTitle = computed(() => props.title || 'Check out this travel deal on GoVietHub!')
+const shareTitle = computed(() => props.title || 'Check out this travel deal on GoTravelNha!')
 const shareDescription = computed(() => props.description || 'Compare and book the best travel deals')
 const shareImage = computed(() => props.image || 'https://storage.googleapis.com/travella_assets_images/app_icon.png')
 

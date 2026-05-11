@@ -1,9 +1,12 @@
 /**
  * i18n Composable for Vietnamese/English Support
- * Simple translation system for GoVietHub
+ * Simple translation system for GoTravelNha
  */
 
 type Language = 'en' | 'vi'
+
+const LANG_STORAGE_KEY = 'gotravelnha_lang'
+const LEGACY_LANG_STORAGE_KEY = 'goviethub_lang'
 
 const translations: Record<Language, Record<string, string>> = {
   en: {
@@ -15,7 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.compare': 'Compare',
     
     // Homepage
-    'home.title': 'GoVietHub',
+    'home.title': 'GoTravelNha',
     'home.tagline': 'Discover, Compare & Book',
     'home.description': 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions',
     
@@ -42,7 +45,7 @@ const translations: Record<Language, Record<string, string>> = {
     'nav.compare': 'So Sánh',
     
     // Homepage
-    'home.title': 'GoVietHub',
+    'home.title': 'GoTravelNha',
     'home.tagline': 'Khám Phá, So Sánh & Đặt Chỗ',
     'home.description': 'So sánh và đặt các ưu đãi du lịch tốt nhất trên Trip.com, Klook và Địa Điểm Singapore',
     
@@ -67,7 +70,15 @@ export const useI18n = () => {
 
   // Get language from localStorage or browser
   if (typeof window !== 'undefined') {
-    const saved = localStorage.getItem('goviethub_lang')
+    let saved = localStorage.getItem(LANG_STORAGE_KEY)
+    if (saved !== 'vi' && saved !== 'en') {
+      const legacy = localStorage.getItem(LEGACY_LANG_STORAGE_KEY)
+      if (legacy === 'vi' || legacy === 'en') {
+        saved = legacy
+        localStorage.setItem(LANG_STORAGE_KEY, legacy)
+        localStorage.removeItem(LEGACY_LANG_STORAGE_KEY)
+      }
+    }
     if (saved === 'vi' || saved === 'en') {
       currentLang.value = saved
     } else {
@@ -82,7 +93,7 @@ export const useI18n = () => {
   const setLanguage = (lang: Language) => {
     currentLang.value = lang
     if (typeof window !== 'undefined') {
-      localStorage.setItem('goviethub_lang', lang)
+      localStorage.setItem(LANG_STORAGE_KEY, lang)
       document.documentElement.lang = lang
     }
   }

@@ -1,8 +1,8 @@
-# GoVietHub Scaling Roadmap
+# GoTravelNha Scaling Roadmap
 
 ## Vision
 
-Transform GoVietHub from a simple referral site into a **comprehensive multi-platform travel comparison and deal aggregation platform**.
+Transform GoTravelNha from a simple referral site into a **comprehensive multi-platform travel comparison and deal aggregation platform**.
 
 ---
 
@@ -70,7 +70,7 @@ Results show:
 
 ### Phase 3: User Value Features
 
-**Goal**: Make GoVietHub indispensable to travelers
+**Goal**: Make GoTravelNha indispensable to travelers
 
 **Features**:
 
@@ -165,7 +165,7 @@ interface UnifiedDeal {
 
 ## Competitive Advantages
 
-### What Makes GoVietHub Unique
+### What Makes GoTravelNha Unique
 
 1. **Vietnamese-Focused**: Designed for Vietnamese travelers
 2. **Multi-Platform**: First true aggregator in the market

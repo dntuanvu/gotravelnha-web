@@ -1,6 +1,6 @@
 # Affiliate Beginner Playbook (Trip.com + Klook)
 
-This playbook is for operating GoVietHub as an affiliate-first business model without owning full booking inventory.
+This playbook is for operating GoTravelNha as an affiliate-first business model without owning full booking inventory.
 
 ## 1) Revenue Setup (One-Time)
 
@@ -64,8 +64,9 @@ This playbook is for operating GoVietHub as an affiliate-first business model wi
 ## 8) Weekly Deal Page Publishing (New Template)
 
 - Deal page route: `pages/deals/[slug].vue`
-- Template content source: `data/deal-page-templates.ts`
+- Template content source: `DealTemplate` table in database
 - Reusable UI block: `components/deals/HighConvertingDealTemplate.vue`
+- Admin editor: `/admin/deal-template-generator`
 
 Weekly publishing workflow:
 
@@ -76,7 +77,8 @@ Weekly publishing workflow:
    - `placementKey` (use a unique key for analytics)
    - `comparison` options and notes
 3. Share URL: `/deals/<slug>`
-4. Track performance in admin affiliate dashboard by placement key.
+4. Save template to DB from admin page.
+5. Track performance in admin affiliate dashboard by placement key.
 
 Trip.com deeplink mapping:
 

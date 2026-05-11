@@ -49,7 +49,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import HighConvertingDealTemplate from '~/components/deals/HighConvertingDealTemplate.vue'
-import { getDealTemplateBySlug } from '~/data/deal-page-templates'
+import type { DealPageTemplate } from '~/types/deal-template'
 
 definePageMeta({
   layout: 'default'
@@ -57,9 +57,16 @@ definePageMeta({
 
 const route = useRoute()
 const slug = computed(() => String(route.params.slug || ''))
-const template = computed(() => getDealTemplateBySlug(slug.value))
 const requestURL = useRequestURL()
 const baseUrl = computed(() => `${requestURL.protocol}//${requestURL.host}`)
+
+const { data: templateResponse } = await useAsyncData(`deal-template-${slug.value}`, () =>
+  $fetch<{ success: boolean; data: DealPageTemplate | null }>(`/api/deal-templates/${slug.value}`).catch(() => ({
+    success: false,
+    data: null
+  }))
+)
+const template = computed(() => templateResponse.value?.data || null)
 
 const slugify = (value: string) =>
   String(value || '')
@@ -120,13 +127,13 @@ const openLegacyDeal = async () => {
 useHead(() => {
   const page = template.value
   const title = page
-    ? `${page.title} | GoVietHub Deals`
+    ? `${page.title} | GoTravelNha Deals`
     : legacyDeal.value
-      ? `${legacyDeal.value.title} | GoVietHub Deals`
-      : 'Deal Page Not Found | GoVietHub'
+      ? `${legacyDeal.value.title} | GoTravelNha Deals`
+      : 'Deal Page Not Found | GoTravelNha'
   const description = page
     ? page.description
-    : legacyDeal.value?.description || 'This deal page is unavailable. Browse all latest travel deals on GoVietHub.'
+    : legacyDeal.value?.description || 'This deal page is unavailable. Browse all latest travel deals on GoTravelNha.'
   const canonical = `${baseUrl.value}/deals/${slug.value}`
 
   const jsonLd = page
@@ -136,7 +143,7 @@ useHead(() => {
         name: page.title,
         description: page.description,
         image: page.heroImage,
-        brand: 'GoVietHub',
+        brand: 'GoTravelNha',
         category: page.category,
         areaServed: page.destination,
         offers: page.comparison.map((option) => ({

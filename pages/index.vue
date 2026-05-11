@@ -1,5 +1,80 @@
 <template>
-  <div class="space-y-6 sm:space-y-12 pb-12 sm:pb-20 animate-fade-in bg-gradient-to-b from-white to-slate-50 min-h-screen">
+  <div class="min-h-screen bg-gradient-to-b from-slate-50 via-white to-emerald-50">
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-10 pb-6">
+      <div class="rounded-3xl bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 p-6 sm:p-9 text-white shadow-2xl">
+        <p class="inline-flex px-3 py-1 rounded-full text-xs font-semibold bg-white/15 border border-white/25">
+          Affiliate-first travel hub
+        </p>
+        <h1 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black leading-tight">
+          Find flights, hotels, and attractions faster
+        </h1>
+        <p class="mt-3 text-emerald-50/95 max-w-3xl">
+          Compare booking options from Trip.com and Klook, then continue with the best route for your trip.
+        </p>
+      </div>
+    </section>
+
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 sm:pb-16">
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div class="text-center mb-6">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Start With Your Travel Intent</h2>
+          <p class="text-slate-600 mt-2">Three focused comparison pages. No extra steps.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <a
+            :href="getFunnelHref('flight')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'flight')"
+            class="group block rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+          >
+            <div class="text-3xl">✈️</div>
+            <h3 class="mt-3 text-lg font-bold text-slate-900">Flights</h3>
+            <p class="mt-1 text-sm text-slate-600">Compare flight booking paths across partner platforms.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
+            </div>
+          </a>
+
+          <a
+            :href="getFunnelHref('hotel')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'hotel')"
+            class="group block rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+          >
+            <div class="text-3xl">🏨</div>
+            <h3 class="mt-3 text-lg font-bold text-slate-900">Hotels</h3>
+            <p class="mt-1 text-sm text-slate-600">Check rates and hotel routes from both partners.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
+            </div>
+          </a>
+
+          <a
+            :href="getFunnelHref('attraction')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'attraction')"
+            class="group block rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+          >
+            <div class="text-3xl">🎡</div>
+            <h3 class="mt-3 text-lg font-bold text-slate-900">Attractions</h3>
+            <p class="mt-1 text-sm text-slate-600">Compare attraction ticket options before checkout.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div v-if="false" class="space-y-6 sm:space-y-12 pb-12 sm:pb-20 animate-fade-in bg-gradient-to-b from-white to-slate-50 min-h-screen">
     <!-- Mobile App Style Hero Section (Mobile Only) -->
     <section class="lg:hidden max-w-7xl mx-auto px-4 sm:px-6 pt-4 sm:pt-6">
       <!-- Mobile Native Header -->
@@ -7,7 +82,7 @@
         <!-- Greeting -->
         <div class="mb-3 sm:mb-4">
           <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-1">
-            Welcome to GoVietHub!
+            Welcome to GoTravelNha!
           </h1>
           <p class="text-lg sm:text-xl font-semibold text-slate-700">
             Where do you want to go?
@@ -85,8 +160,8 @@
           <div class="text-center mb-6 sm:mb-8 space-y-3 sm:space-y-4">
             <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black text-white mb-4 sm:mb-6 leading-[1.1] animate-slide-up px-2">
               <span class="inline-block hover:scale-110 transition-transform duration-300 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Go</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Viet</span>
-              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Hub</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-75 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Travel</span>
+              <span class="inline-block hover:scale-110 transition-transform duration-300 delay-150 bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent">Nha</span>
             </h1>
             
             <!-- Enhanced Tagline -->
@@ -97,9 +172,6 @@
             <!-- Enhanced Description -->
             <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-emerald-50 max-w-3xl mx-auto leading-relaxed mb-2 sm:mb-3 animate-fade-in-delayed font-medium px-3">
               Compare deals across <span class="font-bold text-white">Trip.com</span> and <span class="font-bold text-white">Klook</span>
-            </p>
-            <p class="text-xs sm:text-sm md:text-base text-emerald-100/80 max-w-3xl mx-auto italic animate-fade-in-delayed px-3">
-              formerly known as GoTravelNha
             </p>
           </div>
 
@@ -174,66 +246,65 @@
       </div>
     </section>
 
-    <!-- Deals Hub Funnel -->
+    <!-- Affiliate Comparison Hub -->
     <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 md:p-10">
-        <div class="text-center mb-6">
-          <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Plan Fast With Deals Hub</h2>
-          <p class="text-slate-600 mt-2">Start from your intent and jump straight to tracked partner offers.</p>
+      <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 md:p-10 shadow-sm">
+        <div class="text-center mb-7">
+          <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Compare Top Booking Options</h2>
+          <p class="text-slate-600 mt-2">Choose your travel intent and compare Trip.com with Klook in one step.</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            <a
-              :href="getFunnelHref('flight')"
-              :target="isIOSSafari() ? null : '_blank'"
-              rel="noopener noreferrer"
-              @click="handleFunnelClick($event, 'flight')"
-              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+          <a
+            :href="getFunnelHref('flight')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'flight')"
+            class="group block text-left rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="h-9 mb-3 flex items-center">
               <span class="text-3xl leading-none">✈️</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Flights</h3>
-            <p class="text-sm text-slate-600 mt-1">Compare airline booking entry points quickly.</p>
-            </a>
-            <a
-              :href="getFunnelHref('hotel')"
-              :target="isIOSSafari() ? null : '_blank'"
-              rel="noopener noreferrer"
-              @click="handleFunnelClick($event, 'hotel')"
-              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+            <p class="text-sm text-slate-600 mt-1">Compare flight booking paths across our affiliate partners.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
+            </div>
+          </a>
+          <a
+            :href="getFunnelHref('hotel')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'hotel')"
+            class="group block text-left rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="h-9 mb-3 flex items-center">
               <span class="text-3xl leading-none">🏨</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Hotels</h3>
-            <p class="text-sm text-slate-600 mt-1">Open the best hotel booking routes in one click.</p>
-            </a>
-            <a
-              :href="getFunnelHref('activity')"
-              :target="isIOSSafari() ? null : '_blank'"
-              rel="noopener noreferrer"
-              @click="handleFunnelClick($event, 'activity')"
-              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
-          >
-            <div class="h-9 mb-3 flex items-center">
-              <KlookIcon :size="28" />
+            <p class="text-sm text-slate-600 mt-1">Check hotel options and rates from both booking platforms.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
             </div>
-            <h3 class="text-lg font-bold text-slate-900">Activities</h3>
-            <p class="text-sm text-slate-600 mt-1">Discover tours and attraction offers faster.</p>
-            </a>
-            <a
-              :href="getFunnelHref('attraction')"
-              :target="isIOSSafari() ? null : '_blank'"
-              rel="noopener noreferrer"
-              @click="handleFunnelClick($event, 'attraction')"
-              class="group block text-left rounded-2xl border border-slate-200 p-5 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
+          </a>
+          <a
+            :href="getFunnelHref('attraction')"
+            :target="isIOSSafari() ? null : '_blank'"
+            rel="noopener noreferrer"
+            @click="handleFunnelClick($event, 'attraction')"
+            class="group block text-left rounded-2xl border border-slate-200 p-5 sm:p-6 hover:border-emerald-300 hover:bg-emerald-50/40 transition-colors"
           >
             <div class="h-9 mb-3 flex items-center">
               <span class="text-3xl leading-none">🎡</span>
             </div>
             <h3 class="text-lg font-bold text-slate-900">Attractions</h3>
-            <p class="text-sm text-slate-600 mt-1">Open Trip.com attraction pages in one click.</p>
-            </a>
+            <p class="text-sm text-slate-600 mt-1">Compare attraction ticket booking pages before checkout.</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="text-xs font-semibold uppercase tracking-wide text-emerald-700">Trip.com + Klook</span>
+              <span class="text-sm font-bold text-emerald-700">Compare Prices →</span>
+            </div>
+          </a>
         </div>
       </div>
     </section>
@@ -416,11 +487,16 @@
 import { ref, computed, onMounted } from 'vue'
 import AffiliateCard from '~/components/AffiliateCard.vue'
 import NewsletterSignup from '~/components/NewsletterSignup.vue'
-import { useTripDeeplink } from '~/composables/useTripDeeplink'
 import { useActivityTracker } from '~/composables/useActivityTracker'
 import { useSEO } from '~/composables/useSEO'
 
-const { generateDeeplink } = useTripDeeplink()
+// Temporary switch: use /deals as the primary homepage.
+// Keep this file content as reference for easy rollback.
+const USE_DEALS_AS_HOMEPAGE = true
+if (USE_DEALS_AS_HOMEPAGE) {
+  await navigateTo('/deals', { redirectCode: 302 })
+}
+
 const { trackClick } = useActivityTracker()
 const { setPageSEO } = useSEO()
 const runtimeConfig = useRuntimeConfig()
@@ -440,26 +516,12 @@ const showCompareNav = computed(() => isFeatureEnabled(runtimeConfig.public?.ena
 const showPromoSection = computed(() => showBestDealsNav.value || showCompareNav.value)
 const funnelShortcuts = ref([])
 
-// Flight and hotel links for mobile navigation (same as desktop hero)
-const flightLink = generateDeeplink({
-  type: 'flight',
-  params: {
-    campaign: 'homepage-hero-flight'
-  }
-})
-
-const hotelLink = generateDeeplink({
-  type: 'hotel',
-  params: {
-    campaign: 'homepage-hero-hotel'
-  }
-})
 const attractionLink = 'https://www.trip.com/things-to-do/?Allianceid=3883416&SID=22874365&trip_sub1=&trip_sub3=D16803670'
 
 const getCategoryFallbackUrl = (category) => {
-  if (category === 'flight') return flightLink
-  if (category === 'hotel') return hotelLink
-  if (category === 'attraction') return attractionLink
+  if (category === 'flight') return '/deals/flights'
+  if (category === 'hotel') return '/deals/hotels'
+  if (category === 'attraction') return '/deals/attractions'
   return '/klook'
 }
 
@@ -483,6 +545,9 @@ const loadFunnelShortcuts = async () => {
   }
 }
 
+const isInternalAppPath = (url) =>
+  typeof url === 'string' && url.startsWith('/') && !url.startsWith('//')
+
 const openFunnelDeal = async (category) => {
   const shortcut = findShortcutByCategory(category)
   const fallbackUrl = getCategoryFallbackUrl(category)
@@ -491,6 +556,16 @@ const openFunnelDeal = async (category) => {
   const isIOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent)
   const isSafari = typeof navigator !== 'undefined' && /Safari/.test(navigator.userAgent) && !/Chrome|CriOS|FxiOS|EdgiOS/.test(navigator.userAgent)
   const shouldUseSameTab = isIOS && isSafari
+
+  if (isInternalAppPath(baseUrl)) {
+    trackClick('deals_hub_link', {
+      campaign: `homepage-funnel-${category}`,
+      route: baseUrl,
+      intent: category
+    })
+    await navigateTo(baseUrl)
+    return
+  }
 
   trackClick('deals_hub_link', {
     campaign: `homepage-funnel-${category}`,
@@ -618,14 +693,14 @@ onMounted(() => {
 
 // Set SEO for homepage
 setPageSEO({
-  title: 'GoVietHub - Discover, Compare & Book Travel Deals',
+  title: 'GoTravelNha - Discover, Compare & Book Travel Deals',
   description: 'Compare and book the best travel deals across Trip.com, Klook, and Singapore Attractions. Save on flights, hotels, activities, and attractions. Your all-in-one travel platform.',
   keywords: 'travel deals, compare travel prices, trip.com deals, klook deals, vietnam travel, singapore attractions, hotel bookings, flight bookings',
   url: 'https://gotravelnha.com',
   structuredData: {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'GoVietHub',
+    name: 'GoTravelNha',
     url: 'https://gotravelnha.com',
     potentialAction: {
       '@type': 'SearchAction',
