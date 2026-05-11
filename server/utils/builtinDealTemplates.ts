@@ -1,13 +1,14 @@
 import type { DealComparisonOption, DealPageTemplate } from '~/types/deal-template'
 
+/** Direct www.klook.com URLs so iOS universal links can open the Klook app; aid/aff_adid preserved. */
 const DEFAULT_KLOOK_FLIGHT_REDIRECT =
-  'https://affiliate.klook.com/redirect?aid=89020&aff_adid=1274076&k_site=https%3A%2F%2Fwww.klook.com%2Fen-PH%2Ftransport%2F%3Ftarget_slug%3D%2Fflight'
+  'https://www.klook.com/en-PH/transport/?target_slug=/flight&aid=89020&aff_adid=1274076'
 
 const DEFAULT_KLOOK_HOTEL_REDIRECT =
-  'https://affiliate.klook.com/redirect?aid=89020&aff_adid=1274076&k_site=https%3A%2F%2Fwww.klook.com%2Fen-SG%2Fhotels%2F%3Fspm%3DHome.TopSearchBar_MainNode_LIST%26clickId%3Ddcb7b90dc2'
+  'https://www.klook.com/en-SG/hotels/?spm=Home.TopSearchBar_MainNode_LIST&clickId=dcb7b90dc2&aid=89020&aff_adid=1274076'
 
 const DEFAULT_KLOOK_ATTRACTION_REDIRECT =
-  'https://affiliate.klook.com/redirect?aid=89020&aff_adid=1274076&k_site=https%3A%2F%2Fwww.klook.com%2Fen-SG%2Fattractions%2Fsingapore%2Fc6%2F'
+  'https://www.klook.com/en-SG/attractions/singapore/c6/?aid=89020&aff_adid=1274076'
 
 function tripFlightUrl(publicCfg: Record<string, any> | undefined): string {
   const allianceId = publicCfg?.TRIP_ALLIANCE_ID || '3883416'

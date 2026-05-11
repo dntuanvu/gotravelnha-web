@@ -91,13 +91,15 @@
             </div>
             <p class="text-sm text-slate-700 leading-relaxed grow">{{ option.priceNote }}</p>
             <p class="text-sm text-emerald-700 font-medium mt-2 leading-snug">{{ option.highlight }}</p>
-            <button
-              type="button"
-              @click="openAffiliate(option.provider, option.baseUrl, `Check ${option.label} Price`, `${template.placementKey}_comparison_${option.provider}`)"
-              class="mt-4 w-full min-h-[48px] px-4 py-3.5 rounded-xl border-2 border-emerald-600 text-emerald-800 bg-emerald-50/40 hover:bg-emerald-50 active:bg-emerald-100 font-semibold text-[15px] sm:text-base touch-manipulation"
+            <a
+              :href="partnerNavHref(option)"
+              :target="isIOSSafari() ? undefined : '_blank'"
+              rel="noopener noreferrer"
+              class="mt-4 w-full min-h-[48px] px-4 py-3.5 rounded-xl border-2 border-emerald-600 text-emerald-800 bg-emerald-50/40 hover:bg-emerald-50 active:bg-emerald-100 font-semibold text-[15px] sm:text-base touch-manipulation inline-flex items-center justify-center no-underline"
+              @click="onPartnerTap($event, option)"
             >
               Open {{ option.provider === 'trip' ? 'Trip.com' : 'Klook' }}
-            </button>
+            </a>
           </article>
         </div>
       </div>
@@ -106,14 +108,18 @@
 </template>
 
 <script setup lang="ts">
-import type { DealPageTemplate } from '~/types/deal-template'
+import type { DealComparisonOption, DealPageTemplate } from '~/types/deal-template'
 import { useActivityTracker } from '~/composables/useActivityTracker'
+import { unwrapKlookAffiliateRedirectUrl } from '~/utils/unwrapKlookAffiliateRedirect'
 
 const props = defineProps<{
   template: DealPageTemplate
 }>()
 
-const { shouldUseSameTabAfterAsyncClick } = useIosOutboundNavigation()
+const { shouldUseSameTabAfterAsyncClick, isIOSSafari } = useIosOutboundNavigation()
+
+/** Same-tab `href` as homepage funnel on iOS Safari — `www.klook.com` / Trip for universal links. */
+const partnerNavHref = (option: DealComparisonOption) => unwrapKlookAffiliateRedirectUrl(option.baseUrl)
 
 const partnerOpenHint = computed(() =>
   shouldUseSameTabAfterAsyncClick()
@@ -137,6 +143,54 @@ const getSessionId = () => {
   const next = `deal-${Date.now().toString(36)}`
   localStorage.setItem('activity_session_id', next)
   return next
+}
+
+/**
+ * iOS Safari: same pattern as homepage `handleFunnelClick` — do not preventDefault;
+ * browser follows `<a href>` (universal links). Track with sendBeacon + keepalive fetch.
+ */
+const onPartnerTap = (ev: MouseEvent, option: DealComparisonOption) => {
+  const placementKey = `${props.template.placementKey}_comparison_${option.provider}`
+  const label = `Check ${option.label} Price`
+
+  if (isIOSSafari()) {
+    trackClick('deal_template_affiliate_click', {
+      provider: option.provider,
+      placementKey,
+      slug: props.template.slug
+    })
+    try {
+      const sessionId = getSessionId()
+      const payload = {
+        provider: option.provider,
+        baseUrl: option.baseUrl,
+        placementKey,
+        pagePath: `/deals/${props.template.slug}`,
+        sessionId,
+        metadata: {
+          templateSlug: props.template.slug,
+          ctaLabel: label
+        }
+      }
+      const body = JSON.stringify(payload)
+      if (typeof navigator !== 'undefined' && typeof navigator.sendBeacon === 'function') {
+        navigator.sendBeacon('/api/affiliate/click', new Blob([body], { type: 'application/json' }))
+      } else if (typeof fetch !== 'undefined') {
+        fetch('/api/affiliate/click', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+          keepalive: true
+        }).catch(() => {})
+      }
+    } catch {
+      /* ignore */
+    }
+    return
+  }
+
+  ev.preventDefault()
+  void openAffiliate(option.provider, option.baseUrl, label, placementKey)
 }
 
 const openAffiliate = async (provider: string, baseUrl: string, label: string, placementKey: string) => {

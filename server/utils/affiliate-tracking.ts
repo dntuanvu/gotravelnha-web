@@ -3,6 +3,8 @@
  * Adds affiliate tracking parameters to URLs for commission tracking
  */
 
+import { unwrapKlookAffiliateRedirectUrl } from '~/utils/unwrapKlookAffiliateRedirect'
+
 /**
  * Add Trip.com affiliate tracking to a URL
  * @param url Original Trip.com URL
@@ -74,6 +76,7 @@ export function addKlookAffiliateTracking(
   adId?: string,
   campaign?: string
 ): string {
+  url = unwrapKlookAffiliateRedirectUrl(url)
   try {
     const parsedUrl = new URL(url)
     
